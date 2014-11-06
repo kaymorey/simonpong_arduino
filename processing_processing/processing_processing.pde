@@ -10,8 +10,10 @@ int radius = 20;
 int semiRadius = radius/2;
 int xCircle = (bgSize-radius)/2;
 int yCircle = (bgSize-radius)/2;
-int barLeft = (bgSize-100)/2;
-int barRight = (bgSize-100)/2;
+
+int posYBarLeft = (bgSize-100)/2;
+int posYBarRight = (bgSize-100)/2;
+
 int xBallSpeed = 5;
 float yBallSpeed = random(-xBallSpeed, xBallSpeed);
 boolean goRight = true;
@@ -21,8 +23,8 @@ boolean isLost = false;
 
 
 void setup() {
-  String portName = Serial.list()[5];
-  myPort = new Serial(this, portName, 9600);
+  /*String portName = Serial.list()[5];
+  myPort = new Serial(this, portName, 9600);*/
   
   size(bgSize,bgSize);
   background(0, 0, 0);
@@ -46,11 +48,23 @@ void draw()
   
   ballMove();
   fill(255,255,255);
-  rect(0,barLeft,20,100);
-  rect(bgSize-20,barRight,20,100);
+  rect(0,posYBarLeft,20,100);
+  rect(bgSize-20,posYBarRight,20,100);
+  
+  if (keyPressed) {
+    print("test");
+    if (key == CODED) {
+      if (keyCode == UP) {
+        posYBarLeft -= 5;
+      }
+      else if (keyCode == DOWN) {
+        posYBarLeft += 5;
+      } 
+    }
+  }
   
   
-  //if(val>=0){
+  /*if(val>=0){
     if(myPort.available() > 0){
       stringReceived = myPort.readStringUntil('\n');
       if(stringReceived != null) {
@@ -65,11 +79,11 @@ void draw()
       }
     }
     
-    barLeft = playerLeft*(bgSize-100)/255;
-    barRight = playerRight*(bgSize-100)/255;
+    posYBarLeft = playerLeft*(bgSize-100)/255;
+    posYBarRight = playerRight*(bgSize-100)/255;
     //controllerPos = val*(bgSize-100)/255;
     
-  //}
+  }*/
 }
 
 void ballMove() {
@@ -80,12 +94,12 @@ void ballMove() {
     yCircle=(bgSize-radius)/2;
     xCircle=(bgSize-radius)/2;
   }
-  if(goRight && xCircle > (bgSize-(20+semiRadius)) && yCircle > barRight && yCircle < barRight+100){
+  if(goRight && xCircle > (bgSize-(20+semiRadius)) && yCircle > posYBarRight && yCircle < posYBarRight+100){
       goRight = false;
       xBallSpeed++;
       
   }
-  else if(!goRight && xCircle < 20+semiRadius && yCircle > barLeft && yCircle < barLeft+100) {
+  else if(!goRight && xCircle < 20+semiRadius && yCircle > posYBarLeft && yCircle < posYBarLeft+100) {
       goRight = true;
       xBallSpeed++;
   }
