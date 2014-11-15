@@ -25,6 +25,9 @@ int radiusBall = 20;
   // Positions
 int posXBall;
 int posYBall;
+  // Speed
+int incrementXBall;
+int incrementYBall;
 
 int xBallSpeed = 5;
 float yBallSpeed = random(-xBallSpeed, xBallSpeed);
@@ -50,6 +53,10 @@ void setup() {
   // Set ball position
  posXBall = (bgSize - radiusBall)/2;
  posYBall = (bgSize - radiusBall)/2;
+ 
+  // Set ball increments
+incrementXBall = 3;
+incrementYBall = 2;
   
   if(yBallSpeed < 0) {
     goTop = true;
@@ -74,8 +81,15 @@ void draw()
   
   // Draw bars
   drawBars();
-  // Draw Ball
-  drawBall();
+  // Draw and move Ball
+  moveBall();
+  
+  if (testBallHitBar(posXBarTop, posYBarTop)) {
+    changeBallDirection(posXBarTop, 1);
+  }
+  else if (testBallHitBar(posXBarBottom, posYBarBottom)) {
+    changeBallDirection(posXBarBottom, -1);
+  }
   
   
   if (keyPressed) {
@@ -109,6 +123,70 @@ void drawBall()
 {
   fill(255,255,255);
   ellipse(posXBall, posYBall, radiusBall, radiusBall);
+}
+
+void moveBall()
+{
+  posXBall += incrementXBall;
+  if (posXBall > bgSize || posXBall < 0) {
+    incrementXBall = -incrementXBall;
+  }
+  posYBall += incrementYBall;
+  if (posYBall > bgSize || posYBall < 0) {
+    incrementYBall = -incrementYBall;
+  }
+  drawBall();
+}
+
+boolean testBallHitBar(int posXBar, int posYBar) {
+  if ((posXBall + radiusBall / 2 >= posXBar && posXBall - radiusBall / 2 <= posXBar + barWidth) && (posYBall + radiusBall / 2 >= posYBar && posYBall - radiusBall / 2 <= posYBar + barHeight)) {
+    // Collision
+    return true;
+  }
+  return false;
+}
+
+void changeBallDirection(int posXBar, int multi) {
+  // If collision with top bar multi equals 1 else multi equals -1 (ball going to top or bottom)
+  switch (posBallHitBar(posXBar)) {
+    case -2:
+      incrementXBall = -3;
+      incrementYBall = 2 * multi; 
+       break;
+    case -1:
+      incrementXBall = -2;
+      incrementYBall = 2 * multi;
+      break;
+    case 0:
+      incrementXBall = 0;
+      incrementYBall = 3 * multi;
+      break;
+    case 1:
+      incrementXBall = 2;
+      incrementYBall = 2 * multi;
+      break;
+    case 2:
+      incrementXBall = 3;
+      incrementYBall = 2 * multi;
+      break;
+  }
+}
+
+int posBallHitBar (int posXBar) {
+  int rangeBar = barWidth / 5;
+  if (posXBall > posXBar && posXBall < posXBar + rangeBar) {
+    return -2; // LEFT
+  }
+  else if (posXBall >= posXBar + rangeBar && posXBall < posXBar + rangeBar * 2) {
+    return -1; // MIDLEFT
+  }
+  else if (posXBall >= posXBar + barWidth - rangeBar * 2 && posXBall < posXBar + barWidth - rangeBar) {
+    return 1; // MIDRIGHT
+  }
+  else if (posXBall < posXBar + barWidth && posXBall >= posXBar + barWidth - rangeBar) {
+    return 2; // RIGHT
+  }
+  return 0; // MIDDLE
 }
 
 void ballMove() {
