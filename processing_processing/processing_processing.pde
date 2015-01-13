@@ -11,6 +11,9 @@ int bgSize = 600;
   // Dimensions
 int barWidth = 100;
 int barHeight = 20;
+ // Changing dimensions
+ boolean isExpanding = false;
+ String barExpanding = '';
   
   // Positions
 int posXBarTop;
@@ -108,8 +111,18 @@ void draw()
       else if ((key == 's' || key == 'S') && posXBarBottom < bgSize - barWidth) {
         posXBarBottom += 5;
       }
+      else if (key == 'e' || key == 'E') {
+        // Expand top bar
+        expandBar('top');
+      }
     }
   }
+}
+
+void expandBar(String type)
+{
+  isExpanding = true;
+  barExpanding = type;
 }
 
 void drawBars()
