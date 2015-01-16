@@ -39,10 +39,10 @@ Bar barBottom;
 void setup() {
   /*String portName = Serial.list()[5];
   myPort = new Serial(this, portName, 9600);*/
-  
+
   size(screenWidth, screenHeight);
   background(0, 0, 0);
-  
+
   ball = new Ball(radiusBall, posXBall, posYBall, incrementXBall, incrementYBall);
   barTop = new Bar(barWidth, barHeight, posXBarTop, posYBarTop);
   barBottom = new Bar(barWidth, barHeight, posXBarBottom, posYBarBottom);
@@ -52,23 +52,23 @@ void draw()
 {
   if(!hasWaited){
      hasWaited = true;
-    delay(1000); 
+    delay(1000);
   }
-  
+
   background(0, 0, 0);
-  
+
   barTop.drawBar();
   barBottom.drawBar();
-  
+
   ball.moveBall();
-  
+
   if (ball.testBallHitBar(barTop.posXBar, barTop.posYBar)) {
     ball.changeBallDirection(barTop.posXBar, 1);
   }
   else if (ball.testBallHitBar(barBottom.posXBar, barBottom.posYBar)) {
     ball.changeBallDirection(barBottom.posXBar, -1);
   }
-  
+
   if (keyPressed) {
     if (key == CODED) {
       if (keyCode == LEFT && barTop.posXBar > 0) {
@@ -76,7 +76,7 @@ void draw()
       }
       else if (keyCode == RIGHT && barTop.posXBar < screenWidth - barWidth) {
         barTop.posXBar += 5;
-      } 
+      }
     }
     else {
       if ((key == 'q' || key == 'Q') && barBottom.posXBar > 0) {
@@ -86,8 +86,7 @@ void draw()
         barBottom.posXBar += 5;
       }
       else if (key == 'e' || key == 'E') {
-        // Expand top bar
-        barTop.expandBar("top");
+        barTop.expandBar();
       }
     }
   }
@@ -98,20 +97,20 @@ void draw()
     if(myPort.available() > 0){
       stringReceived = myPort.readStringUntil('\n');
       if(stringReceived != null) {
-        
+
         moves = split(stringReceived,'$');
-        
+
         if(moves.length == 2){
-          
+
           playerLeft = int(moves[0].trim());
           playerRight = int(moves[1].trim());
         }
       }
     }
-    
+
     posYBarLeft = playerLeft*(bgSize-100)/255;
     posYBarRight = playerRight*(bgSize-100)/255;
     //controllerPos = val*(bgSize-100)/255;
-    
+
   }*/
 
