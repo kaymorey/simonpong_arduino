@@ -37,59 +37,62 @@ Bar barTop;
 Bar barBottom;
 
 void setup() {
-  /*String portName = Serial.list()[5];
-  myPort = new Serial(this, portName, 9600);*/
+    /*String portName = Serial.list()[5];
+    myPort = new Serial(this, portName, 9600);*/
 
-  size(screenWidth, screenHeight);
-  background(0, 0, 0);
+    size(screenWidth, screenHeight);
+    background(0, 0, 0);
 
-  ball = new Ball(radiusBall, posXBall, posYBall, incrementXBall, incrementYBall);
-  barTop = new Bar(barWidth, barHeight, posXBarTop, posYBarTop);
-  barBottom = new Bar(barWidth, barHeight, posXBarBottom, posYBarBottom);
+    ball = new Ball(radiusBall, posXBall, posYBall, incrementXBall, incrementYBall);
+    barTop = new Bar(barWidth, barHeight, posXBarTop, posYBarTop);
+    barBottom = new Bar(barWidth, barHeight, posXBarBottom, posYBarBottom);
 }
 
 void draw()
 {
-  if(!hasWaited){
-     hasWaited = true;
-    delay(1000);
-  }
-
-  background(0, 0, 0);
-
-  barTop.drawBar();
-  barBottom.drawBar();
-
-  ball.moveBall();
-
-  if (ball.testBallHitBar(barTop.posXBar, barTop.posYBar)) {
-    ball.changeBallDirection(barTop.posXBar, 1);
-  }
-  else if (ball.testBallHitBar(barBottom.posXBar, barBottom.posYBar)) {
-    ball.changeBallDirection(barBottom.posXBar, -1);
-  }
-
-  if (keyPressed) {
-    if (key == CODED) {
-      if (keyCode == LEFT && barTop.posXBar > 0) {
-        barTop.posXBar -= 5;
-      }
-      else if (keyCode == RIGHT && barTop.posXBar < screenWidth - barWidth) {
-        barTop.posXBar += 5;
-      }
+    if(!hasWaited){
+        hasWaited = true;
+        delay(1000);
     }
-    else {
-      if ((key == 'q' || key == 'Q') && barBottom.posXBar > 0) {
-        barBottom.posXBar -= 5;
-      }
-      else if ((key == 's' || key == 'S') && barBottom.posXBar < screenWidth - barWidth) {
-        barBottom.posXBar += 5;
-      }
-      else if (key == 'e' || key == 'E') {
-        barTop.expandBar();
-      }
+
+    background(0, 0, 0);
+
+    barTop.drawBar();
+    barBottom.drawBar();
+
+    ball.moveBall();
+
+    if (ball.testBallHitBar(barTop.posXBar, barTop.posYBar)) {
+        ball.changeBallDirection(barTop.posXBar, 1);
     }
-  }
+    else if (ball.testBallHitBar(barBottom.posXBar, barBottom.posYBar)) {
+        ball.changeBallDirection(barBottom.posXBar, -1);
+    }
+
+    if (keyPressed) {
+        if (key == CODED) {
+            if (keyCode == LEFT && barTop.posXBar > 0) {
+                barTop.posXBar -= 5;
+            }
+            else if (keyCode == RIGHT && barTop.posXBar < screenWidth - barWidth) {
+                barTop.posXBar += 5;
+            }
+        }
+        else {
+            if ((key == 'q' || key == 'Q') && barBottom.posXBar > 0) {
+                barBottom.posXBar -= 5;
+            }
+            else if ((key == 's' || key == 'S') && barBottom.posXBar < screenWidth - barWidth) {
+                barBottom.posXBar += 5;
+            }
+            else if (key == 'e' || key == 'E') {
+                barTop.expandBar();
+            }
+            else if (key == 'r' || key == 'R') {
+                barTop.shrinkBar();
+            }
+        }
+    }
 }
 
 // Get arduino data and change bars pos in draw function

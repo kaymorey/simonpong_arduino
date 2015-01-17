@@ -55,59 +55,62 @@ Bar barTop;
 Bar barBottom;
 
 public void setup() {
-  /*String portName = Serial.list()[5];
-  myPort = new Serial(this, portName, 9600);*/
+    /*String portName = Serial.list()[5];
+    myPort = new Serial(this, portName, 9600);*/
 
-  size(screenWidth, screenHeight);
-  background(0, 0, 0);
+    size(screenWidth, screenHeight);
+    background(0, 0, 0);
 
-  ball = new Ball(radiusBall, posXBall, posYBall, incrementXBall, incrementYBall);
-  barTop = new Bar(barWidth, barHeight, posXBarTop, posYBarTop);
-  barBottom = new Bar(barWidth, barHeight, posXBarBottom, posYBarBottom);
+    ball = new Ball(radiusBall, posXBall, posYBall, incrementXBall, incrementYBall);
+    barTop = new Bar(barWidth, barHeight, posXBarTop, posYBarTop);
+    barBottom = new Bar(barWidth, barHeight, posXBarBottom, posYBarBottom);
 }
 
 public void draw()
 {
-  if(!hasWaited){
-     hasWaited = true;
-    delay(1000);
-  }
-
-  background(0, 0, 0);
-
-  barTop.drawBar();
-  barBottom.drawBar();
-
-  ball.moveBall();
-
-  if (ball.testBallHitBar(barTop.posXBar, barTop.posYBar)) {
-    ball.changeBallDirection(barTop.posXBar, 1);
-  }
-  else if (ball.testBallHitBar(barBottom.posXBar, barBottom.posYBar)) {
-    ball.changeBallDirection(barBottom.posXBar, -1);
-  }
-
-  if (keyPressed) {
-    if (key == CODED) {
-      if (keyCode == LEFT && barTop.posXBar > 0) {
-        barTop.posXBar -= 5;
-      }
-      else if (keyCode == RIGHT && barTop.posXBar < screenWidth - barWidth) {
-        barTop.posXBar += 5;
-      }
+    if(!hasWaited){
+        hasWaited = true;
+        delay(1000);
     }
-    else {
-      if ((key == 'q' || key == 'Q') && barBottom.posXBar > 0) {
-        barBottom.posXBar -= 5;
-      }
-      else if ((key == 's' || key == 'S') && barBottom.posXBar < screenWidth - barWidth) {
-        barBottom.posXBar += 5;
-      }
-      else if (key == 'e' || key == 'E') {
-        barTop.expandBar();
-      }
+
+    background(0, 0, 0);
+
+    barTop.drawBar();
+    barBottom.drawBar();
+
+    ball.moveBall();
+
+    if (ball.testBallHitBar(barTop.posXBar, barTop.posYBar)) {
+        ball.changeBallDirection(barTop.posXBar, 1);
     }
-  }
+    else if (ball.testBallHitBar(barBottom.posXBar, barBottom.posYBar)) {
+        ball.changeBallDirection(barBottom.posXBar, -1);
+    }
+
+    if (keyPressed) {
+        if (key == CODED) {
+            if (keyCode == LEFT && barTop.posXBar > 0) {
+                barTop.posXBar -= 5;
+            }
+            else if (keyCode == RIGHT && barTop.posXBar < screenWidth - barWidth) {
+                barTop.posXBar += 5;
+            }
+        }
+        else {
+            if ((key == 'q' || key == 'Q') && barBottom.posXBar > 0) {
+                barBottom.posXBar -= 5;
+            }
+            else if ((key == 's' || key == 'S') && barBottom.posXBar < screenWidth - barWidth) {
+                barBottom.posXBar += 5;
+            }
+            else if (key == 'e' || key == 'E') {
+                barTop.expandBar();
+            }
+            else if (key == 'r' || key == 'R') {
+                barTop.shrinkBar();
+            }
+        }
+    }
 }
 
 // Get arduino data and change bars pos in draw function
@@ -222,35 +225,45 @@ class Ball
 
 class Bar
 {
-  int initialWidth;
-  int barWidth;
-  int barHeight;
-  int posXBar;
-  int posYBar;
+    int initialWidth;
+    int barWidth;
+    int barHeight;
+    int posXBar;
+    int posYBar;
 
-  int maxWidth = 300;
+    int maxWidth = 300;
+    int minWidth = 60;
 
-  Bar (int bWidth, int bHeight, int posX, int posY) {
-    initialWidth = bWidth;
-    barWidth = bWidth;
-    barHeight = bHeight;
-    posXBar = posX;
-    posYBar = posY;
-  }
-
-  public void drawBar()
-  {
-    fill(255,255,255);
-    rect(posXBar, posYBar, barWidth, barHeight);
-  }
-
-  public void expandBar()
-  {
-    if (barWidth + 20 <= maxWidth) {
-      barWidth += 20;
-      posXBar -= 10;
+    Bar (int bWidth, int bHeight, int posX, int posY)
+    {
+        initialWidth = bWidth;
+        barWidth = bWidth;
+        barHeight = bHeight;
+        posXBar = posX;
+        posYBar = posY;
     }
-  }
+
+    public void drawBar()
+    {
+        fill(255,255,255);
+        rect(posXBar, posYBar, barWidth, barHeight);
+    }
+
+    public void expandBar()
+    {
+        if (barWidth + 20 <= maxWidth) {
+            barWidth += 20;
+            posXBar -= 10;
+        }
+    }
+
+    public void shrinkBar()
+    {
+        if (barWidth - 20 >= minWidth) {
+            barWidth -= 20;
+            posXBar += 10;
+        }
+    }
 }
 
   static public void main(String[] passedArgs) {
