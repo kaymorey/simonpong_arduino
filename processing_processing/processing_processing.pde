@@ -36,16 +36,20 @@ Ball ball;
 Bar barTop;
 Bar barBottom;
 
+Score score;
+
 void setup() {
     /*String portName = Serial.list()[5];
     myPort = new Serial(this, portName, 9600);*/
 
     size(screenWidth, screenHeight);
-    background(0, 0, 0);
+    background(41, 41, 41);
 
     ball = new Ball(radiusBall, posXBall, posYBall, incrementXBall, incrementYBall);
     barTop = new Bar(barWidth, barHeight, posXBarTop, posYBarTop);
     barBottom = new Bar(barWidth, barHeight, posXBarBottom, posYBarBottom);
+
+    score = new Score();
 }
 
 void draw()
@@ -55,7 +59,12 @@ void draw()
         delay(1000);
     }
 
-    background(0, 0, 0);
+    background(41, 41, 41);
+
+    drawLine();
+
+    score.displayTopScore();
+    score.displayBottomScore();
 
     barTop.drawBar();
     barBottom.drawBar();
@@ -93,6 +102,20 @@ void draw()
             }
         }
     }
+}
+
+void drawLine()
+{
+    stroke(255);
+    line(0, screenHeight / 2, screenWidth, screenHeight / 2);
+}
+
+void displayText()
+{
+    String s = "4";
+    fill(28, 28, 28);
+    textFont(loadFont("BebasNeue-100.vlw"));
+    text(s, (screenWidth - textWidth(s)) / 2, screenHeight / 4 + 50); // 50 is font-size / 2
 }
 
 // Get arduino data and change bars pos in draw function

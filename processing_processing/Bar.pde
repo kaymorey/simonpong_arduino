@@ -1,4 +1,3 @@
-
 class Bar
 {
     int initialWidth;
