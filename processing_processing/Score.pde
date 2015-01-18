@@ -5,20 +5,20 @@ class Score {
     //int scorePosX;
     int scorePosY;
 
-    Score(PFont font, int score/*, int posX*/, int posY)
+    Score(/*PFont font,*/ int score/*, int posX*/, int posY)
     {
-        scoreFont = font;
+        // scoreFont = font;
         scoreText = str(score);
         scorePlayer = score;
         //scorePosX = posX;
         scorePosY = posY;
     }
-    
+
      void displayScore()
     {
         scoreText = str(scorePlayer);
         fill(28, 28, 28);
-        textFont(scoreFont);
+        // textFont(scoreFont);
         text(scoreText, (screenWidth - textWidth(scoreText)) / 2, scorePosY); // 50 is font-size / 2
     }
 /*

@@ -6,21 +6,28 @@ class Ball
     int posYBall;
     int incrementXBall;
     int incrementYBall;
+    int[] incrementsY = {3, -3};
 
     Ball(int radius, int posX, int posY) {
         radiusBall = radius;
         posXBall = posX;
         posYBall = posY;
-        incrementXBall = incrementX;
-        incrementYBall = incrementY;
+        initIncrements();
     }
 
     void initBall()
     {
         posXBall = (screenWidth - radiusBall)/2;
         posYBall = (screenHeight - radiusBall)/2;
-        incrementXBall = 3;
-        incrementYBall = 2;
+        initIncrements();
+    }
+
+    void initIncrements()
+    {
+        incrementXBall = int(random(-4, 4));
+
+        int index = int(random(2));
+        incrementYBall = incrementsY[index];
     }
 
     void drawBall()
