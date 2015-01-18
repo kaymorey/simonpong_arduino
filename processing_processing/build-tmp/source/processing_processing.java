@@ -45,10 +45,6 @@ int posYBarBottom = screenHeight - barHeight;
 
 boolean hasWaited =false;
 
- // Changing dimensions
- boolean isExpanding = false;
- String barExpanding = "";
-
 Ball ball;
 
 Bar barTop;
@@ -86,6 +82,16 @@ public void draw()
 
     barTop.drawBar();
     barBottom.drawBar();
+
+    // Score
+    if (ball.posYBall > screenHeight) {
+        score.topScore += 1;
+        ball.initBall();
+    }
+    else if (ball.posYBall < 0) {
+        score.bottomScore += 1;
+        ball.initBall();
+    }
 
     ball.moveBall();
 
@@ -159,91 +165,110 @@ public void displayText()
   }*/
 
 
-class Ball 
+class Ball
 {
-  int radiusBall;
-  int posXBall;
-  int posYBall;
-  int incrementXBall;
-  int incrementYBall;
-  
-  Ball(int radius, int posX, int posY, int incrementX, int incrementY) {
-    radiusBall = radius;
-    posXBall = posX;
-    posYBall = posY;
-    incrementXBall = incrementX;
-    incrementYBall = incrementY;
-  }
-  
-  public void drawBall()
-  {
-    fill(255,255,255);
-    ellipse(posXBall, posYBall, radiusBall, radiusBall);
-  }
-  
-  public void moveBall()
-  {
-    posXBall += incrementXBall;
-    if (posXBall > screenWidth || posXBall < 0) {
-      incrementXBall = -incrementXBall;
+    int radiusBall;
+    int posXBall;
+    int posYBall;
+    int incrementXBall;
+    int incrementYBall;
+
+    Ball(int radius, int posX, int posY, int incrementX, int incrementY) {
+        radiusBall = radius;
+        posXBall = posX;
+        posYBall = posY;
+        incrementXBall = incrementX;
+        incrementYBall = incrementY;
     }
-    posYBall += incrementYBall;
-    if (posYBall > screenHeight || posYBall < 0) {
-      incrementYBall = -incrementYBall;
-    }
-    drawBall();
-  }
-  
-  public boolean testBallHitBar(int posXBar, int posYBar) {
-    if ((posXBall + radiusBall / 2 >= posXBar && posXBall - radiusBall / 2 <= posXBar + barWidth) && (posYBall + radiusBall / 2 >= posYBar && posYBall - radiusBall / 2 <= posYBar + barHeight)) {
-      // Collision
-      return true;
-    }
-    return false;
-  }
-  
-  public void changeBallDirection(int posXBar, int multi) {
-    // If collision with top bar multi equals 1 else multi equals -1 (ball going to top or bottom)
-    switch (posBallHitBar(posXBar)) {
-      case -2:
-        incrementXBall = -3;
-        incrementYBall = 2 * multi; 
-         break;
-      case -1:
-        incrementXBall = -2;
-        incrementYBall = 2 * multi;
-        break;
-      case 0:
-        incrementXBall = 0;
-        incrementYBall = 3 * multi;
-        break;
-      case 1:
-        incrementXBall = 2;
-        incrementYBall = 2 * multi;
-        break;
-      case 2:
+
+    public void initBall()
+    {
+        posXBall = (screenWidth - radiusBall)/2;
+        posYBall = (screenHeight - radiusBall)/2;
         incrementXBall = 3;
-        incrementYBall = 2 * multi;
-        break;
+        incrementYBall = 2;
     }
-  }
-  
-  public int posBallHitBar (int posXBar) {
-    int rangeBar = barWidth / 5;
-    if (posXBall > posXBar && posXBall < posXBar + rangeBar) {
-      return -2; // LEFT
+
+    public void drawBall()
+    {
+        fill(255,255,255);
+        ellipse(posXBall, posYBall, radiusBall, radiusBall);
     }
-    else if (posXBall >= posXBar + rangeBar && posXBall < posXBar + rangeBar * 2) {
-      return -1; // MIDLEFT
+
+    public void moveBall()
+    {
+        posXBall += incrementXBall;
+        if (posXBall > screenWidth || posXBall < 0) {
+            incrementXBall = -incrementXBall;
+        }
+        posYBall += incrementYBall;
+        drawBall();
     }
-    else if (posXBall >= posXBar + barWidth - rangeBar * 2 && posXBall < posXBar + barWidth - rangeBar) {
-      return 1; // MIDRIGHT
+
+    public boolean testBallHitBar(int posXBar, int posYBar) {
+        if ((posXBall + radiusBall / 2 >= posXBar && posXBall - radiusBall / 2 <= posXBar + barWidth) && (posYBall + radiusBall / 2 >= posYBar && posYBall - radiusBall / 2 <= posYBar + barHeight)) {
+            // Collision
+            return true;
+        }
+        return false;
     }
-    else if (posXBall < posXBar + barWidth && posXBall >= posXBar + barWidth - rangeBar) {
-      return 2; // RIGHT
+
+    public boolean testBallHitTop(int posXBar, int posYBar) {
+        if (posYBall < 0 && !testBallHitBar(posXBar, posXBar)) {
+            return true;
+        }
+        return false;
     }
-    return 0; // MIDDLE
-  }
+
+    public boolean testBallHitBottom(int posXBar, int posYBar) {
+        if (posYBall > screenHeight && !testBallHitBar(posXBar, posYBar)) {
+            return true;
+        }
+        return false;
+    }
+
+    public void changeBallDirection(int posXBar, int multi) {
+        // If collision with top bar multi equals 1 else multi equals -1 (ball going to top or bottom)
+        switch (posBallHitBar(posXBar)) {
+            case -2:
+                incrementXBall = -3;
+                incrementYBall = 2 * multi;
+                break;
+            case -1:
+                incrementXBall = -2;
+                incrementYBall = 2 * multi;
+                break;
+            case 0:
+                incrementXBall = 0;
+                incrementYBall = 3 * multi;
+                break;
+            case 1:
+                incrementXBall = 2;
+                incrementYBall = 2 * multi;
+                break;
+            case 2:
+                incrementXBall = 3;
+                incrementYBall = 2 * multi;
+                break;
+        }
+    }
+
+    public int posBallHitBar (int posXBar) {
+        int rangeBar = barWidth / 5;
+        if (posXBall > posXBar && posXBall < posXBar + rangeBar) {
+            return -2; // LEFT
+        }
+        else if (posXBall >= posXBar + rangeBar && posXBall < posXBar + rangeBar * 2) {
+            return -1; // MIDLEFT
+        }
+        else if (posXBall >= posXBar + barWidth - rangeBar * 2 && posXBall < posXBar + barWidth - rangeBar) {
+            return 1; // MIDRIGHT
+        }
+        else if (posXBall < posXBar + barWidth && posXBall >= posXBar + barWidth - rangeBar) {
+            return 2; // RIGHT
+        }
+        return 0; // MIDDLE
+    }
 }
 class Bar
 {
@@ -300,6 +325,7 @@ class Score {
 
     public void displayTopScore()
     {
+        print(topScore);
         String s = str(topScore);
         fill(28, 28, 28);
         textFont(loadFont("BebasNeue-100.vlw"));

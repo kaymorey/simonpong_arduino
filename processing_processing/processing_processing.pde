@@ -27,10 +27,6 @@ int posYBarBottom = screenHeight - barHeight;
 
 boolean hasWaited =false;
 
- // Changing dimensions
- boolean isExpanding = false;
- String barExpanding = "";
-
 Ball ball;
 
 Bar barTop;
@@ -69,6 +65,17 @@ void draw()
     barTop.drawBar();
     barBottom.drawBar();
 
+    // Score
+    if (ball.posYBall > screenHeight) {
+        score.topScore += 1;
+        ball.initBall();
+    }
+    else if (ball.posYBall < 0) {
+        score.bottomScore += 1;
+        ball.initBall();
+    }
+
+    // Ball
     ball.moveBall();
 
     if (ball.testBallHitBar(barTop.posXBar, barTop.posYBar)) {
@@ -108,14 +115,6 @@ void drawLine()
 {
     stroke(255);
     line(0, screenHeight / 2, screenWidth, screenHeight / 2);
-}
-
-void displayText()
-{
-    String s = "4";
-    fill(28, 28, 28);
-    textFont(loadFont("BebasNeue-100.vlw"));
-    text(s, (screenWidth - textWidth(s)) / 2, screenHeight / 4 + 50); // 50 is font-size / 2
 }
 
 // Get arduino data and change bars pos in draw function
