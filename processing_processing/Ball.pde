@@ -7,7 +7,7 @@ class Ball
     int incrementXBall;
     int incrementYBall;
 
-    Ball(int radius, int posX, int posY, int incrementX, int incrementY) {
+    Ball(int radius, int posX, int posY) {
         radiusBall = radius;
         posXBall = posX;
         posYBall = posY;
