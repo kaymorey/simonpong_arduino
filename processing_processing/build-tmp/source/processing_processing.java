@@ -93,6 +93,7 @@ public void draw()
         ball.initBall();
     }
 
+    // Ball
     ball.moveBall();
 
     if (ball.testBallHitBar(barTop.posXBar, barTop.posYBar)) {
@@ -132,14 +133,6 @@ public void drawLine()
 {
     stroke(255);
     line(0, screenHeight / 2, screenWidth, screenHeight / 2);
-}
-
-public void displayText()
-{
-    String s = "4";
-    fill(28, 28, 28);
-    textFont(loadFont("BebasNeue-100.vlw"));
-    text(s, (screenWidth - textWidth(s)) / 2, screenHeight / 4 + 50); // 50 is font-size / 2
 }
 
 // Get arduino data and change bars pos in draw function
@@ -198,7 +191,7 @@ class Ball
     public void moveBall()
     {
         posXBall += incrementXBall;
-        if (posXBall > screenWidth || posXBall < 0) {
+        if (posXBall + radiusBall / 2 > screenWidth || posXBall - radiusBall / 2 < 0) {
             incrementXBall = -incrementXBall;
         }
         posYBall += incrementYBall;
@@ -325,7 +318,6 @@ class Score {
 
     public void displayTopScore()
     {
-        print(topScore);
         String s = str(topScore);
         fill(28, 28, 28);
         textFont(loadFont("BebasNeue-100.vlw"));

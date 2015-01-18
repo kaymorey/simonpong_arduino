@@ -32,7 +32,7 @@ class Ball
     void moveBall()
     {
         posXBall += incrementXBall;
-        if (posXBall > screenWidth || posXBall < 0) {
+        if (posXBall + radiusBall / 2 > screenWidth || posXBall - radiusBall / 2 < 0) {
             incrementXBall = -incrementXBall;
         }
         posYBall += incrementYBall;
