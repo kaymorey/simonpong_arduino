@@ -32,13 +32,10 @@ int posYBarBottom = screenHeight - barHeight;
 Score scorePlayerTop;
 Score scorePlayerBottom;
 
-// PFont scoreFont = loadFont("BebasNeue-100.vlw");
 int scorePlayer = 0;
 // Score Top
-//int scorePosXTop = ;
 int scorePosYTop = screenHeight / 4 + 50;
 // Score Bottom
-//int scorePosXBottom = ;
 int scorePosYBottom = screenHeight - (screenHeight / 4 - 50);
 
 
@@ -54,8 +51,8 @@ void setup() {
     ball = new Ball(radiusBall, posXBall, posYBall);
     barTop = new Bar(barWidth, barHeight, posXBarTop, posYBarTop);
     barBottom = new Bar(barWidth, barHeight, posXBarBottom, posYBarBottom);
-    scorePlayerTop = new Score(/*scoreFont,*/ scorePlayer, scorePosYTop);
-    scorePlayerBottom = new Score(/*scoreFont,*/ scorePlayer, scorePosYBottom);
+    scorePlayerTop = new Score(scorePlayer, scorePosYTop);
+    scorePlayerBottom = new Score(scorePlayer, scorePosYBottom);
 }
 
 void draw()

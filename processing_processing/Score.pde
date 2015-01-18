@@ -1,16 +1,13 @@
 class Score {
-    PFont scoreFont;
+    PFont scoreFont = loadFont("BebasNeue-100.vlw");
     String scoreText;
     int scorePlayer;
-    //int scorePosX;
     int scorePosY;
 
-    Score(/*PFont font,*/ int score/*, int posX*/, int posY)
+    Score(int score, int posY)
     {
-        // scoreFont = font;
         scoreText = str(score);
         scorePlayer = score;
-        //scorePosX = posX;
         scorePosY = posY;
     }
 
@@ -18,7 +15,7 @@ class Score {
     {
         scoreText = str(scorePlayer);
         fill(28, 28, 28);
-        // textFont(scoreFont);
+        textFont(scoreFont);
         text(scoreText, (screenWidth - textWidth(scoreText)) / 2, scorePosY); // 50 is font-size / 2
     }
 /*
