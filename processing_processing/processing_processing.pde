@@ -9,6 +9,8 @@ int screenWidth  = 800;
 int screenHeight = 600;
 
 // Ball
+Ball ball;
+
 int radiusBall = 20;
 int posXBall = (screenWidth - radiusBall)/2;
 int posYBall = (screenHeight - radiusBall)/2;
@@ -16,6 +18,9 @@ int incrementXBall = 3;
 int incrementYBall = 2;
 
 // Bar
+Bar barTop;
+Bar barBottom;
+
 int barWidth = 100;
 int barHeight = 20;
 // Bar Top
@@ -25,14 +30,21 @@ int posYBarTop = 0;
 int posXBarBottom = (screenWidth - barWidth)/2;
 int posYBarBottom = screenHeight - barHeight;
 
+// Score
+Score scorePlayerTop;
+Score scorePlayerBottom;
+
+PFont scoreFont = loadFont("BebasNeue-100.vlw");
+int scorePlayer = 0;
+// Score Top
+//int scorePosXTop = ;
+int scorePosYTop = screenHeight / 4 + 50;
+// Score Bottom
+//int scorePosXBottom = ;
+int scorePosYBottom = screenHeight - (screenHeight / 4 - 50);
+
+
 boolean hasWaited =false;
-
-Ball ball;
-
-Bar barTop;
-Bar barBottom;
-
-Score score;
 
 void setup() {
     /*String portName = Serial.list()[5];
@@ -44,8 +56,8 @@ void setup() {
     ball = new Ball(radiusBall, posXBall, posYBall, incrementXBall, incrementYBall);
     barTop = new Bar(barWidth, barHeight, posXBarTop, posYBarTop);
     barBottom = new Bar(barWidth, barHeight, posXBarBottom, posYBarBottom);
-
-    score = new Score();
+    scorePlayerTop = new Score(scoreFont, scorePlayer, scorePosYTop);
+    scorePlayerBottom = new Score(scoreFont, scorePlayer, scorePosYBottom);
 }
 
 void draw()
@@ -59,19 +71,19 @@ void draw()
 
     drawLine();
 
-    score.displayTopScore();
-    score.displayBottomScore();
+    scorePlayerTop.displayScore();
+    scorePlayerBottom.displayScore();
 
     barTop.drawBar();
     barBottom.drawBar();
 
     // Score
     if (ball.posYBall > screenHeight) {
-        score.topScore += 1;
+        scorePlayerTop.scorePlayer += 1;
         ball.initBall();
     }
     else if (ball.posYBall < 0) {
-        score.bottomScore += 1;
+        scorePlayerBottom.scorePlayer += 1;
         ball.initBall();
     }
 

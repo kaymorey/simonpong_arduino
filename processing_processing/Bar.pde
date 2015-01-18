@@ -22,6 +22,7 @@ class Bar
     {
         fill(255,255,255);
         rect(posXBar, posYBar, barWidth, barHeight);
+        //triangle(posXBar+barWidth, barHeight, posXBar+barWidth, posYBar, posXBar+barWidth+50, posYBar);
     }
 
     void expandBar()

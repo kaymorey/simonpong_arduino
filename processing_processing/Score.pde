@@ -1,13 +1,27 @@
 class Score {
-    int topScore;
-    int bottomScore;
+    PFont scoreFont;
+    String scoreText;
+    int scorePlayer;
+    //int scorePosX;
+    int scorePosY;
 
-    Score()
+    Score(PFont font, int score/*, int posX*/, int posY)
     {
-        topScore = 0;
-        bottomScore = 0;
+        scoreFont = font;
+        scoreText = str(score);
+        scorePlayer = score;
+        //scorePosX = posX;
+        scorePosY = posY;
     }
-
+    
+     void displayScore()
+    {
+        scoreText = str(scorePlayer);
+        fill(28, 28, 28);
+        textFont(scoreFont);
+        text(scoreText, (screenWidth - textWidth(scoreText)) / 2, scorePosY); // 50 is font-size / 2
+    }
+/*
     void displayTopScore()
     {
         String s = str(topScore);
@@ -23,4 +37,5 @@ class Score {
         textFont(loadFont("BebasNeue-100.vlw"));
         text(s, (screenWidth - textWidth(s)) / 2, screenHeight - (screenHeight / 4 - 50)); // 50 is font-size / 2
     }
+*/
 }

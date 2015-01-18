@@ -27,6 +27,8 @@ int screenWidth  = 800;
 int screenHeight = 600;
 
 // Ball
+Ball ball;
+
 int radiusBall = 20;
 int posXBall = (screenWidth - radiusBall)/2;
 int posYBall = (screenHeight - radiusBall)/2;
@@ -34,6 +36,9 @@ int incrementXBall = 3;
 int incrementYBall = 2;
 
 // Bar
+Bar barTop;
+Bar barBottom;
+
 int barWidth = 100;
 int barHeight = 20;
 // Bar Top
@@ -43,14 +48,21 @@ int posYBarTop = 0;
 int posXBarBottom = (screenWidth - barWidth)/2;
 int posYBarBottom = screenHeight - barHeight;
 
+// Score
+Score scorePlayerTop;
+Score scorePlayerBottom;
+
+PFont scoreFont = loadFont("BebasNeue-100.vlw");
+int scorePlayer = 0;
+// Score Top
+//int scorePosXTop = ;
+int scorePosYTop = screenHeight / 4 + 50;
+// Score Bottom
+//int scorePosXBottom = ;
+int scorePosYBottom = screenHeight - (screenHeight / 4 - 50);
+
+
 boolean hasWaited =false;
-
-Ball ball;
-
-Bar barTop;
-Bar barBottom;
-
-Score score;
 
 public void setup() {
     /*String portName = Serial.list()[5];
@@ -62,8 +74,8 @@ public void setup() {
     ball = new Ball(radiusBall, posXBall, posYBall, incrementXBall, incrementYBall);
     barTop = new Bar(barWidth, barHeight, posXBarTop, posYBarTop);
     barBottom = new Bar(barWidth, barHeight, posXBarBottom, posYBarBottom);
-
-    score = new Score();
+    scorePlayerTop = new Score(scoreFont, scorePlayer, scorePosYTop);
+    scorePlayerBottom = new Score(scoreFont, scorePlayer, scorePosYBottom);
 }
 
 public void draw()
@@ -77,22 +89,23 @@ public void draw()
 
     drawLine();
 
-    score.displayTopScore();
-    score.displayBottomScore();
+    scorePlayerTop.displayScore();
+    scorePlayerBottom.displayScore();
 
     barTop.drawBar();
     barBottom.drawBar();
 
     // Score
     if (ball.posYBall > screenHeight) {
-        score.topScore += 1;
+        scorePlayerTop.scorePlayer += 1;
         ball.initBall();
     }
     else if (ball.posYBall < 0) {
-        score.bottomScore += 1;
+        scorePlayerBottom.scorePlayer += 1;
         ball.initBall();
     }
 
+    // Ball
     ball.moveBall();
 
     if (ball.testBallHitBar(barTop.posXBar, barTop.posYBar)) {
@@ -132,14 +145,6 @@ public void drawLine()
 {
     stroke(255);
     line(0, screenHeight / 2, screenWidth, screenHeight / 2);
-}
-
-public void displayText()
-{
-    String s = "4";
-    fill(28, 28, 28);
-    textFont(loadFont("BebasNeue-100.vlw"));
-    text(s, (screenWidth - textWidth(s)) / 2, screenHeight / 4 + 50); // 50 is font-size / 2
 }
 
 // Get arduino data and change bars pos in draw function
@@ -294,6 +299,7 @@ class Bar
     {
         fill(255,255,255);
         rect(posXBar, posYBar, barWidth, barHeight);
+        //triangle(posXBar+barWidth, barHeight, posXBar+barWidth, posYBar, posXBar+barWidth+50, posYBar);
     }
 
     public void expandBar()
@@ -314,31 +320,45 @@ class Bar
 }
 
 class Score {
-    int topScore;
-    int bottomScore;
+    PFont scoreFont;
+    String scoreText;
+    int scorePlayer;
+    //int scorePosX;
+    int scorePosY;
 
-    Score()
+    Score(PFont font, int score/*, int posX*/, int posY)
     {
-        topScore = 0;
-        bottomScore = 0;
+        scoreFont = font;
+        scoreText = str(score);
+        scorePlayer = score;
+        //scorePosX = posX;
+        scorePosY = posY;
     }
-
-    public void displayTopScore()
+    
+     public void displayScore()
     {
-        print(topScore);
+        scoreText = str(scorePlayer);
+        fill(28, 28, 28);
+        textFont(scoreFont);
+        text(scoreText, (screenWidth - textWidth(scoreText)) / 2, scorePosY); // 50 is font-size / 2
+    }
+/*
+    void displayTopScore()
+    {
         String s = str(topScore);
         fill(28, 28, 28);
         textFont(loadFont("BebasNeue-100.vlw"));
         text(s, (screenWidth - textWidth(s)) / 2, screenHeight / 4 + 50); // 50 is font-size / 2
     }
 
-    public void displayBottomScore()
+    void displayBottomScore()
     {
         String s = str(bottomScore);
         fill(28, 28, 28);
         textFont(loadFont("BebasNeue-100.vlw"));
         text(s, (screenWidth - textWidth(s)) / 2, screenHeight - (screenHeight / 4 - 50)); // 50 is font-size / 2
     }
+*/
 }
   static public void main(String[] passedArgs) {
     String[] appletArgs = new String[] { "processing_processing" };
