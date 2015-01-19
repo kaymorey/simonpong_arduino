@@ -5,8 +5,8 @@ String stringReceived;
 String[] moves;
 int playerTop;
 int playerBottom;
-int screenWidth  = 800;
-int screenHeight = 600;
+int screenWidth  = 1920;
+int screenHeight = 1080;
 
 // Ball
 Ball ball;
@@ -40,11 +40,12 @@ int scorePosYTop = screenHeight / 4 + 50;
 // Score Bottom
 int scorePosYBottom = screenHeight - (screenHeight / 4 - 50);
 
-// ColorSequence
-int colorWidth = 100;
-int colorHeight = 300;
-int colorSpacing = 50;
-ColorSequence colorsToDisplay;
+// Simon
+Simon simon;
+
+// SimonResolver
+SimonResolver simonResolver;
+boolean hasWaitedToReadInput = false;
 
 
 boolean hasWaited = false;
@@ -61,7 +62,10 @@ void setup() {
     barBottom = new Bar(barWidth, barHeight, posXBarBottom, posYBarBottom, barSpeed);
     scorePlayerTop = new Score(scorePlayer, scorePosYTop);
     scorePlayerBottom = new Score(scorePlayer, scorePosYBottom);
-    colorsToDisplay = new ColorSequence(screenWidth, screenHeight, colorWidth, colorHeight, colorSpacing);
+    simon = new Simon(5, 4);
+    simonResolver = new SimonResolver(simon.sequenceToPlay);
+
+    simon.play();
 }
 
 void draw()
@@ -85,9 +89,6 @@ void draw()
         scorePlayerBottom.scorePlayer += 1;
         ball.initBall();
     }
-
-    // ColorSequence
-    // colorsToDisplay.drawSequence();
 
     // Ball
     ball.moveBall();
@@ -132,7 +133,7 @@ void readArduino()
 
                 playerTop = int(moves[0].trim());
                 playerBottom = int(moves[1].trim());
-                /* from 0 to 255 */
+                /* from 0q to 255 */
                 // println("playerLeft: "+playerLeft);
                 // println("playerRight: "+playerRight);
                 barTop.posXBar = playerTop*(screenWidth-barTop.barWidth)/255;
@@ -197,6 +198,30 @@ void readKeyboard()
             }
             else if (key == 'x' || key == 'X') {
                 barBottom.controlInverted = !barBottom.controlInverted;
+            }
+            else if (key == '0' && !hasWaitedToReadInput) {
+                hasWaitedToReadInput = !hasWaitedToReadInput;
+                println("returnValue: "+simonResolver.compareSolution(0));
+                delay(500);
+                hasWaitedToReadInput = !hasWaitedToReadInput;
+            }
+            else if (key == '1' && !hasWaitedToReadInput) {
+                hasWaitedToReadInput = !hasWaitedToReadInput;
+                println("returnValue: "+simonResolver.compareSolution(1));
+                delay(500);
+                hasWaitedToReadInput = !hasWaitedToReadInput;
+            }
+            else if (key == '2' && !hasWaitedToReadInput) {
+                hasWaitedToReadInput = !hasWaitedToReadInput;
+                println("returnValue: "+simonResolver.compareSolution(2));
+                delay(500);
+                hasWaitedToReadInput = !hasWaitedToReadInput;
+            }
+            else if (key == '3' && !hasWaitedToReadInput) {
+                hasWaitedToReadInput = !hasWaitedToReadInput;
+                println("returnValue: "+simonResolver.compareSolution(3));
+                delay(500);
+                hasWaitedToReadInput = !hasWaitedToReadInput;
             }
         }
     }
