@@ -9,6 +9,8 @@ class Bar
     int maxWidth = 300;
     int minWidth = 60;
 
+    boolean controlInverted = false;
+
     Bar (int bWidth, int bHeight, int posX, int posY)
     {
         initialWidth = bWidth;
