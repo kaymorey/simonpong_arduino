@@ -46,23 +46,9 @@ class Ball
         drawBall();
     }
 
-    boolean testBallHitBar(int posXBar, int posYBar) {
-        if ((posXBall + radiusBall / 2 >= posXBar && posXBall - radiusBall / 2 <= posXBar + barWidth) && (posYBall + radiusBall / 2 >= posYBar && posYBall - radiusBall / 2 <= posYBar + barHeight)) {
+    boolean testBallHitBar(Bar bar) {
+        if ((posXBall + radiusBall / 2 >= bar.posXBar && posXBall - radiusBall / 2 <= bar.posXBar + bar.barWidth) && (posYBall + radiusBall / 2 >= bar.posYBar && posYBall - radiusBall / 2 <= bar.posYBar + bar.barHeight)) {
             // Collision
-            return true;
-        }
-        return false;
-    }
-
-    boolean testBallHitTop(int posXBar, int posYBar) {
-        if (posYBall < 0 && !testBallHitBar(posXBar, posXBar)) {
-            return true;
-        }
-        return false;
-    }
-
-    boolean testBallHitBottom(int posXBar, int posYBar) {
-        if (posYBall > screenHeight && !testBallHitBar(posXBar, posYBar)) {
             return true;
         }
         return false;

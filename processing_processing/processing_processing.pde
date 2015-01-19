@@ -12,8 +12,8 @@ int screenHeight = 600;
 Ball ball;
 
 int radiusBall = 20;
-int posXBall = (screenWidth - radiusBall)/2;
-int posYBall = (screenHeight - radiusBall)/2;
+int posXBall = screenWidth / 2;
+int posYBall = screenHeight / 2;
 
 // Bar
 Bar barTop;
@@ -92,10 +92,10 @@ void draw()
     // Ball
     ball.moveBall();
 
-    if (ball.testBallHitBar(barTop.posXBar, barTop.posYBar)) {
+    if (ball.testBallHitBar(barTop)) {
         ball.changeBallDirection(barTop.posXBar, 1);
     }
-    else if (ball.testBallHitBar(barBottom.posXBar, barBottom.posYBar)) {
+    else if (ball.testBallHitBar(barBottom)) {
         ball.changeBallDirection(barBottom.posXBar, -1);
     }
     
@@ -150,12 +150,12 @@ void readKeyboard()
                  if (!barTop.controlInverted && barTop.posXBar > 0) {
                      barTop.posXBar -= 5;
                  }
-                 else if (barTop.controlInverted && barTop.posXBar < screenWidth - barWidth) {
+                 else if (barTop.controlInverted && barTop.posXBar < screenWidth - barTop.barWidth) {
                      barTop.posXBar += 5;
                  }
              }
              else if (keyCode == RIGHT) {
-                 if (!barTop.controlInverted && barTop.posXBar < screenWidth - barWidth) {
+                 if (!barTop.controlInverted && barTop.posXBar < screenWidth - barTop.barWidth) {
                      barTop.posXBar += 5;
                  }
                  else if (barTop.controlInverted && barTop.posXBar > 0) {
@@ -168,12 +168,12 @@ void readKeyboard()
                  if (!barBottom.controlInverted && barBottom.posXBar > 0) {
                      barBottom.posXBar -= 5;
                  }
-                 else if (barBottom.controlInverted && barBottom.posXBar < screenWidth - barWidth) {
+                 else if (barBottom.controlInverted && barBottom.posXBar < screenWidth - barBottom.barWidth) {
                      barBottom.posXBar += 5;
                  }
              }
              else if ((key == 's' || key == 'S')) {
-                 if (!barBottom.controlInverted && barBottom.posXBar < screenWidth - barWidth) {
+                 if (!barBottom.controlInverted && barBottom.posXBar < screenWidth - barBottom.barWidth) {
                      barBottom.posXBar += 5;
                  }
                  else if (barBottom.controlInverted && barBottom.posXBar > 0) {
