@@ -3,8 +3,8 @@ import processing.serial.*;
 Serial myPort;
 String stringReceived;
 String[] moves;
-int playerTop;
-int playerBottom;
+int playerTopLeft;
+int playerTopRight;
 int screenWidth  = 800;
 int screenHeight = 600;
 
@@ -58,7 +58,7 @@ boolean hasWaited = false;
 
 void setup() {
     
-    //instantiaterduino();
+    instantiateArduino();
 
     size(screenWidth, screenHeight);
     background(41, 41, 41);
@@ -89,8 +89,8 @@ void draw()
     scorePlayerBottom.displayScore();
 */
 
-    //readArduino();
-    readKeyboard();
+    readArduino();
+    //readKeyboard();
 }
 
 void instantiateArduino()
@@ -109,18 +109,19 @@ void readArduino()
     if(myPort.available() > 0){
         stringReceived = myPort.readStringUntil('\n');
         if(stringReceived != null) {
+            println(stringReceived);
 
             moves = split(stringReceived,'$');
 
-            if(moves.length == 2){
+            if(moves.length == 3){
 
-                playerTop = int(moves[0].trim());
-                playerBottom = int(moves[1].trim());
+                playerTopLeft = int(moves[1].trim());
+                playerTopRight = int(moves[0].trim());
                 /* from 0q to 255 */
                 // println("playerLeft: "+playerLeft);
                 // println("playerRight: "+playerRight);
-                // barTop.posXBar = playerTop*(screenWidth-barTop.barWidth)/255;
-                // barBottom.posXBar = playerBottom*(screenWidth-barBottom.barWidth)/255;
+                bars[0].posX = playerTopLeft*(screenWidth/2-bars[0].width)/255;
+                bars[1].posX = playerTopRight*(screenWidth/2-bars[1].width)/255 + screenWidth/2;
             }
         }
     }
