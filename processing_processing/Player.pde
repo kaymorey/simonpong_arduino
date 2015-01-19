@@ -8,4 +8,9 @@ class Player
 		index = indexPlayer;
 		bar = playerBar;
 	}
+
+        void draw()
+        {
+              bar.draw();
+        }
 }

@@ -6,10 +6,11 @@ class Pong
     int posX;
     int posY;
     color backgroundColor;
-    ArrayList<Player> players;
+    Player[] players;
+    Ball balls;
     
      
-    Pong(int pongWidth, int pongHeight, int pongPosX, int pongPosY, color pongBackground, ArrayList<Player> pongPlayers, Ball[] pongBalls) {
+    Pong(int pongWidth, int pongHeight, int pongPosX, int pongPosY, color pongBackground, Player[] pongPlayers, Ball pongBalls) {
         width = pongWidth;
         height = pongHeight;
         posX = pongPosX;
@@ -19,15 +20,15 @@ class Pong
         balls = pongBalls;
     }
     
-    void drawPong()
+    void draw()
     {
         size(width, height);
         background(41, 41, 41);
 
         drawLine();
 
-        for(int i : players) {
-            players.get(i).draw();
+        for (int i = 0; i < nbPlayers; i++) {
+            players[i].draw();
         }
         /*
         scorePlayerTop.displayScore();
@@ -38,11 +39,11 @@ class Pong
         */
 
         // Score
-        if (ball.posYBall > height) {
+        if (ball.posY > height) {
             scorePlayerTop.scorePlayer += 1;
             ball.initBall();
         }
-        else if (ball.posYBall < 0) {
+        else if (ball.posY < 0) {
             scorePlayerBottom.scorePlayer += 1;
             ball.initBall();
         }
@@ -50,11 +51,11 @@ class Pong
         // Ball
         ball.moveBall();
 
-        if (ball.testBallHitBar(barTop)) {
-            ball.changeBallDirection(barTop.posXBar, 1);
+        if (ball.testBallHitBar(players[0].bar)) {
+            ball.changeBallDirection(players[0].bar.posX, 1);
         }
-        else if (ball.testBallHitBar(barBottom)) {
-            ball.changeBallDirection(barBottom.posXBar, -1);
+        else if (ball.testBallHitBar(players[1].bar)) {
+            ball.changeBallDirection(players[1].bar.posX, -1);
         }
     }
     
