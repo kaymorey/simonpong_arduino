@@ -5,17 +5,22 @@ class Bar
     int barHeight;
     int posXBar;
     int posYBar;
+    int barSpeed;
 
     int maxWidth = 300;
     int minWidth = 60;
+    
+    int maxSpeed = 20;
+    int minSpeed = 1;
 
-    Bar (int bWidth, int bHeight, int posX, int posY)
+    Bar (int bWidth, int bHeight, int posX, int posY, int speed)
     {
         initialWidth = bWidth;
         barWidth = bWidth;
         barHeight = bHeight;
         posXBar = posX;
         posYBar = posY;
+        barSpeed = speed;
     }
 
     void drawBar()
@@ -38,6 +43,16 @@ class Bar
         if (barWidth - 20 >= minWidth) {
             barWidth -= 20;
             posXBar += 10;
+        }
+    }
+    
+    void speedBar(boolean increase)
+    {
+        if (increase && (barSpeed + 5 <= maxSpeed)) {
+            barSpeed += 5;
+        }
+        else if (!increase && (barSpeed - 5 >= minSpeed)) {
+          barSpeed -= 5;
         }
     }
 }

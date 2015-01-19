@@ -21,6 +21,8 @@ Bar barBottom;
 
 int barWidth = 100;
 int barHeight = 20;
+int barSpeed = 5;
+boolean increase = true;
 // Bar Top
 int posXBarTop = (screenWidth - barWidth)/2;
 int posYBarTop = 0;
@@ -49,8 +51,8 @@ void setup() {
     background(41, 41, 41);
 
     ball = new Ball(radiusBall, posXBall, posYBall);
-    barTop = new Bar(barWidth, barHeight, posXBarTop, posYBarTop);
-    barBottom = new Bar(barWidth, barHeight, posXBarBottom, posYBarBottom);
+    barTop = new Bar(barWidth, barHeight, posXBarTop, posYBarTop, barSpeed);
+    barBottom = new Bar(barWidth, barHeight, posXBarBottom, posYBarBottom, barSpeed);
     scorePlayerTop = new Score(scorePlayer, scorePosYTop);
     scorePlayerBottom = new Score(scorePlayer, scorePosYBottom);
 }
@@ -95,18 +97,18 @@ void draw()
     if (keyPressed) {
         if (key == CODED) {
             if (keyCode == LEFT && barTop.posXBar > 0) {
-                barTop.posXBar -= 5;
+                barTop.posXBar -= barTop.barSpeed;
             }
             else if (keyCode == RIGHT && barTop.posXBar < screenWidth - barWidth) {
-                barTop.posXBar += 5;
+                barTop.posXBar += barTop.barSpeed;
             }
         }
         else {
             if ((key == 'q' || key == 'Q') && barBottom.posXBar > 0) {
-                barBottom.posXBar -= 5;
+                barBottom.posXBar -= barBottom.barSpeed;
             }
             else if ((key == 's' || key == 'S') && barBottom.posXBar < screenWidth - barWidth) {
-                barBottom.posXBar += 5;
+                barBottom.posXBar += barBottom.barSpeed;
             }
             else if (key == 'e' || key == 'E') {
                 barTop.expandBar();
@@ -114,13 +116,19 @@ void draw()
             else if (key == 'r' || key == 'R') {
                 barTop.shrinkBar();
             }
+            else if (key == 'a' || key == 'A') {
+                barTop.speedBar(increase);
+            }
+            else if (key == 'z' || key == 'Z') {
+                barTop.speedBar(!increase);
+            }
         }
     }
 }
 
 void drawLine()
 {
-    stroke(255);
+    stroke(28, 28, 28);
     line(0, screenHeight / 2, screenWidth, screenHeight / 2);
 }
 
