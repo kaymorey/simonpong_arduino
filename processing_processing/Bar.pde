@@ -1,12 +1,12 @@
 class Bar
 {
-    int initialWidth;
-    int barWidth;
-    int barHeight;
-    int posXBar;
-    int posYBar;
+    int posX;
+    int posY;
     int barSpeed;
 
+    int initialWidth;
+    int width;
+    int height;
     int maxWidth = 300;
     int minWidth = 60;
     
@@ -14,36 +14,63 @@ class Bar
     int minSpeed = 1;
     boolean controlInverted = false;
 
-    Bar (int bWidth, int bHeight, int posX, int posY, int speed)
+    // Bar (int bWidth, int bHeight, int posX, int posY, int speed)
+    // {
+    //     initialWidth = bWidth;
+    //     barWidth = bWidth;
+    //     barHeight = bHeight;
+    //     posXBar = posX;
+    //     posYBar = posY;
+    //     barSpeed = speed;
+    // }
+
+    Bar (int barWidth, int barHeight, int index)
     {
-        initialWidth = bWidth;
-        barWidth = bWidth;
-        barHeight = bHeight;
-        posXBar = posX;
-        posYBar = posY;
-        barSpeed = speed;
+        initialWidth = width;
+        width = barWidth;
+        height = barHeight;
+
+        switch (index) {
+            case 0:
+                posX = screenWidth / 4 - barWidth / 2;
+                posY = 0;
+                break;
+            case 1:
+                posX = 3 * screenWidth / 4 - barWidth / 2;
+                posY = 0;
+                break;
+            case 2:
+                posX = screenWidth / 4 - barWidth / 2;
+                posY = screenHeight - height;
+                break;
+            case 3:
+                posX = 3 * screenWidth / 4 - barWidth / 2;
+                posY = screenHeight - height;
+                break;
+
+        }
     }
 
-    void drawBar()
+    void draw()
     {
         fill(255,255,255);
-        rect(posXBar, posYBar, barWidth, barHeight);
+        rect(posX, posY, width, height);
         //triangle(posXBar+barWidth, barHeight, posXBar+barWidth, posYBar, posXBar+barWidth+50, posYBar);
     }
 
     void expandBar()
     {
-        if (barWidth + 20 <= maxWidth) {
-            barWidth += 20;
-            posXBar -= 10;
+        if (width + 20 <= maxWidth) {
+            width += 20;
+            posX -= 10;
         }
     }
 
     void shrinkBar()
     {
-        if (barWidth - 20 >= minWidth) {
-            barWidth -= 20;
-            posXBar += 10;
+        if (width - 20 >= minWidth) {
+            width -= 20;
+            posX += 10;
         }
     }
     
