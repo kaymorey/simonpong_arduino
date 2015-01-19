@@ -40,8 +40,14 @@ int scorePosYTop = screenHeight / 4 + 50;
 // Score Bottom
 int scorePosYBottom = screenHeight - (screenHeight / 4 - 50);
 
+// ColorSequence
+int colorWidth = 100;
+int colorHeight = 300;
+int colorSpacing = 50;
+ColorSequence colorsToDisplay;
 
-boolean hasWaited =false;
+
+boolean hasWaited = false;
 
 void setup() {
     
@@ -56,6 +62,7 @@ void setup() {
     barBottom = new Bar(barWidth, barHeight, posXBarBottom, posYBarBottom, barSpeed);
     scorePlayerTop = new Score(scorePlayer, scorePosYTop);
     scorePlayerBottom = new Score(scorePlayer, scorePosYBottom);
+    colorsToDisplay = new ColorSequence(screenWidth, screenHeight, colorWidth, colorHeight, colorSpacing);
 }
 
 void draw()
@@ -114,6 +121,9 @@ void draw()
         ball.initBall();
     }
 
+    // ColorSequence
+    // colorsToDisplay.drawSequence();
+
     // Ball
     ball.moveBall();
 
@@ -126,19 +136,39 @@ void draw()
 
     if (keyPressed) {
         if (key == CODED) {
-            // if (keyCode == LEFT && barTop.posXBar > 0) {
-            //     barTop.posXBar -= barTop.barSpeed;
+            // if (keyCode == LEFT) {
+            //     if (!barTop.controlInverted && barTop.posXBar > 0) {
+            //         barTop.posXBar -= 5;
+            //     }
+            //     else if (barTop.controlInverted && barTop.posXBar < screenWidth - barWidth) {
+            //         barTop.posXBar += 5;
+            //     }
             // }
-            // else if (keyCode == RIGHT && barTop.posXBar < screenWidth - barTop.barWidth) {
-            //     barTop.posXBar += barTop.barSpeed;
+            // else if (keyCode == RIGHT) {
+            //     if (!barTop.controlInverted && barTop.posXBar < screenWidth - barWidth) {
+            //         barTop.posXBar += 5;
+            //     }
+            //     else if (barTop.controlInverted && barTop.posXBar > 0) {
+            //         barTop.posXBar -= 5;
+            //     }
             // }
         }
         else {
-            // if ((key == 'q' || key == 'Q') && barBottom.posXBar > 0) {
-            //     barBottom.posXBar -= barBottom.barSpeed;
+            // if (key == 'q' || key == 'Q') {
+            //     if (!barBottom.controlInverted && barBottom.posXBar > 0) {
+            //         barBottom.posXBar -= 5;
+            //     }
+            //     else if (barBottom.controlInverted && barBottom.posXBar < screenWidth - barWidth) {
+            //         barBottom.posXBar += 5;
+            //     }
             // }
-            // else if ((key == 's' || key == 'S') && barBottom.posXBar < screenWidth - barBottom.barWidth) {
-            //     barBottom.posXBar += barBottom.barSpeed;
+            // else if ((key == 's' || key == 'S')) {
+            //     if (!barBottom.controlInverted && barBottom.posXBar < screenWidth - barWidth) {
+            //         barBottom.posXBar += 5;
+            //     }
+            //     else if (barBottom.controlInverted && barBottom.posXBar > 0) {
+            //         barBottom.posXBar -= 5;
+            //     }
             // }
             /*else*/ if (key == 'e' || key == 'E') {
                 barTop.expandBar();
@@ -151,6 +181,12 @@ void draw()
             }
             else if (key == 'z' || key == 'Z') {
                 barTop.speedBar(!increase);
+            }
+            else if (key == 'w' || key == 'W') {
+                barTop.controlInverted = !barTop.controlInverted;
+            }
+            else if (key == 'x' || key == 'X') {
+                barBottom.controlInverted = !barBottom.controlInverted;
             }
         }
     }

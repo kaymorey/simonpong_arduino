@@ -12,6 +12,7 @@ class Bar
     
     int maxSpeed = 20;
     int minSpeed = 1;
+    boolean controlInverted = false;
 
     Bar (int bWidth, int bHeight, int posX, int posY, int speed)
     {
@@ -56,4 +57,3 @@ class Bar
         }
     }
 }
-
