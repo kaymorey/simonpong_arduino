@@ -1,4 +1,5 @@
 import processing.serial.*;
+int conteur = 0;
 
 Serial myPort;
 String stringReceived;
@@ -48,10 +49,13 @@ int scorePosYBottom = screenHeight - (screenHeight / 4 - 50);
 
 // Simon
 Simon simon;
+int numberOfLed = 2;
+int numberOfColorInSequence = 3;
 
 // SimonResolver
 SimonResolver simonResolver;
 boolean hasWaitedToReadInput = false;
+int returnedValueByResolver = 0; // /!\ cette variable doit être celle du jour et récupérée pour chaque joueur. N'apparaît pas dans le main.
 
 
 boolean hasWaited = false;
@@ -74,7 +78,7 @@ void setup() {
 
     pongLeft = new Pong(800, 600, 0, 0, color(41, 41, 41), players, ball);
 
-    simon = new Simon(5, 4);
+    simon = new Simon(numberOfColorInSequence, numberOfLed);
     simonResolver = new SimonResolver(simon.sequenceToPlay);
 
     simon.play();
@@ -95,7 +99,7 @@ void draw()
 
 void instantiateArduino()
 {
-    String portName = Serial.list()[3];
+    String portName = Serial.list()[2];
     myPort = new Serial(this, portName, 9600);
 }
 
@@ -109,11 +113,28 @@ void readArduino()
     if(myPort.available() > 0){
         stringReceived = myPort.readStringUntil('\n');
         if(stringReceived != null) {
-            println(stringReceived);
 
             moves = split(stringReceived,'$');
 
             if(moves.length == 3){
+                switch (int(moves[2].trim())) {
+                    case 0 :
+                        returnedValueByResolver = simonResolver.compareSolution(0);
+                        break;
+                    case 1 :
+                        returnedValueByResolver = simonResolver.compareSolution(1);
+                        break;
+                    case 2 :
+                        returnedValueByResolver = simonResolver.compareSolution(2);
+                        break;
+                    case 3 :
+                        returnedValueByResolver = simonResolver.compareSolution(3);
+                        break;
+                }
+
+                if(returnedValueByResolver == 2) {
+                    resetSimon();
+                }
 
                 playerTopLeft = int(moves[1].trim());
                 playerTopRight = int(moves[0].trim());
@@ -125,6 +146,15 @@ void readArduino()
             }
         }
     }
+}
+
+void resetSimon()
+{
+    returnedValueByResolver = 0;
+    simon.win();
+    simon = new Simon(++numberOfColorInSequence,numberOfLed);
+    simonResolver = new SimonResolver(simon.sequenceToPlay);
+    simon.play();
 }
 
 void readKeyboard()

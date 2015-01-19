@@ -17,6 +17,7 @@ import java.io.IOException;
 public class SimonPong_Processing extends PApplet {
 
 
+int conteur = 0;
 
 Serial myPort;
 String stringReceived;
@@ -66,10 +67,13 @@ int scorePosYBottom = screenHeight - (screenHeight / 4 - 50);
 
 // Simon
 Simon simon;
+int numberOfLed = 2;
+int numberOfColorInSequence = 3;
 
 // SimonResolver
 SimonResolver simonResolver;
 boolean hasWaitedToReadInput = false;
+int returnedValueByResolver = 0; // /!\ cette variable doit \u00eatre celle du jour et r\u00e9cup\u00e9r\u00e9e pour chaque joueur. N'appara\u00eet pas dans le main.
 
 
 boolean hasWaited = false;
@@ -92,7 +96,7 @@ public void setup() {
 
     pongLeft = new Pong(800, 600, 0, 0, color(41, 41, 41), players, ball);
 
-    simon = new Simon(5, 4);
+    simon = new Simon(numberOfColorInSequence, numberOfLed);
     simonResolver = new SimonResolver(simon.sequenceToPlay);
 
     simon.play();
@@ -113,7 +117,7 @@ public void draw()
 
 public void instantiateArduino()
 {
-    String portName = Serial.list()[3];
+    String portName = Serial.list()[2];
     myPort = new Serial(this, portName, 9600);
 }
 
@@ -127,11 +131,28 @@ public void readArduino()
     if(myPort.available() > 0){
         stringReceived = myPort.readStringUntil('\n');
         if(stringReceived != null) {
-            println(stringReceived);
 
             moves = split(stringReceived,'$');
 
             if(moves.length == 3){
+                switch (PApplet.parseInt(moves[2].trim())) {
+                    case 0 :
+                        returnedValueByResolver = simonResolver.compareSolution(0);
+                        break;
+                    case 1 :
+                        returnedValueByResolver = simonResolver.compareSolution(1);
+                        break;
+                    case 2 :
+                        returnedValueByResolver = simonResolver.compareSolution(2);
+                        break;
+                    case 3 :
+                        returnedValueByResolver = simonResolver.compareSolution(3);
+                        break;
+                }
+
+                if(returnedValueByResolver == 2) {
+                    resetSimon();
+                }
 
                 playerTopLeft = PApplet.parseInt(moves[1].trim());
                 playerTopRight = PApplet.parseInt(moves[0].trim());
@@ -143,6 +164,15 @@ public void readArduino()
             }
         }
     }
+}
+
+public void resetSimon()
+{
+    returnedValueByResolver = 0;
+    simon.win();
+    simon = new Simon(++numberOfColorInSequence,numberOfLed);
+    simonResolver = new SimonResolver(simon.sequenceToPlay);
+    simon.play();
 }
 
 public void readKeyboard()
@@ -568,6 +598,10 @@ class Simon
         for (int i = 0; i < sequenceToPlay.size(); i++) {
             println("sequenceToPlay["+i+"] = "+sequenceToPlay.get(i));
         }
+    }
+
+    public void win() {
+        println("WIN !!");
     }
 }
 
