@@ -51,8 +51,7 @@ boolean hasWaited = false;
 
 void setup() {
     
-    String portName = Serial.list()[3];
-    myPort = new Serial(this, portName, 9600);
+    //instantiaterduino();
 
     size(screenWidth, screenHeight);
     background(41, 41, 41);
@@ -67,40 +66,6 @@ void setup() {
 
 void draw()
 {
-    if(!hasWaited){
-        hasWaited = true;
-        delay(1000);
-    }
-
-
-
-
-
-
-
-    if(myPort.available() > 0){
-        stringReceived = myPort.readStringUntil('\n');
-        if(stringReceived != null) {
-
-            moves = split(stringReceived,'$');
-
-            if(moves.length == 2){
-
-                playerTop = int(moves[0].trim());
-                playerBottom = int(moves[1].trim());
-                /* from 0 to 255 */
-                // println("playerLeft: "+playerLeft);
-                // println("playerRight: "+playerRight);
-                barTop.posXBar = playerTop*(screenWidth-barTop.barWidth)/255;
-                barBottom.posXBar = playerBottom*(screenWidth-barBottom.barWidth)/255;
-            }
-        }
-    }
-
-
-
-
-
     background(41, 41, 41);
 
     drawLine();
@@ -133,44 +98,89 @@ void draw()
     else if (ball.testBallHitBar(barBottom.posXBar, barBottom.posYBar)) {
         ball.changeBallDirection(barBottom.posXBar, -1);
     }
+    
+    //readArduino();
+    readKeyboard();
+}
 
+void drawLine()
+{
+    stroke(28, 28, 28);
+    line(0, screenHeight / 2, screenWidth, screenHeight / 2);
+}
+
+void instantiateArduino()
+{
+    String portName = Serial.list()[3];
+    myPort = new Serial(this, portName, 9600);
+}
+
+void readArduino()
+{
+    if(!hasWaited){
+        hasWaited = true;
+        delay(1000);
+    }
+
+    if(myPort.available() > 0){
+        stringReceived = myPort.readStringUntil('\n');
+        if(stringReceived != null) {
+
+            moves = split(stringReceived,'$');
+
+            if(moves.length == 2){
+
+                playerTop = int(moves[0].trim());
+                playerBottom = int(moves[1].trim());
+                /* from 0 to 255 */
+                // println("playerLeft: "+playerLeft);
+                // println("playerRight: "+playerRight);
+                barTop.posXBar = playerTop*(screenWidth-barTop.barWidth)/255;
+                barBottom.posXBar = playerBottom*(screenWidth-barBottom.barWidth)/255;
+            }
+        }
+    }
+}
+
+void readKeyboard()
+{
     if (keyPressed) {
         if (key == CODED) {
-            // if (keyCode == LEFT) {
-            //     if (!barTop.controlInverted && barTop.posXBar > 0) {
-            //         barTop.posXBar -= 5;
-            //     }
-            //     else if (barTop.controlInverted && barTop.posXBar < screenWidth - barWidth) {
-            //         barTop.posXBar += 5;
-            //     }
-            // }
-            // else if (keyCode == RIGHT) {
-            //     if (!barTop.controlInverted && barTop.posXBar < screenWidth - barWidth) {
-            //         barTop.posXBar += 5;
-            //     }
-            //     else if (barTop.controlInverted && barTop.posXBar > 0) {
-            //         barTop.posXBar -= 5;
-            //     }
-            // }
+            if (keyCode == LEFT) {
+                 if (!barTop.controlInverted && barTop.posXBar > 0) {
+                     barTop.posXBar -= 5;
+                 }
+                 else if (barTop.controlInverted && barTop.posXBar < screenWidth - barWidth) {
+                     barTop.posXBar += 5;
+                 }
+             }
+             else if (keyCode == RIGHT) {
+                 if (!barTop.controlInverted && barTop.posXBar < screenWidth - barWidth) {
+                     barTop.posXBar += 5;
+                 }
+                 else if (barTop.controlInverted && barTop.posXBar > 0) {
+                     barTop.posXBar -= 5;
+                 }
+             }
         }
         else {
-            // if (key == 'q' || key == 'Q') {
-            //     if (!barBottom.controlInverted && barBottom.posXBar > 0) {
-            //         barBottom.posXBar -= 5;
-            //     }
-            //     else if (barBottom.controlInverted && barBottom.posXBar < screenWidth - barWidth) {
-            //         barBottom.posXBar += 5;
-            //     }
-            // }
-            // else if ((key == 's' || key == 'S')) {
-            //     if (!barBottom.controlInverted && barBottom.posXBar < screenWidth - barWidth) {
-            //         barBottom.posXBar += 5;
-            //     }
-            //     else if (barBottom.controlInverted && barBottom.posXBar > 0) {
-            //         barBottom.posXBar -= 5;
-            //     }
-            // }
-            /*else*/ if (key == 'e' || key == 'E') {
+            if (key == 'q' || key == 'Q') {
+                 if (!barBottom.controlInverted && barBottom.posXBar > 0) {
+                     barBottom.posXBar -= 5;
+                 }
+                 else if (barBottom.controlInverted && barBottom.posXBar < screenWidth - barWidth) {
+                     barBottom.posXBar += 5;
+                 }
+             }
+             else if ((key == 's' || key == 'S')) {
+                 if (!barBottom.controlInverted && barBottom.posXBar < screenWidth - barWidth) {
+                     barBottom.posXBar += 5;
+                 }
+                 else if (barBottom.controlInverted && barBottom.posXBar > 0) {
+                     barBottom.posXBar -= 5;
+                 }
+             }
+            else if (key == 'e' || key == 'E') {
                 barTop.expandBar();
             }
             else if (key == 'r' || key == 'R') {
@@ -192,31 +202,5 @@ void draw()
     }
 }
 
-void drawLine()
-{
-    stroke(28, 28, 28);
-    line(0, screenHeight / 2, screenWidth, screenHeight / 2);
-}
 
-// Get arduino data and change bars pos in draw function
-/*if(val>=0){
-    if(myPort.available() > 0){
-      stringReceived = myPort.readStringUntil('\n');
-      if(stringReceived != null) {
-
-        moves = split(stringReceived,'$');
-
-        if(moves.length == 2){
-
-          playerLeft = int(moves[0].trim());
-          playerRight = int(moves[1].trim());
-        }
-      }
-    }
-
-    posYBarLeft = playerLeft*(bgSize-100)/255;
-    posYBarRight = playerRight*(bgSize-100)/255;
-    //controllerPos = val*(bgSize-100)/255;
-
-  }*/
 
