@@ -47,7 +47,7 @@ class Ball
     }
 
     boolean testBallHitBar(Bar bar) {
-        if ((posXBall + radiusBall / 2 >= bar.posXBar && posXBall - radiusBall / 2 <= bar.posXBar + bar.barWidth) && (posYBall + radiusBall / 2 >= bar.posYBar && posYBall - radiusBall / 2 <= bar.posYBar + bar.barHeight)) {
+        if ((posXBall + radiusBall / 2 >= bar.posX && posXBall - radiusBall / 2 <= bar.posX + bar.width) && (posYBall + radiusBall / 2 >= bar.posY && posYBall - radiusBall / 2 <= bar.posY + bar.height)) {
             // Collision
             return true;
         }
