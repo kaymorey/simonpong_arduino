@@ -8,6 +8,14 @@ int playerBottom;
 int screenWidth  = 800;
 int screenHeight = 600;
 
+//Players
+
+ArrayList<Player> players = new ArrayList<Player>();
+Player player_1;
+Player player_2;
+Player player_3;
+Player player_4;
+
 // Ball
 Ball ball;
 
@@ -62,51 +70,29 @@ void setup() {
     scorePlayerTop = new Score(scorePlayer, scorePosYTop);
     scorePlayerBottom = new Score(scorePlayer, scorePosYBottom);
     colorsToDisplay = new ColorSequence(screenWidth, screenHeight, colorWidth, colorHeight, colorSpacing);
+    
+    player_1 = new Player();
+    player_2 = new Player();
+    player_3 = new Player();
+    player_4 = new Player();
+    
+    players.add(player_1);
+    players.add(player_2);
+    players.add(player_3);
+    players.add(player_4);
+    
+    pong_1 = new Pong();
 }
 
 void draw()
 {
-    background(41, 41, 41);
-
-    drawLine();
-
-    scorePlayerTop.displayScore();
-    scorePlayerBottom.displayScore();
-
-    barTop.drawBar();
-    barBottom.drawBar();
-
-    // Score
-    if (ball.posYBall > screenHeight) {
-        scorePlayerTop.scorePlayer += 1;
-        ball.initBall();
-    }
-    else if (ball.posYBall < 0) {
-        scorePlayerBottom.scorePlayer += 1;
-        ball.initBall();
-    }
+    pong_1.drawPong();
 
     // ColorSequence
     // colorsToDisplay.drawSequence();
 
-    // Ball
-    ball.moveBall();
-
-    if (ball.testBallHitBar(barTop)) {
-        ball.changeBallDirection(barTop.posXBar, 1);
-    }
-    else if (ball.testBallHitBar(barBottom)) {
-        ball.changeBallDirection(barBottom.posXBar, -1);
-    }
-    
     //readArduino();
     readKeyboard();
-}
-
-void drawLine()
-{
-    stroke(28, 28, 28);
-    line(0, screenHeight / 2, screenWidth, screenHeight / 2);
 }
 
 void instantiateArduino()

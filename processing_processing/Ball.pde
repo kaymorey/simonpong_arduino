@@ -1,53 +1,53 @@
 
 class Ball
 {
-    int radiusBall;
-    int posXBall;
-    int posYBall;
-    int incrementXBall;
-    int incrementYBall;
+    int radius;
+    int posX;
+    int posY;
+    int incrementX;
+    int incrementY;
     int[] incrementsY = {3, -3};
 
-    Ball(int radius, int posX, int posY) {
-        radiusBall = radius;
-        posXBall = posX;
-        posYBall = posY;
+    Ball(int radiusBall, int posXBall, int posYBall) {
+        radius = radiusBall;
+        posX = posXBall;
+        posY = posYBall;
         initIncrements();
     }
 
     void initBall()
     {
-        posXBall = (screenWidth - radiusBall)/2;
-        posYBall = (screenHeight - radiusBall)/2;
+        posX = (screenWidth - radius)/2;
+        posY = (screenHeight - radius)/2;
         initIncrements();
     }
 
     void initIncrements()
     {
-        incrementXBall = int(random(-4, 4));
+        incrementX = int(random(-4, 4));
 
         int index = int(random(2));
-        incrementYBall = incrementsY[index];
+        incrementY = incrementsY[index];
     }
 
     void drawBall()
     {
         fill(255,255,255);
-        ellipse(posXBall, posYBall, radiusBall, radiusBall);
+        ellipse(posX, posY, radius, radius);
     }
 
     void moveBall()
     {
-        posXBall += incrementXBall;
-        if (posXBall + radiusBall / 2 > screenWidth || posXBall - radiusBall / 2 < 0) {
-            incrementXBall = -incrementXBall;
+        posX += incrementX;
+        if (posX + radius / 2 > screenWidth || posX - radius / 2 < 0) {
+            incrementX = -incrementX;
         }
-        posYBall += incrementYBall;
+        posY += incrementY;
         drawBall();
     }
 
     boolean testBallHitBar(Bar bar) {
-        if ((posXBall + radiusBall / 2 >= bar.posXBar && posXBall - radiusBall / 2 <= bar.posXBar + bar.barWidth) && (posYBall + radiusBall / 2 >= bar.posYBar && posYBall - radiusBall / 2 <= bar.posYBar + bar.barHeight)) {
+        if ((posX + radius / 2 >= bar.posX && posX - radius / 2 <= bar.posXBar + bar.barWidth) && (posY + radius / 2 >= bar.posYBar && posY - radius / 2 <= bar.posYBar + bar.barHeight)) {
             // Collision
             return true;
         }
@@ -58,40 +58,40 @@ class Ball
         // If collision with top bar multi equals 1 else multi equals -1 (ball going to top or bottom)
         switch (posBallHitBar(posXBar)) {
             case -2:
-                incrementXBall = -3;
-                incrementYBall = 2 * multi;
+                incrementX = -3;
+                incrementY = 2 * multi;
                 break;
             case -1:
-                incrementXBall = -2;
-                incrementYBall = 2 * multi;
+                incrementX = -2;
+                incrementY = 2 * multi;
                 break;
             case 0:
-                incrementXBall = 0;
-                incrementYBall = 3 * multi;
+                incrementX = 0;
+                incrementY = 3 * multi;
                 break;
             case 1:
-                incrementXBall = 2;
-                incrementYBall = 2 * multi;
+                incrementX = 2;
+                incrementY = 2 * multi;
                 break;
             case 2:
-                incrementXBall = 3;
-                incrementYBall = 2 * multi;
+                incrementX = 3;
+                incrementY = 2 * multi;
                 break;
         }
     }
 
     int posBallHitBar (int posXBar) {
         int rangeBar = barWidth / 5;
-        if (posXBall > posXBar && posXBall < posXBar + rangeBar) {
+        if (posX > posXBar && posX < posXBar + rangeBar) {
             return -2; // LEFT
         }
-        else if (posXBall >= posXBar + rangeBar && posXBall < posXBar + rangeBar * 2) {
+        else if (posX >= posXBar + rangeBar && posX < posXBar + rangeBar * 2) {
             return -1; // MIDLEFT
         }
-        else if (posXBall >= posXBar + barWidth - rangeBar * 2 && posXBall < posXBar + barWidth - rangeBar) {
+        else if (posX >= posXBar + barWidth - rangeBar * 2 && posX < posXBar + barWidth - rangeBar) {
             return 1; // MIDRIGHT
         }
-        else if (posXBall < posXBar + barWidth && posXBall >= posXBar + barWidth - rangeBar) {
+        else if (posX < posXBar + barWidth && posX >= posXBar + barWidth - rangeBar) {
             return 2; // RIGHT
         }
         return 0; // MIDDLE
