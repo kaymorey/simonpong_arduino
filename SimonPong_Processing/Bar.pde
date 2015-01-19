@@ -47,7 +47,10 @@ class Bar
                 posX = 3 * screenWidth / 4 - barWidth / 2;
                 posY = screenHeight - height;
                 break;
-
+            default :
+                posX = 0;
+                posY = 0;
+                break;    
         }
     }
 

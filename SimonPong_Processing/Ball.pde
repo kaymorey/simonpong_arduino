@@ -2,23 +2,27 @@
 class Ball
 {
     int radius;
+    int initialPosX;
+    int initialPosY;
     int posX;
     int posY;
     int incrementX;
     int incrementY;
     int[] incrementsY = {3, -3};
 
-    Ball(int radiusBall, int posXBall, int posYBall) {
+    Ball(int radiusBall, int initialPosXBall, int initialPosYBall) {
         radius = radiusBall;
-        posX = posXBall;
-        posY = posYBall;
+        initialPosX = initialPosXBall;
+        initialPosY = initialPosYBall;
+        posX = initialPosXBall;
+        posY = initialPosYBall;
         initIncrements();
     }
 
     void initBall()
     {
-        posX = (screenWidth - radius)/2;
-        posY = (screenHeight - radius)/2;
+        posX = initialPosX;
+        posY = initialPosY;
         initIncrements();
     }
 

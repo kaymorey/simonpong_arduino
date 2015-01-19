@@ -5,41 +5,25 @@ String stringReceived;
 String[] moves;
 int playerTop;
 int playerBottom;
-int screenWidth  = 800;
-int screenHeight = 600;
+int screenWidth  = 1280;
+int screenHeight = 768;
 
 // Pong
 Pong pongLeft;
 
 // Players
-int nbPlayers = 4;
-Player[] players = new Player[nbPlayers];
-
-// Bars
-Bar[] bars = new Bar[nbPlayers];
-int barWidth = 100;
-int barHeight = 20;
-int barSpeed = 5;
-boolean increase = true;
+int playersNumber = 4;
+ArrayList<Player> players = new ArrayList<Player>();
 
 // Ball
-Ball ball;
-
+Ball balls;
 int radiusBall = 20;
 int posXBall = screenWidth / 2;
 int posYBall = screenHeight / 2;
 
-// Bar Top
-int posXBarTop = (screenWidth - barWidth)/2;
-int posYBarTop = 0;
-// Bar Bottom
-int posXBarBottom = (screenWidth - barWidth)/2;
-int posYBarBottom = screenHeight - barHeight;
-
 // Score
 Score scorePlayerTop;
 Score scorePlayerBottom;
-
 int scorePlayer = 0;
 // Score Top
 int scorePosYTop = screenHeight / 4 + 50;
@@ -63,16 +47,16 @@ void setup() {
     size(screenWidth, screenHeight);
     background(41, 41, 41);
 
-    for (int i = 0; i < nbPlayers; i++) {
-        bars[i] = new Bar(barWidth, barHeight, i);
-        players[i] = new Player(i + 1, bars[i]);
+    for (int i = 0; i < playersNumber; i++) {
+        players.add(new Player(i));
     }
 
-    ball = new Ball(radiusBall, posXBall, posYBall);
+    balls = new Ball(radiusBall, posXBall/2, posYBall);
+
     scorePlayerTop = new Score(scorePlayer, scorePosYTop);
     scorePlayerBottom = new Score(scorePlayer, scorePosYBottom);
 
-    pongLeft = new Pong(800, 600, 0, 0, color(41, 41, 41), players, ball);
+    pongLeft = new Pong(screenWidth/2, screenHeight, 0, 0, color(41, 41, 41), players, balls, 0);
 
     simon = new Simon(5, 4);
     simonResolver = new SimonResolver(simon.sequenceToPlay);

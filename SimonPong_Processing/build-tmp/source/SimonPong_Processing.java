@@ -23,41 +23,25 @@ String stringReceived;
 String[] moves;
 int playerTop;
 int playerBottom;
-int screenWidth  = 800;
-int screenHeight = 600;
+int screenWidth  = 1280;
+int screenHeight = 768;
 
 // Pong
 Pong pongLeft;
 
 // Players
-int nbPlayers = 4;
-Player[] players = new Player[nbPlayers];
-
-// Bars
-Bar[] bars = new Bar[nbPlayers];
-int barWidth = 100;
-int barHeight = 20;
-int barSpeed = 5;
-boolean increase = true;
+int playersNumber = 4;
+ArrayList<Player> players = new ArrayList<Player>();
 
 // Ball
-Ball ball;
-
+Ball balls;
 int radiusBall = 20;
 int posXBall = screenWidth / 2;
 int posYBall = screenHeight / 2;
 
-// Bar Top
-int posXBarTop = (screenWidth - barWidth)/2;
-int posYBarTop = 0;
-// Bar Bottom
-int posXBarBottom = (screenWidth - barWidth)/2;
-int posYBarBottom = screenHeight - barHeight;
-
 // Score
 Score scorePlayerTop;
 Score scorePlayerBottom;
-
 int scorePlayer = 0;
 // Score Top
 int scorePosYTop = screenHeight / 4 + 50;
@@ -81,16 +65,16 @@ public void setup() {
     size(screenWidth, screenHeight);
     background(41, 41, 41);
 
-    for (int i = 0; i < nbPlayers; i++) {
-        bars[i] = new Bar(barWidth, barHeight, i);
-        players[i] = new Player(i + 1, bars[i]);
+    for (int i = 0; i < playersNumber; i++) {
+        players.add(new Player(i));
     }
 
-    ball = new Ball(radiusBall, posXBall, posYBall);
+    balls = new Ball(radiusBall, posXBall/2, posYBall);
+
     scorePlayerTop = new Score(scorePlayer, scorePosYTop);
     scorePlayerBottom = new Score(scorePlayer, scorePosYBottom);
 
-    pongLeft = new Pong(800, 600, 0, 0, color(41, 41, 41), players, ball);
+    pongLeft = new Pong(screenWidth/2, screenHeight, 0, 0, color(41, 41, 41), players, balls, 0);
 
     simon = new Simon(5, 4);
     simonResolver = new SimonResolver(simon.sequenceToPlay);
@@ -200,30 +184,30 @@ public void readKeyboard()
         //     else if (key == 'x' || key == 'X') {
         //         barBottom.controlInverted = !barBottom.controlInverted;
         //     }
-//               else if (key == '0' && !hasWaitedToReadInput) {
-//                  hasWaitedToReadInput = !hasWaitedToReadInput;
-//                  println("returnValue: "+simonResolver.compareSolution(0));
-//                  delay(500);
-//                  hasWaitedToReadInput = !hasWaitedToReadInput;
-//              }
-//              else if (key == '1' && !hasWaitedToReadInput) {
-//                  hasWaitedToReadInput = !hasWaitedToReadInput;
-//                  println("returnValue: "+simonResolver.compareSolution(1));
-//                  delay(500);
-//                  hasWaitedToReadInput = !hasWaitedToReadInput;
-//              }
-//              else if (key == '2' && !hasWaitedToReadInput) {
-//                  hasWaitedToReadInput = !hasWaitedToReadInput;
-//                  println("returnValue: "+simonResolver.compareSolution(2));
-//                  delay(500);
-//                  hasWaitedToReadInput = !hasWaitedToReadInput;
-//              }
-//              else if (key == '3' && !hasWaitedToReadInput) {
-//                  hasWaitedToReadInput = !hasWaitedToReadInput;
-//                  println("returnValue: "+simonResolver.compareSolution(3));
-//                  delay(500);
-//                  hasWaitedToReadInput = !hasWaitedToReadInput;
-//              }
+        //       else if (key == '0' && !hasWaitedToReadInput) {
+        //          hasWaitedToReadInput = !hasWaitedToReadInput;
+        //          println("returnValue: "+simonResolver.compareSolution(0));
+        //          delay(500);
+        //          hasWaitedToReadInput = !hasWaitedToReadInput;
+        //      }
+        //      else if (key == '1' && !hasWaitedToReadInput) {
+        //          hasWaitedToReadInput = !hasWaitedToReadInput;
+        //          println("returnValue: "+simonResolver.compareSolution(1));
+        //          delay(500);
+        //          hasWaitedToReadInput = !hasWaitedToReadInput;
+        //      }
+        //      else if (key == '2' && !hasWaitedToReadInput) {
+        //          hasWaitedToReadInput = !hasWaitedToReadInput;
+        //          println("returnValue: "+simonResolver.compareSolution(2));
+        //          delay(500);
+        //          hasWaitedToReadInput = !hasWaitedToReadInput;
+        //      }
+        //      else if (key == '3' && !hasWaitedToReadInput) {
+        //          hasWaitedToReadInput = !hasWaitedToReadInput;
+        //          println("returnValue: "+simonResolver.compareSolution(3));
+        //          delay(500);
+        //          hasWaitedToReadInput = !hasWaitedToReadInput;
+        //      }
         // }
     }
 }
@@ -234,23 +218,27 @@ public void readKeyboard()
 class Ball
 {
     int radius;
+    int initialPosX;
+    int initialPosY;
     int posX;
     int posY;
     int incrementX;
     int incrementY;
     int[] incrementsY = {3, -3};
 
-    Ball(int radiusBall, int posXBall, int posYBall) {
+    Ball(int radiusBall, int initialPosXBall, int initialPosYBall) {
         radius = radiusBall;
-        posX = posXBall;
-        posY = posYBall;
+        initialPosX = initialPosXBall;
+        initialPosY = initialPosYBall;
+        posX = initialPosXBall;
+        posY = initialPosYBall;
         initIncrements();
     }
 
     public void initBall()
     {
-        posX = (screenWidth - radius)/2;
-        posY = (screenHeight - radius)/2;
+        posX = initialPosX;
+        posY = initialPosY;
         initIncrements();
     }
 
@@ -379,7 +367,10 @@ class Bar
                 posX = 3 * screenWidth / 4 - barWidth / 2;
                 posY = screenHeight - height;
                 break;
-
+            default :
+                posX = 0;
+                posY = 0;
+                break;    
         }
     }
 
@@ -425,15 +416,31 @@ class Color
         identifier = valueToIdentify;
     }
 }
+// Bars
+int barWidth = 100;
+int barHeight = 20;
+
+//int barSpeed = 5;
+//boolean increase = true;
+// Bar Top
+/*
+int posXBarTop = (screenWidth - barWidth)/2;
+int posYBarTop = 0;
+// Bar Bottom
+int posXBarBottom = (screenWidth - barWidth)/2;
+int posYBarBottom = screenHeight - barHeight;
+*/
+
 class Player
 {
 	int index;
 	Bar bar;
 
-	Player(int indexPlayer, Bar playerBar)
+	Player(int indexPlayer)
 	{
 		index = indexPlayer;
-		bar = playerBar;
+		bar = new Bar(barWidth, barHeight, index);
+		println(index);
 	}
 
     public void draw()
@@ -449,11 +456,12 @@ class Pong
     int posX;
     int posY;
     int backgroundColor;
-    Player[] players;
+    ArrayList<Player> players;
     Ball balls;
+    int mode;
     
      
-    Pong(int pongWidth, int pongHeight, int pongPosX, int pongPosY, int pongBackground, Player[] pongPlayers, Ball pongBalls) {
+    Pong(int pongWidth, int pongHeight, int pongPosX, int pongPosY, int pongBackground, ArrayList<Player> pongPlayers, Ball pongBalls, int pongMode) {
         width = pongWidth;
         height = pongHeight;
         posX = pongPosX;
@@ -461,44 +469,48 @@ class Pong
         backgroundColor = pongBackground;
         players = pongPlayers;
         balls = pongBalls;
+        mode = pongMode;
     }
     
     public void draw()
     {
         size(width, height);
         background(41, 41, 41);
-
         drawLine();
 
-        for (int i = 0; i < nbPlayers; i++) {
-            players[i].draw();
+        switch (mode) {
+            case 0 :
+                players.get(0).draw();
+                players.get(2).draw();
+                break;
+            default :
+                    
+                break;        
         }
+
         /*
         scorePlayerTop.displayScore();
         scorePlayerBottom.displayScore();
-        
-        barTop.drawBar();
-        barBottom.drawBar();
         */
 
         // Score
-        if (ball.posY > height) {
+        if (balls.posY > height) {
             scorePlayerTop.scorePlayer += 1;
-            ball.initBall();
+            balls.initBall();
         }
-        else if (ball.posY < 0) {
+        else if (balls.posY < 0) {
             scorePlayerBottom.scorePlayer += 1;
-            ball.initBall();
+            balls.initBall();
         }
         
         // Ball
-        ball.moveBall();
+        balls.moveBall();
 
-        if (ball.testBallHitBar(players[0].bar)) {
-            ball.changeBallDirection(players[0].bar.posX, 1);
+        if (balls.testBallHitBar(players.get(0).bar)) {
+            balls.changeBallDirection(players.get(0).bar.posX, 1);
         }
-        else if (ball.testBallHitBar(players[1].bar)) {
-            ball.changeBallDirection(players[1].bar.posX, -1);
+        else if (balls.testBallHitBar(players.get(1).bar)) {
+            balls.changeBallDirection(players.get(1).bar.posX, -1);
         }
     }
     

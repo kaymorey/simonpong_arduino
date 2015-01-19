@@ -6,11 +6,12 @@ class Pong
     int posX;
     int posY;
     color backgroundColor;
-    Player[] players;
+    ArrayList<Player> players;
     Ball balls;
+    int mode;
     
      
-    Pong(int pongWidth, int pongHeight, int pongPosX, int pongPosY, color pongBackground, Player[] pongPlayers, Ball pongBalls) {
+    Pong(int pongWidth, int pongHeight, int pongPosX, int pongPosY, color pongBackground, ArrayList<Player> pongPlayers, Ball pongBalls, int pongMode) {
         width = pongWidth;
         height = pongHeight;
         posX = pongPosX;
@@ -18,44 +19,48 @@ class Pong
         backgroundColor = pongBackground;
         players = pongPlayers;
         balls = pongBalls;
+        mode = pongMode;
     }
     
     void draw()
     {
         size(width, height);
         background(41, 41, 41);
-
         drawLine();
 
-        for (int i = 0; i < nbPlayers; i++) {
-            players[i].draw();
+        switch (mode) {
+            case 0 :
+                players.get(0).draw();
+                players.get(2).draw();
+                break;
+            default :
+                    
+                break;        
         }
+
         /*
         scorePlayerTop.displayScore();
         scorePlayerBottom.displayScore();
-        
-        barTop.drawBar();
-        barBottom.drawBar();
         */
 
         // Score
-        if (ball.posY > height) {
+        if (balls.posY > height) {
             scorePlayerTop.scorePlayer += 1;
-            ball.initBall();
+            balls.initBall();
         }
-        else if (ball.posY < 0) {
+        else if (balls.posY < 0) {
             scorePlayerBottom.scorePlayer += 1;
-            ball.initBall();
+            balls.initBall();
         }
         
         // Ball
-        ball.moveBall();
+        balls.moveBall();
 
-        if (ball.testBallHitBar(players[0].bar)) {
-            ball.changeBallDirection(players[0].bar.posX, 1);
+        if (balls.testBallHitBar(players.get(0).bar)) {
+            balls.changeBallDirection(players.get(0).bar.posX, 1);
         }
-        else if (ball.testBallHitBar(players[1].bar)) {
-            ball.changeBallDirection(players[1].bar.posX, -1);
+        else if (balls.testBallHitBar(players.get(1).bar)) {
+            balls.changeBallDirection(players.get(1).bar.posX, -1);
         }
     }
     
