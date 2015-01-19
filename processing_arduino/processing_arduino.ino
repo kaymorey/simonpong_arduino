@@ -2,11 +2,11 @@
    from: http://itp.nyu.edu/physcomp/Labs/AnalogIn
 —————————————————————*/
  
-int potPinLeft = 0;    // Analog input pin that the potentiometer is attached to
-int potValueLeft = 0;  // value read from the pot
+int potPinTop = 0;    // Analog input pin that the potentiometer is attached to
+int potValueTop = 0;  // value read from the pot
 
-int potPinRight = 1;    // Analog input pin that the potentiometer is attached to
-int potValueRight = 0;  // value read from the pot
+int potPinBottom = 1;    // Analog input pin that the potentiometer is attached to
+int potValueBottom = 0;  // value read from the pot
 
 String stringToSend;
  
@@ -17,9 +17,9 @@ void setup() {
 }
  
 void loop() {
-  potValueLeft = analogRead(potPinLeft); // read the pot value
-  potValueRight = analogRead(potPinRight); // read the pot value
-  stringToSend = String(potValueLeft/4)+"$"+String(potValueRight/4);
+  potValueTop = analogRead(potPinTop); // read the pot value
+  potValueBottom = analogRead(potPinBottom); // read the pot value
+  stringToSend = String(potValueTop/4)+"$"+String(potValueBottom/4);
   Serial.println(stringToSend);      // print the pot value back to the debugger pane
   delay(30);                     // wait 10 milliseconds before the next loop
 }

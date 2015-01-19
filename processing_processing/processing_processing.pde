@@ -3,8 +3,8 @@ import processing.serial.*;
 Serial myPort;
 String stringReceived;
 String[] moves;
-int playerLeft;
-int playerRight;
+int playerTop;
+int playerBottom;
 int screenWidth  = 800;
 int screenHeight = 600;
 
@@ -44,8 +44,9 @@ int scorePosYBottom = screenHeight - (screenHeight / 4 - 50);
 boolean hasWaited =false;
 
 void setup() {
-    /*String portName = Serial.list()[5];
-    myPort = new Serial(this, portName, 9600);*/
+    
+    String portName = Serial.list()[3];
+    myPort = new Serial(this, portName, 9600);
 
     size(screenWidth, screenHeight);
     background(41, 41, 41);
@@ -63,6 +64,35 @@ void draw()
         hasWaited = true;
         delay(1000);
     }
+
+
+
+
+
+
+
+    if(myPort.available() > 0){
+        stringReceived = myPort.readStringUntil('\n');
+        if(stringReceived != null) {
+
+            moves = split(stringReceived,'$');
+
+            if(moves.length == 2){
+
+                playerTop = int(moves[0].trim());
+                playerBottom = int(moves[1].trim());
+                /* from 0 to 255 */
+                // println("playerLeft: "+playerLeft);
+                // println("playerRight: "+playerRight);
+                barTop.posXBar = playerTop*(screenWidth-barTop.barWidth)/255;
+                barBottom.posXBar = playerBottom*(screenWidth-barBottom.barWidth)/255;
+            }
+        }
+    }
+
+
+
+
 
     background(41, 41, 41);
 
@@ -96,21 +126,21 @@ void draw()
 
     if (keyPressed) {
         if (key == CODED) {
-            if (keyCode == LEFT && barTop.posXBar > 0) {
-                barTop.posXBar -= barTop.barSpeed;
-            }
-            else if (keyCode == RIGHT && barTop.posXBar < screenWidth - barWidth) {
-                barTop.posXBar += barTop.barSpeed;
-            }
+            // if (keyCode == LEFT && barTop.posXBar > 0) {
+            //     barTop.posXBar -= barTop.barSpeed;
+            // }
+            // else if (keyCode == RIGHT && barTop.posXBar < screenWidth - barTop.barWidth) {
+            //     barTop.posXBar += barTop.barSpeed;
+            // }
         }
         else {
-            if ((key == 'q' || key == 'Q') && barBottom.posXBar > 0) {
-                barBottom.posXBar -= barBottom.barSpeed;
-            }
-            else if ((key == 's' || key == 'S') && barBottom.posXBar < screenWidth - barWidth) {
-                barBottom.posXBar += barBottom.barSpeed;
-            }
-            else if (key == 'e' || key == 'E') {
+            // if ((key == 'q' || key == 'Q') && barBottom.posXBar > 0) {
+            //     barBottom.posXBar -= barBottom.barSpeed;
+            // }
+            // else if ((key == 's' || key == 'S') && barBottom.posXBar < screenWidth - barBottom.barWidth) {
+            //     barBottom.posXBar += barBottom.barSpeed;
+            // }
+            /*else*/ if (key == 'e' || key == 'E') {
                 barTop.expandBar();
             }
             else if (key == 'r' || key == 'R') {
