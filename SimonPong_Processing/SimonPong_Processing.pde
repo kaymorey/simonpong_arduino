@@ -10,6 +10,7 @@ int screenHeight = 768;
 
 // Pong
 Pong pongLeft;
+Pong pongRight;
 
 // Players
 int playersNumber = 4;
@@ -17,6 +18,7 @@ ArrayList<Player> players = new ArrayList<Player>();
 
 // Ball
 Ball balls;
+Ball balls2;
 int radiusBall = 20;
 int posXBall = screenWidth / 2;
 int posYBall = screenHeight / 2;
@@ -52,11 +54,13 @@ void setup() {
     }
 
     balls = new Ball(radiusBall, posXBall/2, posYBall);
+    balls2 = new Ball(radiusBall, 3*(screenWidth/4), posYBall);
 
     scorePlayerTop = new Score(scorePlayer, scorePosYTop);
     scorePlayerBottom = new Score(scorePlayer, scorePosYBottom);
 
     pongLeft = new Pong(screenWidth/2, screenHeight, 0, 0, color(41, 41, 41), players, balls, 0);
+    pongRight = new Pong(screenWidth/2, screenHeight, screenWidth/2, 0, color(20, 40, 80), players, balls2, 1);
 
     simon = new Simon(5, 4);
     simonResolver = new SimonResolver(simon.sequenceToPlay);
@@ -67,6 +71,7 @@ void setup() {
 void draw()
 {
     pongLeft.draw();
+    pongRight.draw();
   
 /*
     scorePlayerTop.displayScore();

@@ -24,17 +24,40 @@ class Pong
     
     void draw()
     {
-        size(width, height);
-        background(41, 41, 41);
+        noStroke();
+        fill(backgroundColor);
+        rect(posX, posY, width, height);
+        
         drawLine();
 
         switch (mode) {
-            case 0 :
+            case 0 : // Pong Left
                 players.get(0).draw();
                 players.get(2).draw();
                 break;
-            default :
-                    
+            case 1 : // Pong Right
+                players.get(1).draw();
+                players.get(3).draw();
+                break;
+            case 2 : // Pong Top
+                players.get(0).draw();
+                players.get(1).draw();
+                break;
+            case 3 : // Pong Bottom
+                players.get(2).draw();
+                players.get(3).draw();
+                break;
+            case 4 : // Pong Left Top - Right Bottom
+                
+                break;
+            case 5 : // Pong Left Bottom - Right Top
+                
+                break;                
+            default : // Pong Full
+                players.get(0).draw();
+                players.get(1).draw();
+                players.get(2).draw();
+                players.get(3).draw();
                 break;        
         }
 
@@ -54,19 +77,25 @@ class Pong
         }
         
         // Ball
-        balls.moveBall();
+        balls.moveBall(width, posX);
 
         if (balls.testBallHitBar(players.get(0).bar)) {
             balls.changeBallDirection(players.get(0).bar.posX, 1);
         }
         else if (balls.testBallHitBar(players.get(1).bar)) {
-            balls.changeBallDirection(players.get(1).bar.posX, -1);
+            balls.changeBallDirection(players.get(1).bar.posX, 1);
+        }
+        else if (balls.testBallHitBar(players.get(2).bar)) {
+            balls.changeBallDirection(players.get(2).bar.posX, -1);
+        }
+        else if (balls.testBallHitBar(players.get(3).bar)) {
+            balls.changeBallDirection(players.get(3).bar.posX, -1);
         }
     }
     
     void drawLine()
     {
         stroke(28, 28, 28);
-        line(0, height / 2, width, height / 2);
+        line(posX, height / 2, posX+width, height / 2);
     }
 }

@@ -56,6 +56,7 @@ class Bar
 
     void draw()
     {
+        noStroke();
         fill(255,255,255);
         rect(posX, posY, width, height);
         //triangle(posXBar+barWidth, barHeight, posXBar+barWidth, posYBar, posXBar+barWidth+50, posYBar);

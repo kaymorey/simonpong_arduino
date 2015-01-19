@@ -28,6 +28,7 @@ int screenHeight = 768;
 
 // Pong
 Pong pongLeft;
+Pong pongRight;
 
 // Players
 int playersNumber = 4;
@@ -35,6 +36,7 @@ ArrayList<Player> players = new ArrayList<Player>();
 
 // Ball
 Ball balls;
+Ball balls2;
 int radiusBall = 20;
 int posXBall = screenWidth / 2;
 int posYBall = screenHeight / 2;
@@ -70,11 +72,13 @@ public void setup() {
     }
 
     balls = new Ball(radiusBall, posXBall/2, posYBall);
+    balls2 = new Ball(radiusBall, 3*(screenWidth/4), posYBall);
 
     scorePlayerTop = new Score(scorePlayer, scorePosYTop);
     scorePlayerBottom = new Score(scorePlayer, scorePosYBottom);
 
     pongLeft = new Pong(screenWidth/2, screenHeight, 0, 0, color(41, 41, 41), players, balls, 0);
+    pongRight = new Pong(screenWidth/2, screenHeight, screenWidth/2, 0, color(20, 40, 80), players, balls2, 1);
 
     simon = new Simon(5, 4);
     simonResolver = new SimonResolver(simon.sequenceToPlay);
@@ -85,6 +89,7 @@ public void setup() {
 public void draw()
 {
     pongLeft.draw();
+    pongRight.draw();
   
 /*
     scorePlayerTop.displayScore();
@@ -252,14 +257,15 @@ class Ball
 
     public void drawBall()
     {
+        noStroke();
         fill(255,255,255);
         ellipse(posX, posY, radius, radius);
     }
 
-    public void moveBall()
+    public void moveBall(int pongWidth, int pongPosX)
     {
         posX += incrementX;
-        if (posX + radius / 2 > screenWidth || posX - radius / 2 < 0) {
+        if (posX + radius / 2 > pongWidth || posX - radius / 2 < pongPosX) {
             incrementX = -incrementX;
         }
         posY += incrementY;
@@ -376,6 +382,7 @@ class Bar
 
     public void draw()
     {
+        noStroke();
         fill(255,255,255);
         rect(posX, posY, width, height);
         //triangle(posXBar+barWidth, barHeight, posXBar+barWidth, posYBar, posXBar+barWidth+50, posYBar);
@@ -474,17 +481,40 @@ class Pong
     
     public void draw()
     {
-        size(width, height);
-        background(41, 41, 41);
+        noStroke();
+        fill(backgroundColor);
+        rect(posX, posY, width, height);
+        
         drawLine();
 
         switch (mode) {
-            case 0 :
+            case 0 : // Pong Left
                 players.get(0).draw();
                 players.get(2).draw();
                 break;
-            default :
-                    
+            case 1 : // Pong Right
+                players.get(1).draw();
+                players.get(3).draw();
+                break;
+            case 2 : // Pong Top
+                players.get(0).draw();
+                players.get(1).draw();
+                break;
+            case 3 : // Pong Bottom
+                players.get(2).draw();
+                players.get(3).draw();
+                break;
+            case 4 : // Pong Left Top - Right Bottom
+                
+                break;
+            case 5 : // Pong Left Bottom - Right Top
+                
+                break;                
+            default : // Pong Full
+                players.get(0).draw();
+                players.get(1).draw();
+                players.get(2).draw();
+                players.get(3).draw();
                 break;        
         }
 
@@ -504,20 +534,26 @@ class Pong
         }
         
         // Ball
-        balls.moveBall();
+        balls.moveBall(width, posX);
 
         if (balls.testBallHitBar(players.get(0).bar)) {
             balls.changeBallDirection(players.get(0).bar.posX, 1);
         }
         else if (balls.testBallHitBar(players.get(1).bar)) {
-            balls.changeBallDirection(players.get(1).bar.posX, -1);
+            balls.changeBallDirection(players.get(1).bar.posX, 1);
+        }
+        else if (balls.testBallHitBar(players.get(2).bar)) {
+            balls.changeBallDirection(players.get(2).bar.posX, -1);
+        }
+        else if (balls.testBallHitBar(players.get(3).bar)) {
+            balls.changeBallDirection(players.get(3).bar.posX, -1);
         }
     }
     
     public void drawLine()
     {
         stroke(28, 28, 28);
-        line(0, height / 2, width, height / 2);
+        line(posX, height / 2, posX+width, height / 2);
     }
 }
 class Score {

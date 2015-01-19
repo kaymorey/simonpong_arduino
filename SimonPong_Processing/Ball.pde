@@ -36,14 +36,15 @@ class Ball
 
     void drawBall()
     {
+        noStroke();
         fill(255,255,255);
         ellipse(posX, posY, radius, radius);
     }
 
-    void moveBall()
+    void moveBall(int pongWidth, int pongPosX)
     {
         posX += incrementX;
-        if (posX + radius / 2 > screenWidth || posX - radius / 2 < 0) {
+        if (posX + radius / 2 > pongWidth || posX - radius / 2 < pongPosX) {
             incrementX = -incrementX;
         }
         posY += incrementY;
