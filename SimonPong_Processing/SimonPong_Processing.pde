@@ -182,30 +182,30 @@ void readKeyboard()
         //     else if (key == 'x' || key == 'X') {
         //         barBottom.controlInverted = !barBottom.controlInverted;
         //     }
-//               else if (key == '0' && !hasWaitedToReadInput) {
-//                  hasWaitedToReadInput = !hasWaitedToReadInput;
-//                  println("returnValue: "+simonResolver.compareSolution(0));
-//                  delay(500);
-//                  hasWaitedToReadInput = !hasWaitedToReadInput;
-//              }
-//              else if (key == '1' && !hasWaitedToReadInput) {
-//                  hasWaitedToReadInput = !hasWaitedToReadInput;
-//                  println("returnValue: "+simonResolver.compareSolution(1));
-//                  delay(500);
-//                  hasWaitedToReadInput = !hasWaitedToReadInput;
-//              }
-//              else if (key == '2' && !hasWaitedToReadInput) {
-//                  hasWaitedToReadInput = !hasWaitedToReadInput;
-//                  println("returnValue: "+simonResolver.compareSolution(2));
-//                  delay(500);
-//                  hasWaitedToReadInput = !hasWaitedToReadInput;
-//              }
-//              else if (key == '3' && !hasWaitedToReadInput) {
-//                  hasWaitedToReadInput = !hasWaitedToReadInput;
-//                  println("returnValue: "+simonResolver.compareSolution(3));
-//                  delay(500);
-//                  hasWaitedToReadInput = !hasWaitedToReadInput;
-//              }
+        //       else if (key == '0' && !hasWaitedToReadInput) {
+        //          hasWaitedToReadInput = !hasWaitedToReadInput;
+        //          println("returnValue: "+simonResolver.compareSolution(0));
+        //          delay(500);
+        //          hasWaitedToReadInput = !hasWaitedToReadInput;
+        //      }
+        //      else if (key == '1' && !hasWaitedToReadInput) {
+        //          hasWaitedToReadInput = !hasWaitedToReadInput;
+        //          println("returnValue: "+simonResolver.compareSolution(1));
+        //          delay(500);
+        //          hasWaitedToReadInput = !hasWaitedToReadInput;
+        //      }
+        //      else if (key == '2' && !hasWaitedToReadInput) {
+        //          hasWaitedToReadInput = !hasWaitedToReadInput;
+        //          println("returnValue: "+simonResolver.compareSolution(2));
+        //          delay(500);
+        //          hasWaitedToReadInput = !hasWaitedToReadInput;
+        //      }
+        //      else if (key == '3' && !hasWaitedToReadInput) {
+        //          hasWaitedToReadInput = !hasWaitedToReadInput;
+        //          println("returnValue: "+simonResolver.compareSolution(3));
+        //          delay(500);
+        //          hasWaitedToReadInput = !hasWaitedToReadInput;
+        //      }
         // }
     }
 }

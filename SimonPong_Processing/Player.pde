@@ -9,8 +9,8 @@ class Player
 		bar = playerBar;
 	}
 
-        void draw()
-        {
-              bar.draw();
-        }
+    void draw()
+    {
+        bar.draw();
+    }
 }
