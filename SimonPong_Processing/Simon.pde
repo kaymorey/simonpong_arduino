@@ -20,4 +20,8 @@ class Simon
             println("sequenceToPlay["+i+"] = "+sequenceToPlay.get(i));
         }
     }
+
+    void win() {
+        println("WIN !!");
+    }
 }

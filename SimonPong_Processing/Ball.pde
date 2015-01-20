@@ -64,10 +64,12 @@ class Ball
         }
 
         posX += incrementX;
-        if (posX + radius / 2 > pongWidth || posX - radius / 2 < pongPosX) {
+
+        if (posX + radius / 2 > pongPosX + pongWidth || posX - radius / 2 < pongPosX) {
             incrementX = -incrementX;
         }
         posY += incrementY;
+
         drawBall();
     }
 
