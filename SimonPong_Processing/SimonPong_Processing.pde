@@ -1,5 +1,7 @@
 import processing.serial.*;
-int conteur = 0;
+import ddf.minim.*;
+
+Minim minim;//audio context
 
 Serial myPort;
 String stringReceived;
@@ -51,14 +53,20 @@ int returnedValueByResolver = 0; // /!\ cette variable doit être celle du joueu
 boolean hasWaited = false;
 
 void setup() {
-    
+
+    minim = new Minim(this);
+
+    Sound backgroundSound = new Sound(minim, "arcade-music-loop.wav");
+    backgroundSound.player.setGain(-6);
+    backgroundSound.player.play();
+
     //instantiateArduino();
 
     size(screenWidth, screenHeight);
     background(41, 41, 41);
 
     for (int i = 0; i < playersNumber; i++) {
-        players.add(new Player(i));
+        players.add(new Player(minim, i));
     }
 
     balls = new Ball(radiusBall, posXBall/2, posYBall);

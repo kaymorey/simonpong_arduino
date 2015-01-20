@@ -27,7 +27,7 @@ class Pong
         noStroke();
         fill(backgroundColor);
         rect(posX, posY, width, height);
-        
+
         drawLine();
 
         switch (mode) {
@@ -44,17 +44,17 @@ class Pong
                 play(players.get(2), players.get(3), balls);
                 break;
             case 4 : // Pong Left Top - Right Bottom
-                
+
                 break;
             case 5 : // Pong Left Bottom - Right Top
-                
-                break;                
+
+                break;
             default : // Pong Full
                 players.get(0).draw();
                 players.get(1).draw();
                 players.get(2).draw();
                 players.get(3).draw();
-                break;        
+                break;
         }
 
         /*

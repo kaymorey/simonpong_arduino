@@ -16,21 +16,21 @@ int posYBarBottom = screenHeight - barHeight;
 
 class Player
 {
-	int index;
-	Bar bar;
+    int index;
+    Bar bar;
 
-	Player(int indexPlayer)
-	{
-		if(indexPlayer < 2) {
-			barColor = color(255);
-		}
-		else {
-			barColor = color(200);
-		}
+    Player(Minim minim, int indexPlayer)
+    {
+        if(indexPlayer < 2) {
+            barColor = color(255);
+        }
+        else {
+            barColor = color(200);
+        }
 
-		index = indexPlayer;
-		bar = new Bar(barWidth, barHeight, index, barColor);
-	}
+        index = indexPlayer;
+        bar = new Bar(minim, barWidth, barHeight, index, barColor);
+    }
 
     void draw()
     {
