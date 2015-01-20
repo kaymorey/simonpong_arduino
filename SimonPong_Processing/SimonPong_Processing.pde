@@ -59,8 +59,8 @@ void setup() {
     scorePlayerTop = new Score(scorePlayer, scorePosYTop);
     scorePlayerBottom = new Score(scorePlayer, scorePosYBottom);
 
-    pongLeft = new Pong(screenWidth/2, screenHeight, 0, 0, color(41, 41, 41), players, balls, 0);
-    pongRight = new Pong(screenWidth/2, screenHeight, screenWidth/2, 0, color(20, 40, 80), players, balls2, 1);
+    pongLeft = new Pong(screenWidth/2, screenHeight, 0, 0, color(41, 118, 174), players, balls, 0);
+    pongRight = new Pong(screenWidth/2, screenHeight, screenWidth/2, 0, color(251, 211, 89), players, balls2, 1);
 
     simon = new Simon(5, 4);
     simonResolver = new SimonResolver(simon.sequenceToPlay);
@@ -120,80 +120,80 @@ void readKeyboard()
         if (key == CODED) {
             // Controls for top left bar
             if (keyCode == LEFT) {
-                 if (!players.get(0).bar.controlInverted && players.get(0).bar.posX > 0) {
-                     players.get(0).bar.posX -= 5;
-                 }
-                 else if (players.get(0).bar.controlInverted && players.get(0).bar.posX < screenWidth / 2 - players.get(0).bar.width) {
-                     players.get(0).bar.posX += 5;
-                 }
+                if (!players.get(0).bar.controlInverted && players.get(0).bar.posX > 0) {
+                    players.get(0).bar.posX -= 5;
+                }
+                else if (players.get(0).bar.controlInverted && players.get(0).bar.posX < screenWidth / 2 - players.get(0).bar.width) {
+                    players.get(0).bar.posX += 5;
+                }
              }
              else if (keyCode == RIGHT) {
-                 if (!players.get(0).bar.controlInverted && players.get(0).bar.posX < screenWidth / 2 - players.get(0).bar.width) {
-                     players.get(0).bar.posX += 5;
-                 }
-                 else if (players.get(0).bar.controlInverted && players.get(0).bar.posX > 0) {
-                     players.get(0).bar.posX -= 5;
-                 }
+                if (!players.get(0).bar.controlInverted && players.get(0).bar.posX < screenWidth / 2 - players.get(0).bar.width) {
+                    players.get(0).bar.posX += 5;
+                }
+                else if (players.get(0).bar.controlInverted && players.get(0).bar.posX > 0) {
+                    players.get(0).bar.posX -= 5;
+                }
              }
         }
         else {
             // Controls for bottom left bar
             if (key == 'q' || key == 'Q') {
-                 if (!players.get(2).bar.controlInverted && players.get(2).bar.posX > 0) {
-                     players.get(2).bar.posX -= 5;
-                 }
-                 else if (players.get(2).bar.controlInverted && players.get(2).bar.posX < screenWidth / 2 - players.get(2).bar.width) {
-                     players.get(2).bar.posX += 5;
-                 }
+                if (!players.get(2).bar.controlInverted && players.get(2).bar.posX > 0) {
+                    players.get(2).bar.posX -= 5;
+                }
+                else if (players.get(2).bar.controlInverted && players.get(2).bar.posX < screenWidth / 2 - players.get(2).bar.width) {
+                    players.get(2).bar.posX += 5;
+                }
              }
              else if ((key == 's' || key == 'S')) {
-                 if (!players.get(2).bar.controlInverted && players.get(2).bar.posX < screenWidth / 2 - players.get(2).bar.width) {
+                if (!players.get(2).bar.controlInverted && players.get(2).bar.posX < screenWidth / 2 - players.get(2).bar.width) {
                      players.get(2).bar.posX += 5;
-                 }
-                 else if (players.get(2).bar.controlInverted && players.get(2).bar.posX > 0) {
-                     players.get(2).bar.posX -= 5;
-                 }
+                }
+                else if (players.get(2).bar.controlInverted && players.get(2).bar.posX > 0) {
+                    players.get(2).bar.posX -= 5;
+                }
              }
              // Controls for right left bar
              if (key == 'a' || key == 'A') {
-                 if (!players.get(1).bar.controlInverted && players.get(1).bar.posX > screenWidth / 2) {
-                     players.get(1).bar.posX -= 5;
-                 }
-                 else if (players.get(1).bar.controlInverted && players.get(1).bar.posX < screenWidth - players.get(1).bar.width) {
-                     players.get(1).bar.posX += 5;
-                 }
+                if (!players.get(1).bar.controlInverted && players.get(1).bar.posX > screenWidth / 2) {
+                    players.get(1).bar.posX -= 5;
+                }
+                else if (players.get(1).bar.controlInverted && players.get(1).bar.posX < screenWidth - players.get(1).bar.width) {
+                    players.get(1).bar.posX += 5;
+                }
              }
              // Controls for bottom right bar
              else if ((key == 'z' || key == 'Z')) {
-                 if (!players.get(1).bar.controlInverted && players.get(1).bar.posX < screenWidth - players.get(1).bar.width) {
-                     players.get(1).bar.posX += 5;
-                 }
-                 else if (players.get(1).bar.controlInverted && players.get(1).bar.posX > screenWidth / 2) {
-                     players.get(1).bar.posX -= 5;
-                 }
+                if (!players.get(1).bar.controlInverted && players.get(1).bar.posX < screenWidth - players.get(1).bar.width) {
+                    players.get(1).bar.posX += 5;
+                }
+                else if (players.get(1).bar.controlInverted && players.get(1).bar.posX > screenWidth / 2) {
+                    players.get(1).bar.posX -= 5;
+                }
              }
              if (key == 'w' || key == 'W') {
-                 if (!players.get(3).bar.controlInverted && players.get(3).bar.posX > screenWidth / 2) {
-                     players.get(3).bar.posX -= 5;
-                 }
-                 else if (players.get(3).bar.controlInverted && players.get(3).bar.posX < screenWidth - players.get(3).bar.width) {
-                     players.get(3).bar.posX += 5;
-                 }
+                if (!players.get(3).bar.controlInverted && players.get(3).bar.posX > screenWidth / 2) {
+                    players.get(3).bar.posX -= 5;
+                }
+                else if (players.get(3).bar.controlInverted && players.get(3).bar.posX < screenWidth - players.get(3).bar.width) {
+                    players.get(3).bar.posX += 5;
+                }
              }
              else if ((key == 'x' || key == 'X')) {
-                 if (!players.get(3).bar.controlInverted && players.get(3).bar.posX < screenWidth - players.get(3).bar.width) {
-                     players.get(3).bar.posX += 5;
-                 }
-                 else if (players.get(3).bar.controlInverted && players.get(3).bar.posX > screenWidth / 2) {
-                     players.get(3).bar.posX -= 5;
-                 }
+                if (!players.get(3).bar.controlInverted && players.get(3).bar.posX < screenWidth - players.get(3).bar.width) {
+                    players.get(3).bar.posX += 5;
+                }
+                else if (players.get(3).bar.controlInverted && players.get(3).bar.posX > screenWidth / 2) {
+                    players.get(3).bar.posX -= 5;
+                }
              }
-        //     else if (key == 'e' || key == 'E') {
-        //         barTop.expandBar();
-        //     }
-        //     else if (key == 'r' || key == 'R') {
-        //         barTop.shrinkBar();
-        //     }
+            else if (key == 'e' || key == 'E') {
+                players.get(0).bar.expandBar();
+            }
+            else if (key == 'r' || key == 'R') {
+                players.get(0).bar.shrinkBar();
+            }
         //     else if (key == 'a' || key == 'A') {
         //         barTop.speedBar(increase);
         //     }
