@@ -16,14 +16,22 @@ int playerTopRight;
 // Pong
 Pong pongLeft;
 Pong pongRight;
+Pong pongTop;
+Pong pongBottom;
+Pong pongDiagonalTLBR;
+Pong pongDiagonalTRBL;
+Pong pongFull;
 
 // Players
 int playersNumber = 4;
 ArrayList<Player> players = new ArrayList<Player>();
 
 // Ball
-Ball balls;
-Ball balls2;
+Ball ballLeft;
+Ball ballRight;
+Ball ballTop;
+Ball ballBottom;
+Ball ballFull;
 int radiusBall = 20;
 int posXBall = screenWidth / 2;
 int posYBall = screenHeight / 2;
@@ -60,14 +68,38 @@ void setup() {
         players.add(new Player(i));
     }
 
-    balls = new Ball(radiusBall, posXBall/2, posYBall);
-    balls2 = new Ball(radiusBall, 3*(screenWidth/4), posYBall);
-
     scorePlayerTop = new Score(scorePlayer, scorePosYTop);
     scorePlayerBottom = new Score(scorePlayer, scorePosYBottom);
 
-    pongLeft = new Pong(screenWidth/2, screenHeight, 0, 0, color(41, 118, 174), players, balls, 0);
-    pongRight = new Pong(screenWidth/2, screenHeight, screenWidth/2, 0, color(238, 148, 39), players, balls2, 1);
+    ////////////
+    // Mode 1 //
+    ////////////
+    ballLeft = new Ball(radiusBall, posXBall/2, posYBall);
+    ballRight = new Ball(radiusBall, 3*(screenWidth/4), posYBall);
+
+    pongLeft = new Pong(screenWidth/2, screenHeight, 0, 0, color(41, 118, 174), players, ballLeft, 0);
+    pongRight = new Pong(screenWidth/2, screenHeight, screenWidth/2, 0, color(238, 148, 39), players, ballRight, 1);
+
+    ////////////
+    // Mode 2 //
+    ////////////
+    ballTop = new Ball(radiusBall, screenWidth/4, posYBall/2);
+    ballBottom = new Ball(radiusBall, 3*(screenWidth/4), 3*(screenHeight/4));
+
+    pongTop = new Pong(screenWidth, screenHeight/2, 0, 0, color(41, 118, 174), players, ballTop, 2);
+    pongBottom = new Pong(screenWidth, screenHeight/2, 0, screenHeight/2, color(238, 148, 39), players, ballBottom, 3);
+
+    ////////////
+    // Mode 3 //
+    ////////////
+
+    ////////////
+    // Mode 4 //
+    ////////////
+    ballFull = new Ball(radiusBall, screenWidth/2, screenHeight/2);
+
+    pongFull = new Pong(screenWidth, screenHeight, 0, 0, color(169, 76, 79), players, ballFull, 6);
+    ////////////
 
     simon = new Simon(numberOfColorInSequence, numberOfLed);
     simonResolver = new SimonResolver(simon.sequenceToPlay);
@@ -77,8 +109,27 @@ void setup() {
 
 void draw()
 {
-    pongLeft.draw();
-    pongRight.draw();
+    ////////////
+    // Mode 1 //
+    ////////////
+    //pongLeft.draw();
+    //pongRight.draw();
+
+    ////////////
+    // Mode 2 //
+    ////////////
+    pongTop.draw();
+    pongBottom.draw();
+
+    ////////////
+    // Mode 3 //
+    ////////////
+
+    ////////////
+    // Mode 4 //
+    ////////////
+    //pongFull.draw();
+
 /*
     scorePlayerTop.displayScore();
     scorePlayerBottom.displayScore();
@@ -229,8 +280,8 @@ void readKeyboard()
                 players.get(0).bar.shrinkBar();
             }
             else if (key == 'i' || key == 'I') {
-                pongLeft.balls.transparentMalus = true;
-                pongLeft.balls.isTransparent = true;
+                pongLeft.ball.transparentMalus = true;
+                pongLeft.ball.isTransparent = true;
             }
         //     else if (key == 'a' || key == 'A') {
         //         barTop.speedBar(increase);
