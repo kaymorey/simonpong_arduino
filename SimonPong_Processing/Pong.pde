@@ -32,20 +32,16 @@ class Pong
 
         switch (mode) {
             case 0 : // Pong Left
-                players.get(0).draw();
-                players.get(2).draw();
+                play(players.get(0), players.get(2), balls);
                 break;
             case 1 : // Pong Right
-                players.get(1).draw();
-                players.get(3).draw();
+                play(players.get(1), players.get(3), balls);
                 break;
             case 2 : // Pong Top
-                players.get(0).draw();
-                players.get(1).draw();
+                play(players.get(0), players.get(1), balls);
                 break;
             case 3 : // Pong Bottom
-                players.get(2).draw();
-                players.get(3).draw();
+                play(players.get(2), players.get(3), balls);
                 break;
             case 4 : // Pong Left Top - Right Bottom
                 
@@ -65,37 +61,37 @@ class Pong
         scorePlayerTop.displayScore();
         scorePlayerBottom.displayScore();
         */
-
-        // Score
-        if (balls.posY > height) {
-            scorePlayerTop.scorePlayer += 1;
-            balls.initBall();
-        }
-        else if (balls.posY < 0) {
-            scorePlayerBottom.scorePlayer += 1;
-            balls.initBall();
-        }
-
-        // Ball
-        balls.moveBall(width, posX);
-
-        if (balls.testBallHitBar(players.get(0).bar)) {
-            balls.changeBallDirection(players.get(0).bar.posX, 1);
-        }
-        else if (balls.testBallHitBar(players.get(1).bar)) {
-            balls.changeBallDirection(players.get(1).bar.posX, 1);
-        }
-        else if (balls.testBallHitBar(players.get(2).bar)) {
-            balls.changeBallDirection(players.get(2).bar.posX, -1);
-        }
-        else if (balls.testBallHitBar(players.get(3).bar)) {
-            balls.changeBallDirection(players.get(3).bar.posX, -1);
-        }
     }
 
     void drawLine()
     {
         stroke(28, 28, 28);
         line(posX, height / 2, posX+width, height / 2);
+    }
+
+    void play(Player playerTop, Player playerBottom, Ball ball)
+    {
+        playerTop.draw();
+        playerBottom.draw();
+
+        // Score
+        if (ball.posY > height) {
+            //scorePlayerTop.scorePlayer += 1;
+            ball.initBall();
+        }
+        else if (ball.posY < 0) {
+            //scorePlayerBottom.scorePlayer += 1;
+            ball.initBall();
+        }
+
+        // Ball
+        ball.moveBall(width, posX);
+
+        if (ball.testBallHitBar(playerTop.bar)) {
+            ball.changeBallDirection(playerTop.bar.posX, 1);
+        }
+        else if (ball.testBallHitBar(playerBottom.bar)) {
+            ball.changeBallDirection(playerBottom.bar.posX, -1);
+        }
     }
 }
