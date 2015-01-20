@@ -9,8 +9,8 @@ class Pong
     ArrayList<Player> players;
     Ball balls;
     int mode;
-    
-     
+
+
     Pong(int pongWidth, int pongHeight, int pongPosX, int pongPosY, color pongBackground, ArrayList<Player> pongPlayers, Ball pongBalls, int pongMode) {
         width = pongWidth;
         height = pongHeight;
@@ -21,7 +21,7 @@ class Pong
         balls = pongBalls;
         mode = pongMode;
     }
-    
+
     void draw()
     {
         noStroke();
@@ -75,7 +75,7 @@ class Pong
             scorePlayerBottom.scorePlayer += 1;
             balls.initBall();
         }
-        
+
         // Ball
         balls.moveBall(width, posX);
 
@@ -92,7 +92,7 @@ class Pong
             balls.changeBallDirection(players.get(3).bar.posX, -1);
         }
     }
-    
+
     void drawLine()
     {
         stroke(28, 28, 28);

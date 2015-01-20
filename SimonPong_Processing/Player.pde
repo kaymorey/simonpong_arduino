@@ -22,7 +22,6 @@ class Player
 	{
 		index = indexPlayer;
 		bar = new Bar(barWidth, barHeight, index);
-		println(index);
 	}
 
     void draw()
