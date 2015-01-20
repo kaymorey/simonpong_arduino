@@ -1,12 +1,17 @@
 import processing.serial.*;
+int conteur = 0;
 
 Serial myPort;
 String stringReceived;
 String[] moves;
-int playerTop;
-int playerBottom;
+
+// int playerTop;
+// int playerBottom;
 int screenWidth  = 1280;
 int screenHeight = 768;
+
+int playerTopLeft;
+int playerTopRight;
 
 // Pong
 Pong pongLeft;
@@ -34,17 +39,20 @@ int scorePosYBottom = screenHeight - (screenHeight / 4 - 50);
 
 // Simon
 Simon simon;
+int numberOfLed = 4;
+int numberOfColorInSequence = 3;
 
 // SimonResolver
 SimonResolver simonResolver;
 boolean hasWaitedToReadInput = false;
+int returnedValueByResolver = 0; // /!\ cette variable doit être celle du joueur et récupérée pour chaque joueur. N'apparaît pas dans le main.
 
 
 boolean hasWaited = false;
 
 void setup() {
     
-    //instantiaterduino();
+    instantiateArduino();
 
     size(screenWidth, screenHeight);
     background(41, 41, 41);
@@ -62,7 +70,7 @@ void setup() {
     pongLeft = new Pong(screenWidth/2, screenHeight, 0, 0, color(41, 41, 41), players, balls, 0);
     pongRight = new Pong(screenWidth/2, screenHeight, screenWidth/2, 0, color(20, 40, 80), players, balls2, 1);
 
-    simon = new Simon(5, 4);
+    simon = new Simon(numberOfColorInSequence, numberOfLed);
     simonResolver = new SimonResolver(simon.sequenceToPlay);
 
     simon.play();
@@ -78,8 +86,8 @@ void draw()
     scorePlayerBottom.displayScore();
 */
 
-    //readArduino();
-    readKeyboard();
+    readArduino();
+    //readKeyboard();
 }
 
 void instantiateArduino()
@@ -101,18 +109,45 @@ void readArduino()
 
             moves = split(stringReceived,'$');
 
-            if(moves.length == 2){
+            if(moves.length == 3){
+                switch (int(moves[2].trim())) {
+                    case 0 :
+                        returnedValueByResolver = simonResolver.compareSolution(0);
+                        break;
+                    case 1 :
+                        returnedValueByResolver = simonResolver.compareSolution(1);
+                        break;
+                    case 2 :
+                        returnedValueByResolver = simonResolver.compareSolution(2);
+                        break;
+                    case 3 :
+                        returnedValueByResolver = simonResolver.compareSolution(3);
+                        break;
+                }
 
-                playerTop = int(moves[0].trim());
-                playerBottom = int(moves[1].trim());
+                if(returnedValueByResolver == 2) {
+                    resetSimon();
+                }
+
+                playerTopLeft = int(moves[1].trim());
+                playerTopRight = int(moves[0].trim());
                 /* from 0q to 255 */
                 // println("playerLeft: "+playerLeft);
                 // println("playerRight: "+playerRight);
-                // barTop.posXBar = playerTop*(screenWidth-barTop.barWidth)/255;
-                // barBottom.posXBar = playerBottom*(screenWidth-barBottom.barWidth)/255;
+                bars[0].posX = playerTopLeft*(screenWidth/2-bars[0].width)/255;
+                bars[1].posX = playerTopRight*(screenWidth/2-bars[1].width)/255 + screenWidth/2;
             }
         }
     }
+}
+
+void resetSimon()
+{
+    returnedValueByResolver = 0;
+    simon.win();
+    simon = new Simon(++numberOfColorInSequence,numberOfLed);
+    simonResolver = new SimonResolver(simon.sequenceToPlay);
+    simon.play();
 }
 
 void readKeyboard()
