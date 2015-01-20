@@ -47,8 +47,6 @@ class Ball
 
         if (posX + radius / 2 > pongPosX + pongWidth || posX - radius / 2 < pongPosX) {
             incrementX = -incrementX;
-
-            println(incrementX);
         }
         posY += incrementY;
 

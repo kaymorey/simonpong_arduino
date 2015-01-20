@@ -52,7 +52,7 @@ boolean hasWaited = false;
 
 void setup() {
     
-    instantiateArduino();
+    //instantiateArduino();
 
     size(screenWidth, screenHeight);
     background(41, 41, 41);
@@ -85,8 +85,8 @@ void draw()
     scorePlayerBottom.displayScore();
 */
 
-    readArduino();
-    //readKeyboard();
+    //readArduino();
+    readKeyboard();
 }
 
 void instantiateArduino()

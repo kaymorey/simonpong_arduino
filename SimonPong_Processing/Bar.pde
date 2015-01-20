@@ -9,6 +9,7 @@ class Bar
     int height;
     int maxWidth = 300;
     int minWidth = 60;
+    color bColor;
     
     int maxSpeed = 20;
     int minSpeed = 1;
@@ -24,11 +25,12 @@ class Bar
     //     barSpeed = speed;
     // }
 
-    Bar (int barWidth, int barHeight, int index)
+    Bar (int barWidth, int barHeight, int index, color barColor)
     {
         initialWidth = width;
         width = barWidth;
         height = barHeight;
+        bColor = barColor;
 
         switch (index) {
             case 0:
@@ -57,7 +59,7 @@ class Bar
     void draw()
     {
         noStroke();
-        fill(255,255,255);
+        fill(bColor);
         rect(posX, posY, width, height);
         //triangle(posXBar+barWidth, barHeight, posXBar+barWidth, posYBar, posXBar+barWidth+50, posYBar);
     }
