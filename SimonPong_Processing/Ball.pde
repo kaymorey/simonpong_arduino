@@ -10,6 +10,11 @@ class Ball
     int incrementY;
     int[] incrementsY = {3, -3};
 
+    int counter;
+
+    boolean transparentMalus;
+    boolean isTransparent;
+
     Ball(int radiusBall, int initialPosXBall, int initialPosYBall) {
         radius = radiusBall;
         initialPosX = initialPosXBall;
@@ -37,12 +42,27 @@ class Ball
     void drawBall()
     {
         noStroke();
-        fill(255,255,255);
+        if (!isTransparent) {
+            fill(255,255,255);
+        }
+        else {
+            fill(255,255,255, 0);
+        }
         ellipse(posX, posY, radius, radius);
     }
 
     void moveBall(int pongWidth, int pongPosX)
     {
+        if (transparentMalus) {
+            if (counter == 30) {
+                counter = 1;
+                isTransparent = !isTransparent;
+            }
+            else {
+                counter++;
+            }
+        }
+
         posX += incrementX;
         if (posX + radius / 2 > pongWidth || posX - radius / 2 < pongPosX) {
             incrementX = -incrementX;
