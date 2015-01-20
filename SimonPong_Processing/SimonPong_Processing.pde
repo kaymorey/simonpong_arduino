@@ -189,7 +189,7 @@ void readKeyboard()
                 }
              }
              // Controls for right left bar
-             if (key == 'a' || key == 'A') {
+            else if (key == 'a' || key == 'A') {
                 if (!players.get(1).bar.controlInverted && players.get(1).bar.posX > screenWidth / 2) {
                     players.get(1).bar.posX -= 5;
                 }
@@ -198,35 +198,39 @@ void readKeyboard()
                 }
              }
              // Controls for bottom right bar
-             else if ((key == 'z' || key == 'Z')) {
+            else if ((key == 'z' || key == 'Z')) {
                 if (!players.get(1).bar.controlInverted && players.get(1).bar.posX < screenWidth - players.get(1).bar.width) {
                     players.get(1).bar.posX += 5;
                 }
                 else if (players.get(1).bar.controlInverted && players.get(1).bar.posX > screenWidth / 2) {
                     players.get(1).bar.posX -= 5;
                 }
-             }
-             if (key == 'w' || key == 'W') {
+            }
+            else if (key == 'w' || key == 'W') {
                 if (!players.get(3).bar.controlInverted && players.get(3).bar.posX > screenWidth / 2) {
                     players.get(3).bar.posX -= 5;
                 }
                 else if (players.get(3).bar.controlInverted && players.get(3).bar.posX < screenWidth - players.get(3).bar.width) {
                     players.get(3).bar.posX += 5;
                 }
-             }
-             else if ((key == 'x' || key == 'X')) {
+            }
+            else if ((key == 'x' || key == 'X')) {
                 if (!players.get(3).bar.controlInverted && players.get(3).bar.posX < screenWidth - players.get(3).bar.width) {
                     players.get(3).bar.posX += 5;
                 }
                 else if (players.get(3).bar.controlInverted && players.get(3).bar.posX > screenWidth / 2) {
                     players.get(3).bar.posX -= 5;
                 }
-             }
+            }
             else if (key == 'e' || key == 'E') {
                 players.get(0).bar.expandBar();
             }
             else if (key == 'r' || key == 'R') {
                 players.get(0).bar.shrinkBar();
+            }
+            else if (key == 'i' || key == 'I') {
+                pongLeft.balls.transparentMalus = true;
+                pongLeft.balls.isTransparent = true;
             }
         //     else if (key == 'a' || key == 'A') {
         //         barTop.speedBar(increase);
