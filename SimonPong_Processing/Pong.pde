@@ -1,6 +1,7 @@
 
 class Pong
 {
+    Game game;
     int width;
     int height;
     int posX;
@@ -11,7 +12,8 @@ class Pong
     int mode;
 
 
-    Pong(int pongWidth, int pongHeight, int pongPosX, int pongPosY, color pongBackground, ArrayList<Player> pongPlayers, Ball pongBalls, int pongMode) {
+    Pong(Game pongGame, int pongWidth, int pongHeight, int pongPosX, int pongPosY, color pongBackground, ArrayList<Player> pongPlayers, Ball pongBalls, int pongMode) {
+        game = pongGame;
         width = pongWidth;
         height = pongHeight;
         posX = pongPosX;
@@ -81,11 +83,15 @@ class Pong
         // Score
         if (ball.posY > height) {
             //scorePlayerTop.scorePlayer += 1;
+            game.loseSound.player.play();
             ball.initBall();
+            game.loseSound.player.rewind();
         }
         else if (ball.posY < 0) {
             //scorePlayerBottom.scorePlayer += 1;
+            game.loseSound.player.play();
             ball.initBall();
+            game.loseSound.player.rewind();
         }
 
         // Ball

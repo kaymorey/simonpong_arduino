@@ -1,16 +1,16 @@
 import processing.serial.*;
 import ddf.minim.*;
 
-Minim minim;//audio context
-
 Serial myPort;
 String stringReceived;
 String[] moves;
 
 // int playerTop;
 // int playerBottom;
+Game game;
 int screenWidth  = 1280;
 int screenHeight = 768;
+Minim minim;//audio context
 
 int playerTopLeft;
 int playerTopRight;
@@ -55,10 +55,9 @@ boolean hasWaited = false;
 void setup() {
 
     minim = new Minim(this);
+    game = new Game(minim);
 
-    Sound backgroundSound = new Sound(minim, "arcade-music-loop.wav");
-    backgroundSound.player.setGain(-6);
-    backgroundSound.player.play();
+    game.backgroundSound.player.play();
 
     //instantiateArduino();
 
@@ -75,8 +74,8 @@ void setup() {
     scorePlayerTop = new Score(scorePlayer, scorePosYTop);
     scorePlayerBottom = new Score(scorePlayer, scorePosYBottom);
 
-    pongLeft = new Pong(screenWidth/2, screenHeight, 0, 0, color(41, 118, 174), players, balls, 0);
-    pongRight = new Pong(screenWidth/2, screenHeight, screenWidth/2, 0, color(251, 211, 89), players, balls2, 1);
+    pongLeft = new Pong(game, screenWidth/2, screenHeight, 0, 0, color(41, 118, 174), players, balls, 0);
+    pongRight = new Pong(game, screenWidth/2, screenHeight, screenWidth/2, 0, color(251, 211, 89), players, balls2, 1);
 
     simon = new Simon(numberOfColorInSequence, numberOfLed);
     simonResolver = new SimonResolver(simon.sequenceToPlay);
