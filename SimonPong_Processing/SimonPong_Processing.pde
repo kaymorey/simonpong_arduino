@@ -57,12 +57,11 @@ void setup() {
     minim = new Minim(this);
     game = new Game(minim);
 
-    game.backgroundSound.player.play();
+    // game.backgroundSound.player.play();
 
-    //instantiateArduino();
+    // instantiateArduino();
 
     size(screenWidth, screenHeight);
-    background(41, 41, 41);
 
     for (int i = 0; i < playersNumber; i++) {
         players.add(new Player(minim, i));
@@ -85,8 +84,14 @@ void setup() {
 
 void draw()
 {
-    pongLeft.draw();
-    pongRight.draw();
+    if (game.activeScreen == 0) {
+        game.drawInitialScreen();
+    }
+    else {
+        pongLeft.draw();
+        pongRight.draw();
+    }
+
 /*
     scorePlayerTop.displayScore();
     scorePlayerBottom.displayScore();
@@ -169,16 +174,20 @@ void readKeyboard()
                     players.get(0).bar.posX += 5;
                 }
              }
-             else if (keyCode == RIGHT) {
+            else if (keyCode == RIGHT) {
                 if (!players.get(0).bar.controlInverted && players.get(0).bar.posX < screenWidth / 2 - players.get(0).bar.width) {
                     players.get(0).bar.posX += 5;
                 }
                 else if (players.get(0).bar.controlInverted && players.get(0).bar.posX > 0) {
                     players.get(0).bar.posX -= 5;
                 }
-             }
+            }
         }
         else {
+            if (key == ENTER) {
+                println("enter");
+                game.activeScreen = 1;
+            }
             // Controls for bottom left bar
             if (key == 'q' || key == 'Q') {
                 if (!players.get(2).bar.controlInverted && players.get(2).bar.posX > 0) {
