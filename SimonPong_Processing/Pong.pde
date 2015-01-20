@@ -65,7 +65,11 @@ class Pong
 
     void drawLine()
     {
-        stroke(28, 28, 28);
+        float redColor = red(backgroundColor)-30;
+        float greenColor = green(backgroundColor)-30;
+        float blueColor = blue(backgroundColor)-30;
+
+        stroke(redColor, greenColor, blueColor);
         line(posX, height / 2, posX+width, height / 2);
     }
 
