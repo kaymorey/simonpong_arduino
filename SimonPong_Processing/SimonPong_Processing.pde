@@ -56,7 +56,7 @@ void setup() {
     scorePlayerTop = new Score(scorePlayer, scorePosYTop);
     scorePlayerBottom = new Score(scorePlayer, scorePosYBottom);
 
-    pongLeft = new Pong(screenWidth, screenHeight, 0, 0, color(41, 41, 41), players, balls, 0);
+    pongLeft = new Pong(screenWidth / 2, screenHeight, 0, 0, color(41, 41, 41), players, balls, 0);
 
     simon = new Simon(5, 4);
     simonResolver = new SimonResolver(simon.sequenceToPlay);

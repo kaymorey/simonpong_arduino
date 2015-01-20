@@ -31,9 +31,7 @@ class Pong
         switch (mode) {
             case 0 :
                 players.get(0).draw();
-                players.get(1).draw();
                 players.get(2).draw();
-                players.get(3).draw();
                 break;
             default :
 
