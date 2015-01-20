@@ -49,13 +49,13 @@ int scorePosYBottom = screenHeight - (screenHeight / 4 - 50);
 
 // Simon
 Simon simon;
-int numberOfLed = 2;
+int numberOfLed = 4;
 int numberOfColorInSequence = 3;
 
 // SimonResolver
 SimonResolver simonResolver;
 boolean hasWaitedToReadInput = false;
-int returnedValueByResolver = 0; // /!\ cette variable doit être celle du jour et récupérée pour chaque joueur. N'apparaît pas dans le main.
+int returnedValueByResolver = 0; // /!\ cette variable doit être celle du joueur et récupérée pour chaque joueur. N'apparaît pas dans le main.
 
 
 boolean hasWaited = false;
@@ -99,7 +99,7 @@ void draw()
 
 void instantiateArduino()
 {
-    String portName = Serial.list()[2];
+    String portName = Serial.list()[3];
     myPort = new Serial(this, portName, 9600);
 }
 

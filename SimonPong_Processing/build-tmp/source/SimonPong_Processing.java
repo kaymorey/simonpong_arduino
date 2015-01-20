@@ -67,7 +67,7 @@ int scorePosYBottom = screenHeight - (screenHeight / 4 - 50);
 
 // Simon
 Simon simon;
-int numberOfLed = 2;
+int numberOfLed = 4;
 int numberOfColorInSequence = 3;
 
 // SimonResolver
@@ -117,7 +117,7 @@ public void draw()
 
 public void instantiateArduino()
 {
-    String portName = Serial.list()[2];
+    String portName = Serial.list()[3];
     myPort = new Serial(this, portName, 9600);
 }
 
