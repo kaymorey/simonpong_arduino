@@ -44,10 +44,14 @@ class Ball
     void moveBall(int pongWidth, int pongPosX)
     {
         posX += incrementX;
-        if (posX + radius / 2 > pongWidth || posX - radius / 2 < pongPosX) {
+
+        if (posX + radius / 2 > pongPosX + pongWidth || posX - radius / 2 < pongPosX) {
             incrementX = -incrementX;
+
+            println(incrementX);
         }
         posY += incrementY;
+
         drawBall();
     }
 
