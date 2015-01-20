@@ -24,10 +24,7 @@ class Pong
 
     void draw()
     {
-        noStroke();
-        fill(backgroundColor);
-        rect(posX, posY, width, height);
-        
+        drawBackground();
         drawLine();
 
         switch (mode) {
@@ -61,6 +58,13 @@ class Pong
         scorePlayerTop.displayScore();
         scorePlayerBottom.displayScore();
         */
+    }
+
+    void drawBackground()
+    {
+        noStroke();
+        fill(backgroundColor, 80);
+        rect(posX, posY, width, height);
     }
 
     void drawLine()

@@ -55,7 +55,6 @@ void setup() {
     //instantiateArduino();
 
     size(screenWidth, screenHeight);
-    background(41, 41, 41);
 
     for (int i = 0; i < playersNumber; i++) {
         players.add(new Player(i));
@@ -68,7 +67,7 @@ void setup() {
     scorePlayerBottom = new Score(scorePlayer, scorePosYBottom);
 
     pongLeft = new Pong(screenWidth/2, screenHeight, 0, 0, color(41, 118, 174), players, balls, 0);
-    pongRight = new Pong(screenWidth/2, screenHeight, screenWidth/2, 0, color(251, 211, 89), players, balls2, 1);
+    pongRight = new Pong(screenWidth/2, screenHeight, screenWidth/2, 0, color(238, 148, 39), players, balls2, 1);
 
     simon = new Simon(numberOfColorInSequence, numberOfLed);
     simonResolver = new SimonResolver(simon.sequenceToPlay);

@@ -60,6 +60,7 @@ class Bar
     {
         noStroke();
         fill(bColor);
+        smooth();
         rect(posX, posY, width, height);
         //triangle(posXBar+barWidth, barHeight, posXBar+barWidth, posYBar, posXBar+barWidth+50, posYBar);
     }

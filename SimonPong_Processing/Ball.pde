@@ -38,6 +38,7 @@ class Ball
     {
         noStroke();
         fill(255,255,255);
+        smooth();
         ellipse(posX, posY, radius, radius);
     }
 
