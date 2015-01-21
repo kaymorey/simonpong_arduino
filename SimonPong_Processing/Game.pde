@@ -4,10 +4,12 @@ class Game {
     int activeScreen = 0;
 
     PFont pressBtnFont;
+    PFont gameNameFont;
 
     Game(Minim minim)
     {
         pressBtnFont = loadFont("BebasNeueBook-30.vlw");
+        gameNameFont = loadFont("BebasNeue-100.vlw");
 
         backgroundSound = new Sound(minim, "arcade-music-loop.wav");
         backgroundSound.player.setGain(-6);
@@ -17,9 +19,9 @@ class Game {
 
     void drawInitialScreen()
     {
-        fill(41, 118, 174);
-        rect(0, 0, screenWidth, screenHeight / 2);
         fill(251, 211, 89);
+        rect(0, 0, screenWidth, screenHeight / 2);
+        fill(41, 118, 174);
         rect(0, screenHeight / 2, screenWidth, screenHeight / 2);
 
         displayInitialScreen();
@@ -27,14 +29,25 @@ class Game {
 
     void displayInitialScreen()
     {
-        println("display text");
-        String txt = "Press any button to play";
+        String txt = "Simon";
+        fill(41, 118, 174);
+        textFont(gameNameFont);
+        textSize(72);
+        text(txt, (screenWidth - textWidth(txt)) / 2, screenHeight / 2 - 20);
+
+        txt = "Pong";
+        fill(251, 211, 89);
+        textFont(gameNameFont);
+        textSize(72);
+        text(txt, (screenWidth - textWidth(txt)) / 2, screenHeight / 2 + 72);
+
+        txt = "Press any button to play";
         fill(255);
-        textSize(32);
-        text(txt, 10, 30);
-        // String txt = "Press any button to play";
-        // fill(255);
-        // textFont(pressBtnFont);
-        // text(txt, (screenWidth - textWidth(txt)) / 2, 0);
+        textFont(pressBtnFont);
+        text(txt, (screenWidth - textWidth(txt)) / 2, screenHeight - 30);
+
+        rotate(PI);
+        text(txt, - (screenWidth + textWidth(txt)) / 2, - 30);
+
     }
 }

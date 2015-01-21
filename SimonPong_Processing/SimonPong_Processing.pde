@@ -69,7 +69,7 @@ void setup() {
 
     // game.backgroundSound.player.play();
 
-    instantiateArduino();
+    // instantiateArduino();
 
     size(screenWidth, screenHeight);
 
