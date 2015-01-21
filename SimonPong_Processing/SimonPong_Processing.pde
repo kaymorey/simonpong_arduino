@@ -3,6 +3,7 @@ int conteur = 0;
 
 Serial myPort;
 String stringReceived;
+String stringToSend;
 String[] moves;
 
 // int playerTop;
@@ -16,22 +17,14 @@ int playerTopRight;
 // Pong
 Pong pongLeft;
 Pong pongRight;
-Pong pongTop;
-Pong pongBottom;
-Pong pongDiagonalTLBR;
-Pong pongDiagonalTRBL;
-Pong pongFull;
 
 // Players
 int playersNumber = 4;
 ArrayList<Player> players = new ArrayList<Player>();
 
 // Ball
-Ball ballLeft;
-Ball ballRight;
-Ball ballTop;
-Ball ballBottom;
-Ball ballFull;
+Ball balls;
+Ball balls2;
 int radiusBall = 20;
 int posXBall = screenWidth / 2;
 int posYBall = screenHeight / 2;
@@ -57,10 +50,11 @@ int returnedValueByResolver = 0; // /!\ cette variable doit être celle du joueu
 
 
 boolean hasWaited = false;
+boolean firstContact = false;
 
 void setup() {
     
-    //instantiateArduino();
+    instantiateArduino();
 
     size(screenWidth, screenHeight);
 
@@ -68,80 +62,37 @@ void setup() {
         players.add(new Player(i));
     }
 
+    balls = new Ball(radiusBall, posXBall/2, posYBall);
+    balls2 = new Ball(radiusBall, 3*(screenWidth/4), posYBall);
+
     scorePlayerTop = new Score(scorePlayer, scorePosYTop);
     scorePlayerBottom = new Score(scorePlayer, scorePosYBottom);
 
-    ////////////
-    // Mode 1 //
-    ////////////
-    ballLeft = new Ball(radiusBall, posXBall/2, posYBall);
-    ballRight = new Ball(radiusBall, 3*(screenWidth/4), posYBall);
-
-    pongLeft = new Pong(screenWidth/2, screenHeight, 0, 0, color(41, 118, 174), players, ballLeft, 0);
-    pongRight = new Pong(screenWidth/2, screenHeight, screenWidth/2, 0, color(238, 148, 39), players, ballRight, 1);
-
-    ////////////
-    // Mode 2 //
-    ////////////
-    ballTop = new Ball(radiusBall, screenWidth/4, posYBall/2);
-    ballBottom = new Ball(radiusBall, 3*(screenWidth/4), 3*(screenHeight/4));
-
-    pongTop = new Pong(screenWidth, screenHeight/2, 0, 0, color(41, 118, 174), players, ballTop, 2);
-    pongBottom = new Pong(screenWidth, screenHeight/2, 0, screenHeight/2, color(238, 148, 39), players, ballBottom, 3);
-
-    ////////////
-    // Mode 3 //
-    ////////////
-
-    ////////////
-    // Mode 4 //
-    ////////////
-    ballFull = new Ball(radiusBall, screenWidth/2, screenHeight/2);
-
-    pongFull = new Pong(screenWidth, screenHeight, 0, 0, color(169, 76, 79), players, ballFull, 6);
-    ////////////
+    pongLeft = new Pong(screenWidth/2, screenHeight, 0, 0, color(41, 118, 174), players, balls, 0);
+    pongRight = new Pong(screenWidth/2, screenHeight, screenWidth/2, 0, color(238, 148, 39), players, balls2, 1);
 
     simon = new Simon(numberOfColorInSequence, numberOfLed);
     simonResolver = new SimonResolver(simon.sequenceToPlay);
 
-    simon.play();
+    //simon.play();
 }
 
 void draw()
 {
-    ////////////
-    // Mode 1 //
-    ////////////
-    //pongLeft.draw();
-    //pongRight.draw();
-
-    ////////////
-    // Mode 2 //
-    ////////////
-    pongTop.draw();
-    pongBottom.draw();
-
-    ////////////
-    // Mode 3 //
-    ////////////
-
-    ////////////
-    // Mode 4 //
-    ////////////
-    //pongFull.draw();
-
+    pongLeft.draw();
+    pongRight.draw();
 /*
     scorePlayerTop.displayScore();
     scorePlayerBottom.displayScore();
 */
 
-    //readArduino();
-    readKeyboard();
+    readArduino();
+    //readKeyboard();
 }
 
 void instantiateArduino()
 {
-    String portName = Serial.list()[3];
+    String portName = Serial.list()[2];
     myPort = new Serial(this, portName, 9600);
 }
 
@@ -150,6 +101,8 @@ void readArduino()
     if(!hasWaited){
         hasWaited = true;
         delay(1000);
+        simon.play();
+        sendStringToArduino();
     }
 
     if(myPort.available() > 0){
@@ -157,6 +110,9 @@ void readArduino()
         if(stringReceived != null) {
 
             moves = split(stringReceived,'$');
+            if (mousePressed == true) {
+                sendStringToArduino();
+            }
 
             if(moves.length == 3){
                 switch (int(moves[2].trim())) {
@@ -190,6 +146,16 @@ void readArduino()
     }
 }
 
+void sendStringToArduino() {
+    stringToSend = str(numberOfColorInSequence);
+    for(int i = 0; i < numberOfColorInSequence; i++) {
+        stringToSend += "$"+str(simon.sequenceToPlay.get(i));
+    }
+    stringToSend += "\n";
+    println(stringToSend);
+    myPort.write(stringToSend);
+}
+
 void resetSimon()
 {
     returnedValueByResolver = 0;
@@ -197,6 +163,7 @@ void resetSimon()
     simon = new Simon(++numberOfColorInSequence,numberOfLed);
     simonResolver = new SimonResolver(simon.sequenceToPlay);
     simon.play();
+    sendStringToArduino();
 }
 
 void readKeyboard()
@@ -280,8 +247,8 @@ void readKeyboard()
                 players.get(0).bar.shrinkBar();
             }
             else if (key == 'i' || key == 'I') {
-                pongLeft.ball.transparentMalus = true;
-                pongLeft.ball.isTransparent = true;
+                pongLeft.balls.transparentMalus = true;
+                pongLeft.balls.isTransparent = true;
             }
         //     else if (key == 'a' || key == 'A') {
         //         barTop.speedBar(increase);
@@ -322,6 +289,3 @@ void readKeyboard()
         }
     }
 }
-
-
-
