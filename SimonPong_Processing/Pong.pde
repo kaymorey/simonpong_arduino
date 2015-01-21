@@ -1,3 +1,9 @@
+//////////
+// Ball //
+//////////
+int radiusBall = 20;
+int posXBall;
+int posYBall;
 
 class Pong
 {
@@ -11,8 +17,8 @@ class Pong
     Ball ball;
     int mode;
 
-
-    Pong(Game pongGame, int pongWidth, int pongHeight, int pongPosX, int pongPosY, color pongBackground, ArrayList<Player> pongPlayers, Ball pongBall, int pongMode) {
+    Pong(Game pongGame, int pongWidth, int pongHeight, int pongPosX, int pongPosY, color pongBackground, ArrayList<Player> pongPlayers, int pongMode) {
+        
         game = pongGame;
         width = pongWidth;
         height = pongHeight;
@@ -20,8 +26,40 @@ class Pong
         posY = pongPosY;
         backgroundColor = pongBackground;
         players = pongPlayers;
-        ball = pongBall;
         mode = pongMode;
+
+        switch (mode) {
+            case 0 :
+                posXBall = screenWidth / 4;
+                posYBall = screenHeight / 2;
+                break;
+            case 1 :
+                posXBall = 3 * (screenWidth / 4);
+                posYBall = screenHeight / 2;
+                break;
+            case 2 :
+                posXBall = screenWidth / 4;
+                posYBall = screenHeight / 4;
+                break;
+            case 3 :
+                posXBall = 3 * (screenWidth / 4);
+                posYBall = 3 * (screenHeight / 4);
+                break;
+            case 4 :
+                posXBall = 0;
+                posYBall = 0;
+                break;
+            case 5 :
+                posXBall = 0;
+                posYBall = 0;
+                break;
+            default :
+                posXBall = screenWidth / 2;
+                posYBall = screenHeight / 2;
+                break;    
+        }
+
+        ball = new Ball(radiusBall, posXBall, posYBall);
     }
 
     void draw()
