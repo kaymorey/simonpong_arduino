@@ -11,8 +11,10 @@ class Player
 {
     int index;
     Bar bar;
+    SimonResolver resolver;
+    int returnedValueByResolver = 0;
 
-    Player(Minim minim, int indexPlayer)
+    Player(Minim minim, int indexPlayer, ArrayList<Integer> sequenceToPlay)
     {
         if(indexPlayer < 2) {
             barColor = color(255);
@@ -23,6 +25,8 @@ class Player
 
         index = indexPlayer;
         bar = new Bar(minim, barWidth, barHeight, index, barColor);
+
+        resolver = new SimonResolver(sequenceToPlay);
     }
 
     void draw()

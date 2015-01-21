@@ -21,7 +21,7 @@ class Simon
         }
     }
 
-    void win() {
-        println("WIN !!");
+    void win(int player) {
+        println("PLAYER "+str(player)+" WIN !!");
     }
 }

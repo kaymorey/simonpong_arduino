@@ -28,15 +28,20 @@ int interruptButtonRight_3 = 2;     // interrupt is on 0 (pin 2)
 int stateInterruptButtonRight_3 = 0;
 int stateRight = 255;               // variable to be updated by the interrupts
 
-int blueLed = 9;
-int redLed = 8;
-int yellowLed = 7;
-int greenLed = 6;
 
-boolean blueLedState = LOW;
-boolean redLedState = LOW;
-boolean yellowLedState = LOW;
-boolean greenLedState = LOW;
+int latchPin = 11;
+int clockPin = 13;
+int dataPin = 12;
+
+//int blueLed = 9;
+//int redLed = 8;
+//int yellowLed = 7;
+//int greenLed = 6;
+//
+//boolean blueLedState = LOW;
+//boolean redLedState = LOW;
+//boolean yellowLedState = LOW;
+//boolean greenLedState = LOW;
 
 long previousMillis = 0;
 long interval = 1000;
@@ -53,7 +58,10 @@ boolean stringToReadHasBeenRead = false;
 boolean hasWaitedToDisplaySequence = false;
  
 void setup() {
-  pinMode(yellowLed, OUTPUT); // Set pin as OUTPUT
+  //set pins to output because they are addressed in the main loop
+  pinMode(latchPin, OUTPUT);
+  pinMode(dataPin, OUTPUT);
+  pinMode(clockPin, OUTPUT);
   
   // player left
   pinMode(interruptButtonLeft_0, INPUT);
@@ -158,7 +166,14 @@ void loop() {
   }
 
   potValueLeft = analogRead(potPinLeft); // read the pot value
-  potValueRight = analogRead(potPinRight); // read the pot value
+  potValueRight = analogRead(potPinRight); // read the pot values
+  
+  
+  
+  
+  
+  
+  
   stringToSend = String(potValueLeft/4)+"$"+String(potValueRight/4)+"$"+String(stateLeft)+"$"+String(stateRight);
   Serial.println(stringToSend);      // print the pot value back to the debugger pane
   if(stateLeft != 255) {
@@ -190,41 +205,58 @@ void loop() {
           ledIsLighting = true;
           switch(sequence[currentindexSequence]) {
             case 0:
-              blueLedState = HIGH;
-              digitalWrite(blueLed, blueLedState);
+                registerWrite(7, HIGH);
+                registerWrite(3, HIGH);
+//              blueLedState = HIGH;
+//              digitalWrite(blueLed, blueLedState);
               break;
             case 1:
-              redLedState = HIGH;
-              digitalWrite(redLed, redLedState);
+                registerWrite(6, HIGH);
+                registerWrite(2, HIGH);
+//              redLedState = HIGH;
+//              digitalWrite(redLed, redLedState);
               break;
             case 2:
-              yellowLedState = HIGH;
-              digitalWrite(yellowLed, yellowLedState);
+                registerWrite(5, HIGH);
+                registerWrite(1, HIGH);
+//              yellowLedState = HIGH;
+//              digitalWrite(yellowLed, yellowLedState);
               break;
             case 3:
-              greenLedState = HIGH;
-              digitalWrite(greenLed, greenLedState);
+                registerWrite(4, HIGH);
+                registerWrite(0, HIGH);
+//              greenLedState = HIGH;
+//              digitalWrite(greenLed, greenLedState);
               break;
-          } 
+          }
+          //setLedOn(dataPin, clockPin, data);
         }
         else {
           ledIsLighting = false;
           switch(sequence[currentindexSequence]) {
             case 0:
-              blueLedState = LOW;
-              digitalWrite(blueLed, blueLedState);
+                registerWrite(7, LOW);
+                registerWrite(3, LOW);
+//              blueLedState = LOW;
+//              digitalWrite(blueLed, blueLedState);
               break;
             case 1:
-              redLedState = LOW;
-              digitalWrite(redLed, redLedState);
+                registerWrite(6, LOW);
+                registerWrite(2, LOW);
+//              redLedState = LOW;
+//              digitalWrite(redLed, redLedState);
               break;
             case 2:
-              yellowLedState = LOW;
-              digitalWrite(yellowLed, yellowLedState);
+                registerWrite(5, LOW);
+                registerWrite(1, LOW);
+//              yellowLedState = LOW;
+//              digitalWrite(yellowLed, yellowLedState);
               break;
             case 3:
-              greenLedState = LOW;
-              digitalWrite(greenLed, greenLedState);
+                registerWrite(4, LOW);
+                registerWrite(0, LOW);
+//              greenLedState = LOW;
+//              digitalWrite(greenLed, greenLedState);
               break;
           }
           currentindexSequence++;
@@ -243,6 +275,9 @@ void loop() {
   
   delay(30);                     // wait 30 milliseconds before the next loop
 }
+
+
+
 
 // player Left
 void changeStateLeft_0() {
@@ -294,6 +329,10 @@ void changeStateRight_3() {
   }
 }
 
+
+
+
+
 void readProcessing() {
     // read data from processing
   if (Serial.available() > 0) { // If data is available to read,
@@ -326,4 +365,48 @@ void readStringToRead() {
     }
     stringToRead = "";
     stringToReadHasBeenRead = false;
+}
+
+//blinks the whole register based on the number of times you want to 
+//blink "n" and the pause between them "d"
+//starts with a moment of darkness to make sure the first blink
+//has its full visual effect.
+//void blinkAll_2Bytes(int n, int d) {
+//  digitalWrite(latchPin, 0);
+//  shiftOut(dataPin, clockPin, 0);
+//  shiftOut(dataPin, clockPin, 0);
+//  digitalWrite(latchPin, 1);
+//  delay(200);
+//  for (int x = 0; x < n; x++) {
+//    digitalWrite(latchPin, 0);
+//    shiftOut(dataPin, clockPin, 255);
+//    shiftOut(dataPin, clockPin, 255);
+//    digitalWrite(latchPin, 1);
+//    delay(d);
+//    digitalWrite(latchPin, 0);
+//    shiftOut(dataPin, clockPin, 0);
+//    shiftOut(dataPin, clockPin, 0);
+//    digitalWrite(latchPin, 1);
+//    delay(d);
+//  }
+//}
+
+// the heart of the program
+void registerWrite(int whichPin, int whichState) {
+// the bits you want to send
+  byte bitsToSend = 0;
+
+  // turn off the output so the pins don't light up
+  // while you're shifting bits:
+  digitalWrite(latchPin, LOW);
+
+  // turn on the next highest bit in bitsToSend:
+  bitWrite(bitsToSend, whichPin, whichState);
+
+  // shift the bits out:
+  shiftOut(dataPin, clockPin, MSBFIRST, bitsToSend);
+
+    // turn on the output so the LEDs can light up:
+  digitalWrite(latchPin, HIGH);
+
 }

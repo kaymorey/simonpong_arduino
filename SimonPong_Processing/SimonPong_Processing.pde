@@ -63,9 +63,9 @@ Simon simon;
 int numberOfLed = 4;
 int numberOfColorInSequence = 3;
 // SimonResolver
-SimonResolver simonResolver;
+// SimonResolver simonResolver;
 boolean hasWaitedToReadInput = false;
-int returnedValueByResolver = 0; // /!\ cette variable doit être celle du joueur et récupérée pour chaque joueur. N'apparaît pas dans le main.
+ // /!\ cette variable doit être celle du joueur et récupérée pour chaque joueur. N'apparaît pas dans le main.
 
 ///////////////////
 // fightLauncher //
@@ -89,7 +89,7 @@ void setup()
     //////////
     minim = new Minim(this);
     game = new Game(minim);
-    // game.backgroundSound.player.play();
+    game.backgroundSound.player.play();
 
     /////////////
     // Arduino //
@@ -101,11 +101,17 @@ void setup()
     ////////////
     size(screenWidth, screenHeight);
 
+    ///////////
+    // Simon //
+    ///////////
+    simon = new Simon(numberOfColorInSequence, numberOfLed);
+    // simonResolver = new SimonResolver(simon.sequenceToPlay);
+
     ////////////
     // Player //
     ////////////
     for (int i = 0; i < playersNumber; i++) {
-        players.add(new Player(minim, i));
+        players.add(new Player(minim, i, simon.sequenceToPlay));
     }
 
     ///////////
@@ -142,12 +148,6 @@ void setup()
         /////////////
         pongFull = new Pong(game, screenWidth, screenHeight, 0, 0, color(169, 76, 79), players, 6);
 
-    ///////////
-    // Simon //
-    ///////////
-    simon = new Simon(numberOfColorInSequence, numberOfLed);
-    simonResolver = new SimonResolver(simon.sequenceToPlay);
-
     //simon.play();
 
     if (game.activeScreen == 0) {
@@ -157,6 +157,7 @@ void setup()
 
 void draw()
 {
+    int currentMillis = millis();
 
     if (game.activeScreen != 0) {
         //////////
@@ -192,39 +193,9 @@ void draw()
                 break;
         }
 
-        
+
         fightLauncherBottom.draw();
-        int currentMillis = millis();
-        if(fightLauncherBottom.fontSize >= 200) {
-            launcherNeedTowait = true;
-            currentTimer = fightLauncherBottom.valueToDisplay;
-            if(currentTimer == "3") {
-                fightLauncherBottom.valueToDisplay = "2";
-                fightLauncherBottom.fontSize = 0;
-            }
-            else if(currentTimer == "2") {
-                fightLauncherBottom.valueToDisplay = "1";
-                fightLauncherBottom.fontSize = 0;
-            }
-            else if(currentTimer == "1") {
-                fightLauncherBottom.valueToDisplay = "FIGHT !";
-                fightLauncherBottom.fontSize = 0;
-            }
-            else if(currentTimer == "FIGHT !") {
-                fightLauncherBottom.valueToDisplay = "";
-                fightLauncherBottom.fontSize = 0;
-                pongCanBeLaunched = true;
-            }
-        }
-        if(currentMillis - previousMillis > interval && fightLauncherBottom.valueToDisplay != "" && !launcherNeedTowait) {
-            previousMillis = currentMillis;
-            fightLauncherBottom.fontSize += 7;
-        }
-        else if(currentMillis - previousMillis > pauseInterval && launcherNeedTowait) {
-            previousMillis = currentMillis;
-            launcherNeedTowait = false;
-        }
-        
+        displayLauncher(currentMillis);
 
         // if(pongCanBeLaunched) {
         //     pongTop.draw();
@@ -274,36 +245,41 @@ void readArduino()
                 // joueur top left
                 switch (int(moves[2].trim())) {
                     case 0 :
-                        returnedValueByResolver = simonResolver.compareSolution(0);
+                        players.get(0).returnedValueByResolver = players.get(0).resolver.compareSolution(0);
                         break;
                     case 1 :
-                        returnedValueByResolver = simonResolver.compareSolution(1);
+                        players.get(0).returnedValueByResolver = players.get(0).resolver.compareSolution(1);
                         break;
                     case 2 :
-                        returnedValueByResolver = simonResolver.compareSolution(2);
+                        players.get(0).returnedValueByResolver = players.get(0).resolver.compareSolution(2);
                         break;
                     case 3 :
-                        returnedValueByResolver = simonResolver.compareSolution(3);
+                        players.get(0).returnedValueByResolver = players.get(0).resolver.compareSolution(3);
                         break;
                 }
                 // joueur top right
                 switch (int(moves[3].trim())) {
                     case 0 :
-                        returnedValueByResolver = simonResolver.compareSolution(0);
+                        players.get(1).returnedValueByResolver = players.get(1).resolver.compareSolution(0);
                         break;
                     case 1 :
-                        returnedValueByResolver = simonResolver.compareSolution(1);
+                        players.get(1).returnedValueByResolver = players.get(1).resolver.compareSolution(1);
                         break;
                     case 2 :
-                        returnedValueByResolver = simonResolver.compareSolution(2);
+                        players.get(1).returnedValueByResolver = players.get(1).resolver.compareSolution(2);
                         break;
                     case 3 :
-                        returnedValueByResolver = simonResolver.compareSolution(3);
+                        players.get(1).returnedValueByResolver = players.get(1).resolver.compareSolution(3);
                         break;
                 }
 
-                if(returnedValueByResolver == 2) {
-                    resetSimon();
+                // if(returnedValueByResolver == 2) {
+                //     resetSimon();
+                // }
+                for (int i = 0; i < playersNumber; i++) {
+                    if(players.get(i).returnedValueByResolver == 2) {
+                        resetSimon(i);
+                    }
                 }
 
                 playerTopLeft = int(moves[1].trim());
@@ -328,12 +304,16 @@ void sendStringToArduino()
     myPort.write(stringToSend);
 }
 
-void resetSimon()
+void resetSimon(int player)
 {
-    returnedValueByResolver = 0;
-    simon.win();
+    for (int i = 0; i < playersNumber; i++) {
+        players.get(i).returnedValueByResolver = 0;
+    }
+    simon.win(player);
     simon = new Simon(++numberOfColorInSequence,numberOfLed);
-    simonResolver = new SimonResolver(simon.sequenceToPlay);
+    for (int i = 0; i < playersNumber; i++) {
+        players.get(i).resolver = new SimonResolver(simon.sequenceToPlay);
+    }
     simon.play();
     sendStringToArduino();
 }
@@ -462,5 +442,38 @@ void readKeyboard()
         //          hasWaitedToReadInput = !hasWaitedToReadInput;
         //      }
         }
+    }
+}
+
+void displayLauncher(int currentMillis)
+{
+    if(fightLauncherBottom.fontSize >= 200) {
+        launcherNeedTowait = true;
+        currentTimer = fightLauncherBottom.valueToDisplay;
+        if(currentTimer == "3") {
+            fightLauncherBottom.valueToDisplay = "2";
+            fightLauncherBottom.fontSize = 0;
+        }
+        else if(currentTimer == "2") {
+            fightLauncherBottom.valueToDisplay = "1";
+            fightLauncherBottom.fontSize = 0;
+        }
+        else if(currentTimer == "1") {
+            fightLauncherBottom.valueToDisplay = "FIGHT !";
+            fightLauncherBottom.fontSize = 0;
+        }
+        else if(currentTimer == "FIGHT !") {
+            fightLauncherBottom.valueToDisplay = "";
+            fightLauncherBottom.fontSize = 0;
+            pongCanBeLaunched = true;
+        }
+    }
+    if(currentMillis - previousMillis > interval && fightLauncherBottom.valueToDisplay != "" && !launcherNeedTowait) {
+        previousMillis = currentMillis;
+        fightLauncherBottom.fontSize += 7;
+    }
+    else if(currentMillis - previousMillis > pauseInterval && launcherNeedTowait) {
+        previousMillis = currentMillis;
+        launcherNeedTowait = false;
     }
 }
