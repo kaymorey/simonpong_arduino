@@ -17,9 +17,10 @@ class Pong
     ArrayList<Player> players;
     Ball ball;
     int mode;
+    int lastBarTouched = -1;
 
     Pong(Game pongGame, int pongWidth, int pongHeight, int pongPosX, int pongPosY, color pongBackground, ArrayList<Player> pongPlayers, int pongMode) {
-        
+
         game = pongGame;
         width = pongWidth;
         height = pongHeight;
@@ -59,7 +60,7 @@ class Pong
             default :
                 posXBall = screenWidth / 2;
                 posYBall = screenHeight / 2;
-                break;    
+                break;
         }
 
         ball = new Ball(radiusBall, posXBall, posYBall);
@@ -124,16 +125,22 @@ class Pong
 
         // Score
         if (ball.posY > posY + height) {
-            //scorePlayerTop.scorePlayer += 1;
             game.loseSound.player.play();
             ball.initBall();
             game.loseSound.player.rewind();
+
+            if (mode != 2) {
+                scoreTeamTop.scorePlayer += 1;
+            }
         }
         else if (ball.posY < 0) {
-            //scorePlayerBottom.scorePlayer += 1;
             game.loseSound.player.play();
             ball.initBall();
             game.loseSound.player.rewind();
+
+            if (mode != 2) {
+                scoreTeamBottom.scorePlayer += 1;
+            }
         }
 
         // Ball
@@ -150,6 +157,50 @@ class Pong
         }
         else if (ball.testBallHitBar(players.get(3).bar)) {
             ball.changeBallDirection(players.get(3).bar.posX, -1);
+        }
+
+        if (mode == 2) {
+            if (ball.testBallHitBar(players.get(0).bar)) {
+                if (lastBarTouched == -1 || lastBarTouched != 0) {
+                    if (lastBarTouched != -1) {
+                        scoreTeamTop.scorePlayer += 1;
+                    }
+                    lastBarTouched = 0;
+                }
+            }
+            else if (ball.testBallHitBar(players.get(1).bar)) {
+                if (lastBarTouched == -1 || lastBarTouched != 1) {
+                    if (lastBarTouched != -1) {
+                        scoreTeamTop.scorePlayer += 1;
+                    }
+                    lastBarTouched = 1;
+                }
+            }
+            else if (ball.testBallHitBar(players.get(2).bar)) {
+                if (lastBarTouched == -1 || lastBarTouched != 2) {
+                    if (lastBarTouched != -1) {
+                        scoreTeamBottom.scorePlayer += 1;
+                    }
+                    lastBarTouched = 2;
+                }
+            }
+            else if (ball.testBallHitBar(players.get(3).bar)) {
+                if (lastBarTouched == -1 || lastBarTouched != 3) {
+                    if (lastBarTouched != -1) {
+                        scoreTeamBottom.scorePlayer += 1;
+                    }
+                    lastBarTouched = 3;
+                }
+            }
+
+            if (ball.posY > posY + height) {
+                scoreTeamBottom.maxScoreSecondMode = scoreTeamBottom.scorePlayer;
+                scoreTeamBottom.scorePlayer = 0;
+            }
+            else if (ball.posY < 0) {
+                scoreTeamTop.maxScoreSecondMode = scoreTeamTop.scorePlayer;
+                scoreTeamTop.scorePlayer = 0;
+            }
         }
     }
 }

@@ -21,8 +21,8 @@ Minim minim;//audio context
 ////////////
 // Screen //
 ////////////
-int screenWidth  = 1680;
-int screenHeight = 1050;
+int screenWidth  = 800;
+int screenHeight = 600;
 
 //////////
 // Pong //
@@ -48,9 +48,9 @@ int playerTopRight;
 ///////////
 // Score //
 ///////////
-Score scorePlayerTop;
-Score scorePlayerBottom;
-int scorePlayer = 0;
+Score scoreTeamTop;
+Score scoreTeamBottom;
+
 // Score Top
 int scorePosYTop = screenHeight / 4 + 50;
 // Score Bottom
@@ -117,13 +117,13 @@ void setup()
     ///////////
     // Score //
     ///////////
-    //scorePlayerTop = new Score(scorePlayer, scorePosYTop);
-    //scorePlayerBottom = new Score(scorePlayer, scorePosYBottom);
+    scoreTeamTop = new Score(0, scorePosYTop);
+    scoreTeamBottom = new Score(0, scorePosYBottom);
 
     //////////
     // Pong //
     //////////
-        level = 1;
+        level = 2;
 
         /////////////
         // Level 1 //
@@ -202,13 +202,29 @@ void draw()
         //     pongBottom.draw();
         // }
 
-    }
+        ///////////
+        // Score //
+        ///////////
+        scoreTeamTop.displayScore();
+        scoreTeamBottom.displayScore();
 
-    ///////////
-    // Score //
-    ///////////
-    //scorePlayerTop.displayScore();
-    //scorePlayerBottom.displayScore();
+    }
+    else {
+        if (game.pressPhraseOpacity < 255 && game.increasePhraseOpacity) {
+            game.pressPhraseOpacity += 6;
+        }
+        else if (game.pressPhraseOpacity > 0 && !game.increasePhraseOpacity) {
+            game.pressPhraseOpacity -= 6;
+        }
+        else if (game.pressPhraseOpacity >= 255) {
+            game.increasePhraseOpacity = false;
+        }
+        else if (game.pressPhraseOpacity <= 0) {
+            game.increasePhraseOpacity = true;
+        }
+
+        game.drawInitialScreen();
+    }
 
     /////////////
     // Arduino //

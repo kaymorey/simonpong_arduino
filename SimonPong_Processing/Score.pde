@@ -3,6 +3,7 @@ class Score {
     String scoreText;
     int scorePlayer;
     int scorePosY;
+    int maxScoreSecondMode;
 
     Score(int score, int posY)
     {
@@ -14,7 +15,7 @@ class Score {
      void displayScore()
     {
         scoreText = str(scorePlayer);
-        fill(28, 28, 28);
+        fill(55);
         textFont(scoreFont);
         text(scoreText, (screenWidth - textWidth(scoreText)) / 2, scorePosY); // 50 is font-size / 2
     }
