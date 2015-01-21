@@ -1,5 +1,5 @@
 import processing.serial.*;
-int conteur = 0;
+int previousMillis = 0;
 
 Serial myPort;
 String stringReceived;
@@ -60,6 +60,17 @@ int returnedValueByResolver = 0; // /!\ cette variable doit être celle du joueu
 boolean hasWaited = false;
 boolean firstContact = false;
 
+///////////////////
+// fightLauncher //
+///////////////////
+int interval = 5;
+int pauseInterval = 300;
+FightLauncher fightLauncherBottom;
+boolean launcherNeedTowait = false;
+String currentTimer;
+boolean pongCanBeLaunched = true;
+
+
 void setup() {
     
     instantiateArduino();
@@ -72,6 +83,11 @@ void setup() {
 
     scorePlayerTop = new Score(scorePlayer, scorePosYTop);
     scorePlayerBottom = new Score(scorePlayer, scorePosYBottom);
+
+    ///////////////////
+    // fightLauncher //
+    ///////////////////
+    fightLauncherBottom = new FightLauncher("3",5,scorePosYBottom);
 
     ////////////
     // Mode 1 //
@@ -120,8 +136,10 @@ void draw()
     ////////////
     // Mode 2 //
     ////////////
-    pongTop.draw();
-    pongBottom.draw();
+    if(pongCanBeLaunched) {
+        pongTop.draw();
+        pongBottom.draw();
+    }
 
     ////////////
     // Mode 3 //
@@ -136,6 +154,37 @@ void draw()
     scorePlayerTop.displayScore();
     scorePlayerBottom.displayScore();
 */
+    fightLauncherBottom.draw();
+    int currentMillis = millis();
+    if(fightLauncherBottom.fontSize >= 200) {
+        launcherNeedTowait = true;
+        currentTimer = fightLauncherBottom.valueToDisplay;
+        if(currentTimer == "3") {
+            fightLauncherBottom.valueToDisplay = "2";
+            fightLauncherBottom.fontSize = 0;
+        }
+        else if(currentTimer == "2") {
+            fightLauncherBottom.valueToDisplay = "1";
+            fightLauncherBottom.fontSize = 0;
+        }
+        else if(currentTimer == "1") {
+            fightLauncherBottom.valueToDisplay = "FIGHT !";
+            fightLauncherBottom.fontSize = 0;
+        }
+        else if(currentTimer == "FIGHT !") {
+            fightLauncherBottom.valueToDisplay = "";
+            fightLauncherBottom.fontSize = 0;
+            pongCanBeLaunched = true;
+        }
+    }
+    if(currentMillis - previousMillis > interval && fightLauncherBottom.valueToDisplay != "" && !launcherNeedTowait) {
+        previousMillis = currentMillis;
+        fightLauncherBottom.fontSize += 7;
+    }
+    else if(currentMillis - previousMillis > pauseInterval && launcherNeedTowait) {
+        previousMillis = currentMillis;
+        launcherNeedTowait = false;
+    }
 
     readArduino();
     //readKeyboard();
@@ -143,7 +192,7 @@ void draw()
 
 void instantiateArduino()
 {
-    String portName = Serial.list()[2];
+    String portName = Serial.list()[3];
     myPort = new Serial(this, portName, 9600);
 }
 
@@ -159,14 +208,30 @@ void readArduino()
     if(myPort.available() > 0){
         stringReceived = myPort.readStringUntil('\n');
         if(stringReceived != null) {
-
+            //println("stringReceived: "+stringReceived);
             moves = split(stringReceived,'$');
             if (mousePressed == true) {
                 sendStringToArduino();
             }
 
-            if(moves.length == 3){
+            if(moves.length == 4){
+                // joueur top left
                 switch (int(moves[2].trim())) {
+                    case 0 :
+                        returnedValueByResolver = simonResolver.compareSolution(0);
+                        break;
+                    case 1 :
+                        returnedValueByResolver = simonResolver.compareSolution(1);
+                        break;
+                    case 2 :
+                        returnedValueByResolver = simonResolver.compareSolution(2);
+                        break;
+                    case 3 :
+                        returnedValueByResolver = simonResolver.compareSolution(3);
+                        break;
+                }
+                // joueur top right
+                switch (int(moves[3].trim())) {
                     case 0 :
                         returnedValueByResolver = simonResolver.compareSolution(0);
                         break;
