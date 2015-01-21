@@ -1,20 +1,33 @@
 import processing.serial.*;
+import ddf.minim.*;
+
 int previousMillis = 0;
 
+/////////////
+// Arduino //
+/////////////
 Serial myPort;
 String stringReceived;
 String stringToSend;
 String[] moves;
+boolean hasWaited = false;
 
-// int playerTop;
-// int playerBottom;
-int screenWidth  = 1280;
-int screenHeight = 768;
+//////////
+// Game //
+//////////
+Game game;
+Minim minim;//audio context
 
-int playerTopLeft;
-int playerTopRight;
+////////////
+// Screen //
+////////////
+int screenWidth  = 1680;
+int screenHeight = 1050;
 
-// Pong
+//////////
+// Pong //
+//////////
+int level;
 Pong pongLeft;
 Pong pongRight;
 Pong pongTop;
@@ -23,21 +36,18 @@ Pong pongDiagonalTLBR;
 Pong pongDiagonalTRBL;
 Pong pongFull;
 
-// Players
+////////////
+// Player //
+////////////
 int playersNumber = 4;
 ArrayList<Player> players = new ArrayList<Player>();
+// Temporaire
+int playerTopLeft;
+int playerTopRight;
 
-// Ball
-Ball ballLeft;
-Ball ballRight;
-Ball ballTop;
-Ball ballBottom;
-Ball ballFull;
-int radiusBall = 20;
-int posXBall = screenWidth / 2;
-int posYBall = screenHeight / 2;
-
-// Score
+///////////
+// Score //
+///////////
 Score scorePlayerTop;
 Score scorePlayerBottom;
 int scorePlayer = 0;
@@ -46,19 +56,16 @@ int scorePosYTop = screenHeight / 4 + 50;
 // Score Bottom
 int scorePosYBottom = screenHeight - (screenHeight / 4 - 50);
 
-// Simon
+///////////
+// Simon //
+///////////
 Simon simon;
 int numberOfLed = 4;
 int numberOfColorInSequence = 3;
-
 // SimonResolver
 SimonResolver simonResolver;
 boolean hasWaitedToReadInput = false;
 int returnedValueByResolver = 0; // /!\ cette variable doit être celle du joueur et récupérée pour chaque joueur. N'apparaît pas dans le main.
-
-
-boolean hasWaited = false;
-boolean firstContact = false;
 
 ///////////////////
 // fightLauncher //
@@ -70,124 +77,173 @@ boolean launcherNeedTowait = false;
 String currentTimer;
 boolean pongCanBeLaunched = true;
 
-
-void setup() {
-    
-    instantiateArduino();
-
-    size(screenWidth, screenHeight);
-
-    for (int i = 0; i < playersNumber; i++) {
-        players.add(new Player(i));
-    }
-
-    scorePlayerTop = new Score(scorePlayer, scorePosYTop);
-    scorePlayerBottom = new Score(scorePlayer, scorePosYBottom);
-
+void setup()
+{
     ///////////////////
     // fightLauncher //
     ///////////////////
     fightLauncherBottom = new FightLauncher("3",5,scorePosYBottom);
 
-    ////////////
-    // Mode 1 //
-    ////////////
-    ballLeft = new Ball(radiusBall, posXBall/2, posYBall);
-    ballRight = new Ball(radiusBall, 3*(screenWidth/4), posYBall);
+    //////////
+    // Game //
+    //////////
+    minim = new Minim(this);
+    game = new Game(minim);
+    // game.backgroundSound.player.play();
 
-    pongLeft = new Pong(screenWidth/2, screenHeight, 0, 0, color(41, 118, 174), players, ballLeft, 0);
-    pongRight = new Pong(screenWidth/2, screenHeight, screenWidth/2, 0, color(238, 148, 39), players, ballRight, 1);
-
-    ////////////
-    // Mode 2 //
-    ////////////
-    ballTop = new Ball(radiusBall, screenWidth/4, posYBall/2);
-    ballBottom = new Ball(radiusBall, 3*(screenWidth/4), 3*(screenHeight/4));
-
-    pongTop = new Pong(screenWidth, screenHeight/2, 0, 0, color(41, 118, 174), players, ballTop, 2);
-    pongBottom = new Pong(screenWidth, screenHeight/2, 0, screenHeight/2, color(238, 148, 39), players, ballBottom, 3);
+    /////////////
+    // Arduino //
+    /////////////
+    instantiateArduino();
 
     ////////////
-    // Mode 3 //
+    // Screen //
     ////////////
+    size(screenWidth, screenHeight);
 
     ////////////
-    // Mode 4 //
+    // Player //
     ////////////
-    ballFull = new Ball(radiusBall, screenWidth/2, screenHeight/2);
+    for (int i = 0; i < playersNumber; i++) {
+        players.add(new Player(minim, i));
+    }
 
-    pongFull = new Pong(screenWidth, screenHeight, 0, 0, color(169, 76, 79), players, ballFull, 6);
-    ////////////
+    ///////////
+    // Score //
+    ///////////
+    //scorePlayerTop = new Score(scorePlayer, scorePosYTop);
+    //scorePlayerBottom = new Score(scorePlayer, scorePosYBottom);
 
+    //////////
+    // Pong //
+    //////////
+        level = 1;
+
+        /////////////
+        // Level 1 //
+        /////////////
+        pongLeft = new Pong(game, screenWidth/2, screenHeight, 0, 0, color(41, 118, 174), players, 0);
+        pongRight = new Pong(game, screenWidth/2, screenHeight, screenWidth/2, 0, color(238, 148, 39), players, 1);
+
+        /////////////
+        // Level 2 //
+        /////////////
+        pongTop = new Pong(game, screenWidth, screenHeight/2, 0, 0, color(41, 118, 174), players, 2);
+        pongBottom = new Pong(game, screenWidth, screenHeight/2, 0, screenHeight/2, color(238, 148, 39), players, 3);
+
+        /////////////
+        // Level 3 //
+        /////////////
+        pongDiagonalTLBR = new Pong(game, screenWidth, screenHeight, 0, 0, color(221), players, 4);
+        pongDiagonalTRBL = new Pong(game, screenWidth, screenHeight, 0, 0, color(221), players, 5);
+
+        /////////////
+        // Level 4 //
+        /////////////
+        pongFull = new Pong(game, screenWidth, screenHeight, 0, 0, color(169, 76, 79), players, 6);
+
+    ///////////
+    // Simon //
+    ///////////
     simon = new Simon(numberOfColorInSequence, numberOfLed);
     simonResolver = new SimonResolver(simon.sequenceToPlay);
 
     //simon.play();
+
+    if (game.activeScreen == 0) {
+        game.drawInitialScreen();
+    }
 }
 
 void draw()
 {
-    ////////////
-    // Mode 1 //
-    ////////////
-    //pongLeft.draw();
-    //pongRight.draw();
 
-    ////////////
-    // Mode 2 //
-    ////////////
-    if(pongCanBeLaunched) {
-        pongTop.draw();
-        pongBottom.draw();
+    if (game.activeScreen != 0) {
+        //////////
+        // Pong //
+        //////////
+        switch (level) {
+            case 1 :
+                /////////////
+                // Level 1 //
+                /////////////
+                pongLeft.draw();
+                pongRight.draw();
+                break;
+            case 2 :
+                /////////////
+                // Level 2 //
+                /////////////
+                pongTop.draw();
+                pongBottom.draw();
+                break;
+            case 3 :
+                /////////////
+                // Level 3 //
+                /////////////
+                pongDiagonalTLBR.draw();
+                pongDiagonalTRBL.draw();
+                break;
+            default :
+                /////////////
+                // Level 4 //
+                /////////////
+                pongFull.draw();
+                break;
+        }
+
+        
+        fightLauncherBottom.draw();
+        int currentMillis = millis();
+        if(fightLauncherBottom.fontSize >= 200) {
+            launcherNeedTowait = true;
+            currentTimer = fightLauncherBottom.valueToDisplay;
+            if(currentTimer == "3") {
+                fightLauncherBottom.valueToDisplay = "2";
+                fightLauncherBottom.fontSize = 0;
+            }
+            else if(currentTimer == "2") {
+                fightLauncherBottom.valueToDisplay = "1";
+                fightLauncherBottom.fontSize = 0;
+            }
+            else if(currentTimer == "1") {
+                fightLauncherBottom.valueToDisplay = "FIGHT !";
+                fightLauncherBottom.fontSize = 0;
+            }
+            else if(currentTimer == "FIGHT !") {
+                fightLauncherBottom.valueToDisplay = "";
+                fightLauncherBottom.fontSize = 0;
+                pongCanBeLaunched = true;
+            }
+        }
+        if(currentMillis - previousMillis > interval && fightLauncherBottom.valueToDisplay != "" && !launcherNeedTowait) {
+            previousMillis = currentMillis;
+            fightLauncherBottom.fontSize += 7;
+        }
+        else if(currentMillis - previousMillis > pauseInterval && launcherNeedTowait) {
+            previousMillis = currentMillis;
+            launcherNeedTowait = false;
+        }
+        
+
+        // if(pongCanBeLaunched) {
+        //     pongTop.draw();
+        //     pongBottom.draw();
+        // }
+
     }
 
-    ////////////
-    // Mode 3 //
-    ////////////
+    ///////////
+    // Score //
+    ///////////
+    //scorePlayerTop.displayScore();
+    //scorePlayerBottom.displayScore();
 
-    ////////////
-    // Mode 4 //
-    ////////////
-    //pongFull.draw();
-
-/*
-    scorePlayerTop.displayScore();
-    scorePlayerBottom.displayScore();
-*/
-    fightLauncherBottom.draw();
-    int currentMillis = millis();
-    if(fightLauncherBottom.fontSize >= 200) {
-        launcherNeedTowait = true;
-        currentTimer = fightLauncherBottom.valueToDisplay;
-        if(currentTimer == "3") {
-            fightLauncherBottom.valueToDisplay = "2";
-            fightLauncherBottom.fontSize = 0;
-        }
-        else if(currentTimer == "2") {
-            fightLauncherBottom.valueToDisplay = "1";
-            fightLauncherBottom.fontSize = 0;
-        }
-        else if(currentTimer == "1") {
-            fightLauncherBottom.valueToDisplay = "FIGHT !";
-            fightLauncherBottom.fontSize = 0;
-        }
-        else if(currentTimer == "FIGHT !") {
-            fightLauncherBottom.valueToDisplay = "";
-            fightLauncherBottom.fontSize = 0;
-            pongCanBeLaunched = true;
-        }
-    }
-    if(currentMillis - previousMillis > interval && fightLauncherBottom.valueToDisplay != "" && !launcherNeedTowait) {
-        previousMillis = currentMillis;
-        fightLauncherBottom.fontSize += 7;
-    }
-    else if(currentMillis - previousMillis > pauseInterval && launcherNeedTowait) {
-        previousMillis = currentMillis;
-        launcherNeedTowait = false;
-    }
-
+    /////////////
+    // Arduino //
+    /////////////
     readArduino();
-    //readKeyboard();
+    readKeyboard();
 }
 
 void instantiateArduino()
@@ -262,13 +318,13 @@ void readArduino()
     }
 }
 
-void sendStringToArduino() {
+void sendStringToArduino()
+{
     stringToSend = str(numberOfColorInSequence);
     for(int i = 0; i < numberOfColorInSequence; i++) {
         stringToSend += "$"+str(simon.sequenceToPlay.get(i));
     }
     stringToSend += "\n";
-    println(stringToSend);
     myPort.write(stringToSend);
 }
 
@@ -295,16 +351,19 @@ void readKeyboard()
                     players.get(0).bar.posX += 5;
                 }
              }
-             else if (keyCode == RIGHT) {
+            else if (keyCode == RIGHT) {
                 if (!players.get(0).bar.controlInverted && players.get(0).bar.posX < screenWidth / 2 - players.get(0).bar.width) {
                     players.get(0).bar.posX += 5;
                 }
                 else if (players.get(0).bar.controlInverted && players.get(0).bar.posX > 0) {
                     players.get(0).bar.posX -= 5;
                 }
-             }
+            }
         }
         else {
+            if (key == ENTER) {
+                game.activeScreen = 1;
+            }
             // Controls for bottom left bar
             if (key == 'q' || key == 'Q') {
                 if (!players.get(2).bar.controlInverted && players.get(2).bar.posX > 0) {
@@ -357,20 +416,20 @@ void readKeyboard()
                 }
             }
             else if (key == 'e' || key == 'E') {
-                players.get(0).bar.expandBar();
+                players.get(0).bar.expand();
             }
             else if (key == 'r' || key == 'R') {
-                players.get(0).bar.shrinkBar();
+                players.get(0).bar.shrink();
             }
             else if (key == 'i' || key == 'I') {
                 pongLeft.ball.transparentMalus = true;
                 pongLeft.ball.isTransparent = true;
             }
         //     else if (key == 'a' || key == 'A') {
-        //         barTop.speedBar(increase);
+        //         barTop.speed(increase);
         //     }
         //     else if (key == 'z' || key == 'Z') {
-        //         barTop.speedBar(!increase);
+        //         barTop.speed(!increase);
         //     }
         //     else if (key == 'w' || key == 'W') {
         //         barTop.controlInverted = !barTop.controlInverted;

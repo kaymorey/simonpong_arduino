@@ -1,43 +1,107 @@
+//////////
+// Ball //
+//////////
+int radiusBall = 20;
+int posXBall;
+int posYBall;
 
 class Pong
 {
+    Game game;
     int width;
     int height;
     int posX;
     int posY;
     color backgroundColor;
+    color backgroundColor2;
     ArrayList<Player> players;
     Ball ball;
     int mode;
 
-
-    Pong(int pongWidth, int pongHeight, int pongPosX, int pongPosY, color pongBackground, ArrayList<Player> pongPlayers, Ball pongBall, int pongMode) {
+    Pong(Game pongGame, int pongWidth, int pongHeight, int pongPosX, int pongPosY, color pongBackground, ArrayList<Player> pongPlayers, int pongMode) {
+        
+        game = pongGame;
         width = pongWidth;
         height = pongHeight;
         posX = pongPosX;
         posY = pongPosY;
         backgroundColor = pongBackground;
         players = pongPlayers;
-        ball = pongBall;
         mode = pongMode;
+
+        switch (mode) {
+            case 0 :
+                posXBall = screenWidth / 4;
+                posYBall = screenHeight / 2;
+                break;
+            case 1 :
+                posXBall = 3 * (screenWidth / 4);
+                posYBall = screenHeight / 2;
+                break;
+            case 2 :
+                posXBall = screenWidth / 4;
+                posYBall = screenHeight / 4;
+                break;
+            case 3 :
+                posXBall = 3 * (screenWidth / 4);
+                posYBall = 3 * (screenHeight / 4);
+                break;
+            case 4 :
+                posXBall = 500;
+                posYBall = 500;
+                backgroundColor2 = color(41, 118, 174);
+                break;
+            case 5 :
+                posXBall = 500;
+                posYBall = 500;
+                backgroundColor2 = color(238, 148, 39);
+                break;
+            default :
+                posXBall = screenWidth / 2;
+                posYBall = screenHeight / 2;
+                break;    
+        }
+
+        ball = new Ball(radiusBall, posXBall, posYBall);
+
+        drawBackground(255);
     }
 
     void draw()
     {
-        drawBackground();
+
+        drawBackground(80);
         drawLine();
         play();
-
         /*
         scorePlayerTop.displayScore();
         scorePlayerBottom.displayScore();
         */
     }
 
-    void drawBackground()
+    void drawBackground(int bgAlpha)
     {
+        if (mode == 4) {
+            noStroke();
+            fill(backgroundColor2, bgAlpha);
+            rect(0, 0, width/2, height/2);
+
+            noStroke();
+            fill(backgroundColor2, bgAlpha);
+            rect(width/2, height/2, width/2, height/2);
+        }
+        if (mode == 5) {
+            noStroke();
+            fill(backgroundColor2, bgAlpha);
+            rect(width/2, 0, width/2, height/2);
+
+            noStroke();
+            fill(backgroundColor2, bgAlpha);
+            rect(0, height/2, width/2, height/2);
+        }
+
         noStroke();
-        fill(backgroundColor, 80);
+        fill(backgroundColor, bgAlpha);
         rect(posX, posY, width, height);
     }
 
@@ -55,17 +119,21 @@ class Pong
     {
         players.get(0).draw();
         players.get(1).draw();
-        players.get(2).draw(); 
+        players.get(2).draw();
         players.get(3).draw();
 
         // Score
         if (ball.posY > posY + height) {
             //scorePlayerTop.scorePlayer += 1;
+            game.loseSound.player.play();
             ball.initBall();
+            game.loseSound.player.rewind();
         }
         else if (ball.posY < 0) {
             //scorePlayerBottom.scorePlayer += 1;
+            game.loseSound.player.play();
             ball.initBall();
+            game.loseSound.player.rewind();
         }
 
         // Ball
