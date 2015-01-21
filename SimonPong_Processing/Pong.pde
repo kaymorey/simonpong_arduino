@@ -12,7 +12,7 @@ class Pong
     int mode;
 
 
-    Pong(Game pongGame, int pongWidth, int pongHeight, int pongPosX, int pongPosY, color pongBackground, ArrayList<Player> pongPlayers, Ball pongBalls, int pongMode) {
+    Pong(Game pongGame, int pongWidth, int pongHeight, int pongPosX, int pongPosY, color pongBackground, ArrayList<Player> pongPlayers, Ball pongBall, int pongMode) {
         game = pongGame;
         width = pongWidth;
         height = pongHeight;

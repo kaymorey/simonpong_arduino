@@ -61,7 +61,7 @@ void setup() {
 
     // game.backgroundSound.player.play();
 
-    // instantiateArduino();
+    instantiateArduino();
 
     size(screenWidth, screenHeight);
 
@@ -82,6 +82,10 @@ void setup() {
     simonResolver = new SimonResolver(simon.sequenceToPlay);
 
     //simon.play();
+
+    if (game.activeScreen == 0) {
+        game.displayInitialScreen();
+    }
 }
 
 void draw()
@@ -165,7 +169,6 @@ void sendStringToArduino() {
         stringToSend += "$"+str(simon.sequenceToPlay.get(i));
     }
     stringToSend += "\n";
-    println(stringToSend);
     myPort.write(stringToSend);
 }
 
@@ -263,10 +266,10 @@ void readKeyboard()
             else if (key == 'r' || key == 'R') {
                 players.get(0).bar.shrinkBar();
             }
-            else if (key == 'i' || key == 'I') {
-                pongLeft.balls.transparentMalus = true;
-                pongLeft.balls.isTransparent = true;
-            }
+            // else if (key == 'i' || key == 'I') {
+            //     pongLeft.balls.transparentMalus = true;
+            //     pongLeft.balls.isTransparent = true;
+            // }
         //     else if (key == 'a' || key == 'A') {
         //         barTop.speedBar(increase);
         //     }
