@@ -19,8 +19,8 @@ Minim minim;//audio context
 ////////////
 // Screen //
 ////////////
-int screenWidth  = 1280;
-int screenHeight = 768;
+int screenWidth  = 1680;
+int screenHeight = 1050;
 
 //////////
 // Pong //
@@ -78,7 +78,7 @@ void setup()
     /////////////
     // Arduino //
     /////////////
-    //instantiateArduino();
+    instantiateArduino();
 
     ////////////
     // Screen //
@@ -101,7 +101,7 @@ void setup()
     //////////
     // Pong //
     //////////
-    level = 1;
+        level = 1;
 
         /////////////
         // Level 1 //
@@ -118,6 +118,8 @@ void setup()
         /////////////
         // Level 3 //
         /////////////
+        pongDiagonalTLBR = new Pong(game, screenWidth, screenHeight, 0, 0, color(221), players, 4);
+        pongDiagonalTRBL = new Pong(game, screenWidth, screenHeight, 0, 0, color(221), players, 5);
 
         /////////////
         // Level 4 //
@@ -165,7 +167,8 @@ void draw()
                 /////////////
                 // Level 3 //
                 /////////////
-
+                pongDiagonalTLBR.draw();
+                pongDiagonalTRBL.draw();
                 break;
             default :
                 /////////////
@@ -185,7 +188,7 @@ void draw()
     /////////////
     // Arduino //
     /////////////
-    //readArduino();
+    readArduino();
     readKeyboard();
 }
 

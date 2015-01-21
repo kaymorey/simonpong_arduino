@@ -13,6 +13,7 @@ class Pong
     int posX;
     int posY;
     color backgroundColor;
+    color backgroundColor2;
     ArrayList<Player> players;
     Ball ball;
     int mode;
@@ -46,12 +47,14 @@ class Pong
                 posYBall = 3 * (screenHeight / 4);
                 break;
             case 4 :
-                posXBall = 0;
-                posYBall = 0;
+                posXBall = 500;
+                posYBall = 500;
+                backgroundColor2 = color(41, 118, 174);
                 break;
             case 5 :
-                posXBall = 0;
-                posYBall = 0;
+                posXBall = 500;
+                posYBall = 500;
+                backgroundColor2 = color(238, 148, 39);
                 break;
             default :
                 posXBall = screenWidth / 2;
@@ -60,12 +63,14 @@ class Pong
         }
 
         ball = new Ball(radiusBall, posXBall, posYBall);
+
+        drawBackground(255);
     }
 
     void draw()
     {
 
-        drawBackground();
+        drawBackground(80);
         drawLine();
         play();
         /*
@@ -74,10 +79,29 @@ class Pong
         */
     }
 
-    void drawBackground()
+    void drawBackground(int bgAlpha)
     {
+        if (mode == 4) {
+            noStroke();
+            fill(backgroundColor2, bgAlpha);
+            rect(0, 0, width/2, height/2);
+
+            noStroke();
+            fill(backgroundColor2, bgAlpha);
+            rect(width/2, height/2, width/2, height/2);
+        }
+        if (mode == 5) {
+            noStroke();
+            fill(backgroundColor2, bgAlpha);
+            rect(width/2, 0, width/2, height/2);
+
+            noStroke();
+            fill(backgroundColor2, bgAlpha);
+            rect(0, height/2, width/2, height/2);
+        }
+
         noStroke();
-        fill(backgroundColor, 80);
+        fill(backgroundColor, bgAlpha);
         rect(posX, posY, width, height);
     }
 
