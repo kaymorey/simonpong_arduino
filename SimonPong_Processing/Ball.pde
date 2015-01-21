@@ -84,6 +84,8 @@ class Ball
     boolean testBallHitBar(Bar bar) {
 
         if ((posX + radius / 2 >= bar.posX && posX - radius / 2 <= bar.posX + bar.width) && (posY + radius / 2 >= bar.posY && posY - radius / 2 <= bar.posY + bar.height)) {
+            bar.sound.player.play();
+            bar.sound.player.rewind();
             // Collision
             return true;
         }

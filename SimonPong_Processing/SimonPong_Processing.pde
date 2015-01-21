@@ -1,5 +1,5 @@
 import processing.serial.*;
-int conteur = 0;
+import ddf.minim.*;
 
 Serial myPort;
 String stringReceived;
@@ -8,8 +8,10 @@ String[] moves;
 
 // int playerTop;
 // int playerBottom;
+Game game;
 int screenWidth  = 1280;
 int screenHeight = 768;
+Minim minim;//audio context
 
 int playerTopLeft;
 int playerTopRight;
@@ -61,13 +63,18 @@ boolean hasWaited = false;
 boolean firstContact = false;
 
 void setup() {
-    
+
+    minim = new Minim(this);
+    game = new Game(minim);
+
+    // game.backgroundSound.player.play();
+
     instantiateArduino();
 
     size(screenWidth, screenHeight);
 
     for (int i = 0; i < playersNumber; i++) {
-        players.add(new Player(i));
+        players.add(new Player(minim, i));
     }
 
     scorePlayerTop = new Score(scorePlayer, scorePosYTop);
@@ -107,30 +114,39 @@ void setup() {
     simonResolver = new SimonResolver(simon.sequenceToPlay);
 
     //simon.play();
+
+    if (game.activeScreen == 0) {
+        game.displayInitialScreen();
+    }
 }
 
 void draw()
 {
-    ////////////
-    // Mode 1 //
-    ////////////
-    //pongLeft.draw();
-    //pongRight.draw();
+    if (game.activeScreen == 0) {
+        game.drawInitialScreen();
+    }
+    else {
+        ////////////
+        // Mode 1 //
+        ////////////
+        //pongLeft.draw();
+        //pongRight.draw();
 
-    ////////////
-    // Mode 2 //
-    ////////////
-    pongTop.draw();
-    pongBottom.draw();
+        ////////////
+        // Mode 2 //
+        ////////////
+        pongTop.draw();
+        pongBottom.draw();
 
-    ////////////
-    // Mode 3 //
-    ////////////
+        ////////////
+        // Mode 3 //
+        ////////////
 
-    ////////////
-    // Mode 4 //
-    ////////////
-    //pongFull.draw();
+        ////////////
+        // Mode 4 //
+        ////////////
+        //pongFull.draw();
+    }
 
 /*
     scorePlayerTop.displayScore();
@@ -203,7 +219,6 @@ void sendStringToArduino() {
         stringToSend += "$"+str(simon.sequenceToPlay.get(i));
     }
     stringToSend += "\n";
-    println(stringToSend);
     myPort.write(stringToSend);
 }
 
@@ -230,16 +245,20 @@ void readKeyboard()
                     players.get(0).bar.posX += 5;
                 }
              }
-             else if (keyCode == RIGHT) {
+            else if (keyCode == RIGHT) {
                 if (!players.get(0).bar.controlInverted && players.get(0).bar.posX < screenWidth / 2 - players.get(0).bar.width) {
                     players.get(0).bar.posX += 5;
                 }
                 else if (players.get(0).bar.controlInverted && players.get(0).bar.posX > 0) {
                     players.get(0).bar.posX -= 5;
                 }
-             }
+            }
         }
         else {
+            if (key == ENTER) {
+                println("enter");
+                game.activeScreen = 1;
+            }
             // Controls for bottom left bar
             if (key == 'q' || key == 'Q') {
                 if (!players.get(2).bar.controlInverted && players.get(2).bar.posX > 0) {
