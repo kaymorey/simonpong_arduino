@@ -48,7 +48,7 @@ class Pong
         float blueColor = blue(backgroundColor)-30;
 
         stroke(redColor, greenColor, blueColor);
-        line(posX, posY + height / 2, posX+width, posY + height / 2);
+        line(posX, posY + height / 2, posX + width, posY + height / 2);
     }
 
     void play()
