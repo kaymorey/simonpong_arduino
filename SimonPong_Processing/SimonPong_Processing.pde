@@ -86,8 +86,8 @@ void setup() {
     ballLeft = new Ball(radiusBall, posXBall/2, posYBall);
     ballRight = new Ball(radiusBall, 3*(screenWidth/4), posYBall);
 
-    pongLeft = new Pong(screenWidth/2, screenHeight, 0, 0, color(41, 118, 174), players, ballLeft, 0);
-    pongRight = new Pong(screenWidth/2, screenHeight, screenWidth/2, 0, color(238, 148, 39), players, ballRight, 1);
+    pongLeft = new Pong(game, screenWidth/2, screenHeight, 0, 0, color(41, 118, 174), players, ballLeft, 0);
+    pongRight = new Pong(game, screenWidth/2, screenHeight, screenWidth/2, 0, color(238, 148, 39), players, ballRight, 1);
 
     ////////////
     // Mode 2 //
@@ -95,8 +95,8 @@ void setup() {
     ballTop = new Ball(radiusBall, screenWidth/4, posYBall/2);
     ballBottom = new Ball(radiusBall, 3*(screenWidth/4), 3*(screenHeight/4));
 
-    pongTop = new Pong(screenWidth, screenHeight/2, 0, 0, color(41, 118, 174), players, ballTop, 2);
-    pongBottom = new Pong(screenWidth, screenHeight/2, 0, screenHeight/2, color(238, 148, 39), players, ballBottom, 3);
+    pongTop = new Pong(game, screenWidth, screenHeight/2, 0, 0, color(41, 118, 174), players, ballTop, 2);
+    pongBottom = new Pong(game, screenWidth, screenHeight/2, 0, screenHeight/2, color(238, 148, 39), players, ballBottom, 3);
 
     ////////////
     // Mode 3 //
@@ -107,7 +107,7 @@ void setup() {
     ////////////
     ballFull = new Ball(radiusBall, screenWidth/2, screenHeight/2);
 
-    pongFull = new Pong(screenWidth, screenHeight, 0, 0, color(169, 76, 79), players, ballFull, 6);
+    pongFull = new Pong(game, screenWidth, screenHeight, 0, 0, color(169, 76, 79), players, ballFull, 6);
     ////////////
 
     simon = new Simon(numberOfColorInSequence, numberOfLed);
@@ -126,6 +126,7 @@ void draw()
         game.drawInitialScreen();
     }
     else {
+        println("game");
         ////////////
         // Mode 1 //
         ////////////
@@ -153,8 +154,8 @@ void draw()
     scorePlayerBottom.displayScore();
 */
 
-    readArduino();
-    //readKeyboard();
+    // readArduino();
+    readKeyboard();
 }
 
 void instantiateArduino()
@@ -256,7 +257,6 @@ void readKeyboard()
         }
         else {
             if (key == ENTER) {
-                println("enter");
                 game.activeScreen = 1;
             }
             // Controls for bottom left bar
