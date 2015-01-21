@@ -1,3 +1,4 @@
+
 class Bar
 {
     int posX;
@@ -71,7 +72,7 @@ class Bar
         //triangle(posXBar+barWidth, barHeight, posXBar+barWidth, posYBar, posXBar+barWidth+50, posYBar);
     }
 
-    void expandBar()
+    void expand()
     {
         if (width + 20 <= maxWidth) {
             width += 20;
@@ -79,7 +80,7 @@ class Bar
         }
     }
 
-    void shrinkBar()
+    void shrink()
     {
         if (width - 20 >= minWidth) {
             width -= 20;
@@ -87,7 +88,7 @@ class Bar
         }
     }
 
-    void speedBar(boolean increase)
+    void speed(boolean increase)
     {
         if (increase && (barSpeed + 5 <= maxSpeed)) {
             barSpeed += 5;

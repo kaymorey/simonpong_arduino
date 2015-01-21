@@ -1,22 +1,31 @@
 import processing.serial.*;
 import ddf.minim.*;
 
+/////////////
+// Arduino //
+/////////////
 Serial myPort;
 String stringReceived;
 String stringToSend;
 String[] moves;
+boolean hasWaited = false;
 
-// int playerTop;
-// int playerBottom;
+//////////
+// Game //
+//////////
 Game game;
-int screenWidth  = 1280;
-int screenHeight = 768;
 Minim minim;//audio context
 
-int playerTopLeft;
-int playerTopRight;
+////////////
+// Screen //
+////////////
+int screenWidth  = 1280;
+int screenHeight = 768;
 
-// Pong
+//////////
+// Pong //
+//////////
+int level;
 Pong pongLeft;
 Pong pongRight;
 Pong pongTop;
@@ -25,21 +34,18 @@ Pong pongDiagonalTLBR;
 Pong pongDiagonalTRBL;
 Pong pongFull;
 
-// Players
+////////////
+// Player //
+////////////
 int playersNumber = 4;
 ArrayList<Player> players = new ArrayList<Player>();
+// Temporaire
+int playerTopLeft;
+int playerTopRight;
 
-// Ball
-Ball ballLeft;
-Ball ballRight;
-Ball ballTop;
-Ball ballBottom;
-Ball ballFull;
-int radiusBall = 20;
-int posXBall = screenWidth / 2;
-int posYBall = screenHeight / 2;
-
-// Score
+///////////
+// Score //
+///////////
 Score scorePlayerTop;
 Score scorePlayerBottom;
 int scorePlayer = 0;
@@ -48,68 +54,79 @@ int scorePosYTop = screenHeight / 4 + 50;
 // Score Bottom
 int scorePosYBottom = screenHeight - (screenHeight / 4 - 50);
 
-// Simon
+///////////
+// Simon //
+///////////
 Simon simon;
 int numberOfLed = 4;
 int numberOfColorInSequence = 3;
-
 // SimonResolver
 SimonResolver simonResolver;
 boolean hasWaitedToReadInput = false;
 int returnedValueByResolver = 0; // /!\ cette variable doit être celle du joueur et récupérée pour chaque joueur. N'apparaît pas dans le main.
 
 
-boolean hasWaited = false;
-boolean firstContact = false;
-
-void setup() {
-
+void setup() 
+{
+    //////////
+    // Game //
+    //////////
     minim = new Minim(this);
     game = new Game(minim);
-
     // game.backgroundSound.player.play();
 
-    instantiateArduino();
+    /////////////
+    // Arduino //
+    /////////////
+    //instantiateArduino();
 
+    ////////////
+    // Screen //
+    ////////////
     size(screenWidth, screenHeight);
 
+    ////////////
+    // Player //
+    ////////////
     for (int i = 0; i < playersNumber; i++) {
         players.add(new Player(minim, i));
     }
 
-    scorePlayerTop = new Score(scorePlayer, scorePosYTop);
-    scorePlayerBottom = new Score(scorePlayer, scorePosYBottom);
+    ///////////
+    // Score //
+    ///////////
+    //scorePlayerTop = new Score(scorePlayer, scorePosYTop);
+    //scorePlayerBottom = new Score(scorePlayer, scorePosYBottom);
+    
+    //////////
+    // Pong //
+    //////////
+    level = 1;
 
-    ////////////
-    // Mode 1 //
-    ////////////
-    ballLeft = new Ball(radiusBall, posXBall/2, posYBall);
-    ballRight = new Ball(radiusBall, 3*(screenWidth/4), posYBall);
+        /////////////
+        // Level 1 //
+        /////////////
+        pongLeft = new Pong(game, screenWidth/2, screenHeight, 0, 0, color(41, 118, 174), players, 0);
+        pongRight = new Pong(game, screenWidth/2, screenHeight, screenWidth/2, 0, color(238, 148, 39), players, 1);
 
-    pongLeft = new Pong(game, screenWidth/2, screenHeight, 0, 0, color(41, 118, 174), players, ballLeft, 0);
-    pongRight = new Pong(game, screenWidth/2, screenHeight, screenWidth/2, 0, color(238, 148, 39), players, ballRight, 1);
+        /////////////
+        // Level 2 //
+        /////////////
+        pongTop = new Pong(game, screenWidth, screenHeight/2, 0, 0, color(41, 118, 174), players, 2);
+        pongBottom = new Pong(game, screenWidth, screenHeight/2, 0, screenHeight/2, color(238, 148, 39), players, 3);
 
-    ////////////
-    // Mode 2 //
-    ////////////
-    ballTop = new Ball(radiusBall, screenWidth/4, posYBall/2);
-    ballBottom = new Ball(radiusBall, 3*(screenWidth/4), 3*(screenHeight/4));
+        /////////////
+        // Level 3 //
+        /////////////
 
-    pongTop = new Pong(game, screenWidth, screenHeight/2, 0, 0, color(41, 118, 174), players, ballTop, 2);
-    pongBottom = new Pong(game, screenWidth, screenHeight/2, 0, screenHeight/2, color(238, 148, 39), players, ballBottom, 3);
+        /////////////
+        // Level 4 //
+        /////////////
+        pongFull = new Pong(game, screenWidth, screenHeight, 0, 0, color(169, 76, 79), players, 6);
 
-    ////////////
-    // Mode 3 //
-    ////////////
-
-    ////////////
-    // Mode 4 //
-    ////////////
-    ballFull = new Ball(radiusBall, screenWidth/2, screenHeight/2);
-
-    pongFull = new Pong(game, screenWidth, screenHeight, 0, 0, color(169, 76, 79), players, ballFull, 6);
-    ////////////
-
+    ///////////
+    // Simon //
+    ///////////
     simon = new Simon(numberOfColorInSequence, numberOfLed);
     simonResolver = new SimonResolver(simon.sequenceToPlay);
 
@@ -126,34 +143,49 @@ void draw()
         // game.drawInitialScreen();
     }
     else {
-        ////////////
-        // Mode 1 //
-        ////////////
-        //pongLeft.draw();
-        //pongRight.draw();
+        //////////
+        // Pong //
+        //////////
+        switch (level) {
+            case 1 :
+                /////////////
+                // Level 1 //
+                /////////////
+                pongLeft.draw();
+                pongRight.draw();
+                break;
+            case 2 :
+                /////////////
+                // Level 2 //
+                /////////////
+                pongTop.draw();
+                pongBottom.draw();
+                break;
+            case 3 :
+                /////////////
+                // Level 3 //
+                /////////////
 
-        ////////////
-        // Mode 2 //
-        ////////////
-        pongTop.draw();
-        pongBottom.draw();
-
-        ////////////
-        // Mode 3 //
-        ////////////
-
-        ////////////
-        // Mode 4 //
-        ////////////
-        //pongFull.draw();
+                break;
+            default :
+                /////////////
+                // Level 4 //
+                /////////////
+                pongFull.draw();           
+                break;                
+        }
     }
+    
+    ///////////
+    // Score //
+    ///////////
+    //scorePlayerTop.displayScore();
+    //scorePlayerBottom.displayScore();
 
-/*
-    scorePlayerTop.displayScore();
-    scorePlayerBottom.displayScore();
-*/
-
-    // readArduino();
+    /////////////
+    // Arduino //
+    /////////////
+    //readArduino();
     readKeyboard();
 }
 
@@ -213,7 +245,8 @@ void readArduino()
     }
 }
 
-void sendStringToArduino() {
+void sendStringToArduino() 
+{
     stringToSend = str(numberOfColorInSequence);
     for(int i = 0; i < numberOfColorInSequence; i++) {
         stringToSend += "$"+str(simon.sequenceToPlay.get(i));
@@ -310,20 +343,20 @@ void readKeyboard()
                 }
             }
             else if (key == 'e' || key == 'E') {
-                players.get(0).bar.expandBar();
+                players.get(0).bar.expand();
             }
             else if (key == 'r' || key == 'R') {
-                players.get(0).bar.shrinkBar();
+                players.get(0).bar.shrink();
             }
             else if (key == 'i' || key == 'I') {
                 pongLeft.ball.transparentMalus = true;
                 pongLeft.ball.isTransparent = true;
             }
         //     else if (key == 'a' || key == 'A') {
-        //         barTop.speedBar(increase);
+        //         barTop.speed(increase);
         //     }
         //     else if (key == 'z' || key == 'Z') {
-        //         barTop.speedBar(!increase);
+        //         barTop.speed(!increase);
         //     }
         //     else if (key == 'w' || key == 'W') {
         //         barTop.controlInverted = !barTop.controlInverted;
