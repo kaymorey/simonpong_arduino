@@ -42,16 +42,19 @@ class Ball
     void drawBall()
     {
         noStroke();
+
         if (!isTransparent) {
             fill(255,255,255);
+            smooth();
         }
         else {
             fill(255,255,255, 0);
         }
+
         ellipse(posX, posY, radius, radius);
     }
 
-    void moveBall(int pongWidth, int pongPosX)
+    void moveBall(int pongWidth, int pongHeight, int pongPosX, int pongPosY, int mode)
     {
         if (transparentMalus) {
             if (counter == 30) {
@@ -68,7 +71,12 @@ class Ball
         if (posX + radius / 2 > pongPosX + pongWidth || posX - radius / 2 < pongPosX) {
             incrementX = -incrementX;
         }
+
         posY += incrementY;
+
+        if ((mode == 2 && (posY + radius / 2 > pongPosY + pongHeight)) || (mode == 3 && (posY - radius / 2 < pongPosY))) {
+            incrementY = -incrementY;
+        }
 
         drawBall();
     }

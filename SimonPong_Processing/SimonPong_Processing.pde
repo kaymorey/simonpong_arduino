@@ -5,6 +5,7 @@ Minim minim;//audio context
 
 Serial myPort;
 String stringReceived;
+String stringToSend;
 String[] moves;
 
 // int playerTop;
@@ -51,6 +52,7 @@ int returnedValueByResolver = 0; // /!\ cette variable doit être celle du joueu
 
 
 boolean hasWaited = false;
+boolean firstContact = false;
 
 void setup() {
 
@@ -63,7 +65,6 @@ void setup() {
     //instantiateArduino();
 
     size(screenWidth, screenHeight);
-    background(41, 41, 41);
 
     for (int i = 0; i < playersNumber; i++) {
         players.add(new Player(minim, i));
@@ -76,12 +77,12 @@ void setup() {
     scorePlayerBottom = new Score(scorePlayer, scorePosYBottom);
 
     pongLeft = new Pong(screenWidth/2, screenHeight, 0, 0, color(41, 118, 174), players, balls, 0);
-    pongRight = new Pong(screenWidth/2, screenHeight, screenWidth/2, 0, color(251, 211, 89), players, balls2, 1);
+    pongRight = new Pong(screenWidth/2, screenHeight, screenWidth/2, 0, color(238, 148, 39), players, balls2, 1);
 
     simon = new Simon(numberOfColorInSequence, numberOfLed);
     simonResolver = new SimonResolver(simon.sequenceToPlay);
 
-    simon.play();
+    //simon.play();
 }
 
 void draw()
@@ -93,13 +94,13 @@ void draw()
     scorePlayerBottom.displayScore();
 */
 
-    //readArduino();
-    readKeyboard();
+    readArduino();
+    //readKeyboard();
 }
 
 void instantiateArduino()
 {
-    String portName = Serial.list()[3];
+    String portName = Serial.list()[2];
     myPort = new Serial(this, portName, 9600);
 }
 
@@ -108,6 +109,8 @@ void readArduino()
     if(!hasWaited){
         hasWaited = true;
         delay(1000);
+        simon.play();
+        sendStringToArduino();
     }
 
     if(myPort.available() > 0){
@@ -115,6 +118,9 @@ void readArduino()
         if(stringReceived != null) {
 
             moves = split(stringReceived,'$');
+            if (mousePressed == true) {
+                sendStringToArduino();
+            }
 
             if(moves.length == 3){
                 switch (int(moves[2].trim())) {
@@ -148,6 +154,16 @@ void readArduino()
     }
 }
 
+void sendStringToArduino() {
+    stringToSend = str(numberOfColorInSequence);
+    for(int i = 0; i < numberOfColorInSequence; i++) {
+        stringToSend += "$"+str(simon.sequenceToPlay.get(i));
+    }
+    stringToSend += "\n";
+    println(stringToSend);
+    myPort.write(stringToSend);
+}
+
 void resetSimon()
 {
     returnedValueByResolver = 0;
@@ -155,6 +171,7 @@ void resetSimon()
     simon = new Simon(++numberOfColorInSequence,numberOfLed);
     simonResolver = new SimonResolver(simon.sequenceToPlay);
     simon.play();
+    sendStringToArduino();
 }
 
 void readKeyboard()
@@ -280,6 +297,3 @@ void readKeyboard()
         }
     }
 }
-
-
-

@@ -7,60 +7,38 @@ class Pong
     int posY;
     color backgroundColor;
     ArrayList<Player> players;
-    Ball balls;
+    Ball ball;
     int mode;
 
 
-    Pong(int pongWidth, int pongHeight, int pongPosX, int pongPosY, color pongBackground, ArrayList<Player> pongPlayers, Ball pongBalls, int pongMode) {
+    Pong(int pongWidth, int pongHeight, int pongPosX, int pongPosY, color pongBackground, ArrayList<Player> pongPlayers, Ball pongBall, int pongMode) {
         width = pongWidth;
         height = pongHeight;
         posX = pongPosX;
         posY = pongPosY;
         backgroundColor = pongBackground;
         players = pongPlayers;
-        balls = pongBalls;
+        ball = pongBall;
         mode = pongMode;
     }
 
     void draw()
     {
-        noStroke();
-        fill(backgroundColor);
-        rect(posX, posY, width, height);
 
+        drawBackground();
         drawLine();
-
-        switch (mode) {
-            case 0 : // Pong Left
-                play(players.get(0), players.get(2), balls);
-                break;
-            case 1 : // Pong Right
-                play(players.get(1), players.get(3), balls);
-                break;
-            case 2 : // Pong Top
-                play(players.get(0), players.get(1), balls);
-                break;
-            case 3 : // Pong Bottom
-                play(players.get(2), players.get(3), balls);
-                break;
-            case 4 : // Pong Left Top - Right Bottom
-
-                break;
-            case 5 : // Pong Left Bottom - Right Top
-
-                break;
-            default : // Pong Full
-                players.get(0).draw();
-                players.get(1).draw();
-                players.get(2).draw();
-                players.get(3).draw();
-                break;
-        }
-
+        play();
         /*
         scorePlayerTop.displayScore();
         scorePlayerBottom.displayScore();
         */
+    }
+
+    void drawBackground()
+    {
+        noStroke();
+        fill(backgroundColor, 80);
+        rect(posX, posY, width, height);
     }
 
     void drawLine()
@@ -70,16 +48,18 @@ class Pong
         float blueColor = blue(backgroundColor)-30;
 
         stroke(redColor, greenColor, blueColor);
-        line(posX, height / 2, posX+width, height / 2);
+        line(posX, posY + height / 2, posX+width, posY + height / 2);
     }
 
-    void play(Player playerTop, Player playerBottom, Ball ball)
+    void play()
     {
-        playerTop.draw();
-        playerBottom.draw();
+        players.get(0).draw();
+        players.get(1).draw();
+        players.get(2).draw();
+        players.get(3).draw();
 
         // Score
-        if (ball.posY > height) {
+        if (ball.posY > posY + height) {
             //scorePlayerTop.scorePlayer += 1;
             ball.initBall();
         }
@@ -89,13 +69,19 @@ class Pong
         }
 
         // Ball
-        ball.moveBall(width, posX);
+        ball.moveBall(width, height, posX, posY, mode);
 
-        if (ball.testBallHitBar(playerTop.bar)) {
-            ball.changeBallDirection(playerTop.bar.posX, 1);
+        if (ball.testBallHitBar(players.get(0).bar)) {
+            ball.changeBallDirection(players.get(0).bar.posX, 1);
         }
-        else if (ball.testBallHitBar(playerBottom.bar)) {
-            ball.changeBallDirection(playerBottom.bar.posX, -1);
+        else if (ball.testBallHitBar(players.get(1).bar)) {
+            ball.changeBallDirection(players.get(1).bar.posX, 1);
+        }
+        else if (ball.testBallHitBar(players.get(2).bar)) {
+            ball.changeBallDirection(players.get(2).bar.posX, -1);
+        }
+        else if (ball.testBallHitBar(players.get(3).bar)) {
+            ball.changeBallDirection(players.get(3).bar.posX, -1);
         }
     }
 }
