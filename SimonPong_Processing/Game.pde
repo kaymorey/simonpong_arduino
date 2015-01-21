@@ -21,13 +21,20 @@ class Game {
         rect(0, 0, screenWidth, screenHeight / 2);
         fill(251, 211, 89);
         rect(0, screenHeight / 2, screenWidth, screenHeight / 2);
+
+        displayInitialScreen();
     }
 
     void displayInitialScreen()
     {
+        println("display text");
         String txt = "Press any button to play";
         fill(255);
-        textFont(pressBtnFont);
-        text(txt, (screenWidth - textWidth(txt)) / 2, screenHeight - 120);
+        textSize(32);
+        text(txt, 10, 30);
+        // String txt = "Press any button to play";
+        // fill(255);
+        // textFont(pressBtnFont);
+        // text(txt, (screenWidth - textWidth(txt)) / 2, 0);
     }
 }

@@ -116,17 +116,16 @@ void setup() {
     //simon.play();
 
     if (game.activeScreen == 0) {
-        game.displayInitialScreen();
+        game.drawInitialScreen();
     }
 }
 
 void draw()
 {
     if (game.activeScreen == 0) {
-        game.drawInitialScreen();
+        // game.drawInitialScreen();
     }
     else {
-        println("game");
         ////////////
         // Mode 1 //
         ////////////
