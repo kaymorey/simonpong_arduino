@@ -17,10 +17,10 @@ class Player
     Player(Minim minim, int indexPlayer, ArrayList<Integer> sequenceToPlay)
     {
         if(indexPlayer < 2) {
-            barColor = color(255);
+            barColor = color(255);//color(136, 111, 86);
         }
         else {
-            barColor = color(200);
+            barColor = color(60, 40, 20);
         }
 
         index = indexPlayer;

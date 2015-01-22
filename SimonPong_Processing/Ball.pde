@@ -16,6 +16,10 @@ class Ball
     boolean isTransparent;
     boolean ballAtTheTop = true;
 
+    int timer = 0;
+    int maxTimer = 100;
+    boolean loadingEnd = false;
+
     Ball(int radiusBall, int initialPosXBall, int initialPosYBall) {
         radius = radiusBall;
         initialPosX = initialPosXBall;
@@ -28,10 +32,29 @@ class Ball
     void initBall()
     {
         ballAtTheTop = true;
+        loadingEnd = false;
 
         posX = initialPosX;
         posY = initialPosY;
         initIncrements();
+    }
+
+    void loading()
+    {
+        drawBall();
+
+        noFill();
+        stroke(255, 100);
+
+        if(timer < maxTimer) {
+            arc(initialPosX, initialPosY, 3*radius, 3*radius, -(2*PI)/4, timer*(2*PI)/maxTimer-(2*PI)/4);
+        }
+        else {
+            timer = 0;
+            loadingEnd = true;
+        }
+
+        timer++;
     }
 
     void initIncrements()

@@ -208,7 +208,13 @@ class Pong
         }
 
         // Ball
-        ball.moveBall(width, height, posX, posY, mode);
+        if(ball.loadingEnd) {
+            ball.moveBall(width, height, posX, posY, mode);
+        }
+        else {
+            ball.loading();
+        }
+        
 
         if (ball.testBallHitBar(players.get(0).bar)) {
             ball.changeBallDirection(players.get(0).bar.posX, 1);
