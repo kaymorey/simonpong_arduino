@@ -14,7 +14,7 @@ class Score {
         scoreColor = sColor;
     }
 
-     void displayScore()
+     void display(int pongPosX, int pongWidth)
     {
         scoreText = str(scorePlayer);
 
@@ -24,7 +24,7 @@ class Score {
 
         fill(redColor, greenColor, blueColor);
         textFont(scoreFont);
-        text(scoreText, (screenWidth - textWidth(scoreText)) / 2, scorePosY); // 50 is font-size / 2
+        text(scoreText, pongPosX + (pongWidth - textWidth(scoreText)) / 2, scorePosY + 35); // 50 is font-size / 2
     }
 /*
     void displayTopScore()

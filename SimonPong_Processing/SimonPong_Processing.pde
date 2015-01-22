@@ -50,12 +50,6 @@ int playerTopRight;
 ///////////
 // Score //
 ///////////
-Score scoreTeamTop;
-Score scoreTeamBottom;
-
-// Score Top
-int scorePosYTop = screenHeight / 4 + 50;
-// Score Bottom
 int scorePosYBottom = screenHeight - (screenHeight / 4 - 50);
 
 ///////////
@@ -115,12 +109,6 @@ void setup()
         players.add(new Player(minim, i, simon.sequenceToPlay));
     }
 
-    ///////////
-    // Score //
-    ///////////
-    scoreTeamTop = new Score(0, scorePosYTop, color(41, 118, 174));
-    scoreTeamBottom = new Score(0, scorePosYBottom, color(238, 148, 39));
-
     //////////
     // Pong //
     //////////
@@ -141,8 +129,8 @@ void setup()
         /////////////
         // Level 3 //
         /////////////
-        pongDiagonalTLBR = new Pong(game, screenWidth, screenHeight, 0, 0, color(100), players, 4);
-        pongDiagonalTRBL = new Pong(game, screenWidth, screenHeight, 0, 0, color(100), players, 5);
+        pongDiagonalTLBR = new Pong(game, screenWidth, screenHeight, 0, 0, color(41, 118, 174), players, 4);
+        pongDiagonalTRBL = new Pong(game, screenWidth, screenHeight, 0, 0, color(238, 148, 39), players, 5);
 
         /////////////
         // Level 4 //
@@ -202,12 +190,6 @@ void draw()
         //     pongTop.draw();
         //     pongBottom.draw();
         // }
-
-        ///////////
-        // Score //
-        ///////////
-        scoreTeamTop.displayScore();
-        scoreTeamBottom.displayScore();
 
     }
     else {
