@@ -6,6 +6,9 @@ class Game {
     PFont pressBtnFont;
     PFont gameNameFont;
 
+    int pressPhraseOpacity = 255;
+    boolean increasePhraseOpacity = true;
+
     Game(Minim minim)
     {
         pressBtnFont = loadFont("BebasNeueBook-30.vlw");
@@ -15,6 +18,7 @@ class Game {
         backgroundSound.player.setGain(-6);
 
         loseSound = new Sound(minim, "lose.mp3");
+        loseSound.player.setGain(-5);
     }
 
     void drawInitialScreen()
@@ -41,13 +45,17 @@ class Game {
         textSize(72);
         text(txt, (screenWidth - textWidth(txt)) / 2, screenHeight / 2 + 72);
 
-        txt = "Press any button to play";
-        fill(255);
+        displayPressPhrase();
+    }
+
+    void displayPressPhrase()
+    {
+        String txt = "Press any button to play";
+        fill(255, 255, 255, pressPhraseOpacity);
         textFont(pressBtnFont);
         text(txt, (screenWidth - textWidth(txt)) / 2, screenHeight - 30);
 
         rotate(PI);
         text(txt, - (screenWidth + textWidth(txt)) / 2, - 30);
-
     }
 }

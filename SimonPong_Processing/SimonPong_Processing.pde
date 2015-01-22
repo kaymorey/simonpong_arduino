@@ -23,10 +23,8 @@ Minim minim;//audio context
 ////////////
 // Screen //
 ////////////
-// int screenWidth  = 1680;
-// int screenHeight = 1050;
-int screenWidth  = 840;
-int screenHeight = 525;
+int screenWidth  = 1280;//1680;
+int screenHeight = 800;//1050;
 
 //////////
 // Pong //
@@ -52,9 +50,9 @@ int playerTopRight;
 ///////////
 // Score //
 ///////////
-Score scorePlayerTop;
-Score scorePlayerBottom;
-int scorePlayer = 0;
+Score scoreTeamTop;
+Score scoreTeamBottom;
+
 // Score Top
 int scorePosYTop = screenHeight / 4 + 50;
 // Score Bottom
@@ -97,7 +95,7 @@ void setup()
     /////////////
     // Arduino //
     /////////////
-    instantiateArduino();
+    //instantiateArduino();
 
     ////////////
     // Screen //
@@ -120,13 +118,13 @@ void setup()
     ///////////
     // Score //
     ///////////
-    //scorePlayerTop = new Score(scorePlayer, scorePosYTop);
-    //scorePlayerBottom = new Score(scorePlayer, scorePosYBottom);
+    scoreTeamTop = new Score(0, scorePosYTop, color(41, 118, 174));
+    scoreTeamBottom = new Score(0, scorePosYBottom, color(238, 148, 39));
 
     //////////
     // Pong //
     //////////
-        level = 1;
+        level = 3;
 
         /////////////
         // Level 1 //
@@ -143,8 +141,8 @@ void setup()
         /////////////
         // Level 3 //
         /////////////
-        pongDiagonalTLBR = new Pong(game, screenWidth, screenHeight, 0, 0, color(221), players, 4);
-        pongDiagonalTRBL = new Pong(game, screenWidth, screenHeight, 0, 0, color(221), players, 5);
+        pongDiagonalTLBR = new Pong(game, screenWidth, screenHeight, 0, 0, color(100), players, 4);
+        pongDiagonalTRBL = new Pong(game, screenWidth, screenHeight, 0, 0, color(100), players, 5);
 
         /////////////
         // Level 4 //
@@ -205,21 +203,37 @@ void draw()
         //     pongBottom.draw();
         // }
 
-    }
+        ///////////
+        // Score //
+        ///////////
+        scoreTeamTop.displayScore();
+        scoreTeamBottom.displayScore();
 
-    ///////////
-    // Score //
-    ///////////
-    //scorePlayerTop.displayScore();
-    //scorePlayerBottom.displayScore();
+    }
+    else {
+        if (game.pressPhraseOpacity < 255 && game.increasePhraseOpacity) {
+            game.pressPhraseOpacity += 6;
+        }
+        else if (game.pressPhraseOpacity > 0 && !game.increasePhraseOpacity) {
+            game.pressPhraseOpacity -= 6;
+        }
+        else if (game.pressPhraseOpacity >= 255) {
+            game.increasePhraseOpacity = false;
+        }
+        else if (game.pressPhraseOpacity <= 0) {
+            game.increasePhraseOpacity = true;
+        }
+
+        game.drawInitialScreen();
+    }
 
     /////////////
     // Arduino //
     /////////////
-    readArduino();
+    //readArduino();
     readKeyboard();
 
-    sendArduino();
+    //sendArduino();
 }
 
 void instantiateArduino()
@@ -392,6 +406,7 @@ void readKeyboard()
         else {
             if (key == ENTER) {
                 game.activeScreen = 1;
+                background(255);
             }
             // Controls for bottom left bar
             if (key == 'q' || key == 'Q') {
