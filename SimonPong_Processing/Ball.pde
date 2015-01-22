@@ -14,6 +14,7 @@ class Ball
 
     boolean transparentMalus;
     boolean isTransparent;
+    boolean ballAtTheTop = true;
 
     Ball(int radiusBall, int initialPosXBall, int initialPosYBall) {
         radius = radiusBall;
@@ -26,6 +27,8 @@ class Ball
 
     void initBall()
     {
+        ballAtTheTop = true;
+
         posX = initialPosX;
         posY = initialPosY;
         initIncrements();
@@ -68,8 +71,48 @@ class Ball
 
         posX += incrementX;
 
-        if (posX + radius / 2 > pongPosX + pongWidth || posX - radius / 2 < pongPosX) {
+        if ((posX + radius / 2 > pongPosX + pongWidth) || (posX - radius / 2 < pongPosX)) {
             incrementX = -incrementX;
+        }
+        else if ((mode == 4) && (posX + radius / 2 > pongWidth / 2) && (posY - radius / 2 < pongHeight / 2)) {
+            
+            if (!ballAtTheTop) {
+                posX = posX - pongWidth / 2;
+                ballAtTheTop = true;
+            }
+            else {
+                incrementX = -incrementX;
+            }
+        }
+        else if ((mode == 4) && (posX - radius / 2 < pongWidth / 2) && (posY + radius / 2 > pongHeight / 2)) {
+
+            if (ballAtTheTop) {
+                posX = posX + pongWidth / 2;
+                ballAtTheTop = false;
+            }
+            else {
+                incrementX = -incrementX;
+            }
+        }
+        else if ((mode == 5) && (posX + radius / 2 > pongWidth / 2) && (posY + radius / 2 > pongHeight / 2)) {
+            
+            if (ballAtTheTop) {
+                posX = posX - pongWidth / 2;
+                ballAtTheTop = false;
+            }
+            else {
+                incrementX = -incrementX;
+            }
+        }
+        else if ((mode == 5) && (posX - radius / 2 < pongWidth / 2) && (posY - radius / 2 < pongHeight / 2)) {
+            
+            if (!ballAtTheTop) {
+                posX = posX + pongWidth / 2;
+                ballAtTheTop = true;
+            }
+            else {
+                incrementX = -incrementX;
+            }
         }
 
         posY += incrementY;

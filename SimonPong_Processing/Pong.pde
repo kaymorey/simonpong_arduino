@@ -47,13 +47,13 @@ class Pong
                 posYBall = 3 * (screenHeight / 4);
                 break;
             case 4 :
-                posXBall = 500;
-                posYBall = 500;
+                posXBall = screenWidth / 4;
+                posYBall = screenHeight / 2 - 50;
                 backgroundColor2 = color(41, 118, 174);
                 break;
             case 5 :
-                posXBall = 500;
-                posYBall = 500;
+                posXBall = 3 * (screenWidth / 4);
+                posYBall = screenHeight / 2 - 50;
                 backgroundColor2 = color(238, 148, 39);
                 break;
             default :
@@ -72,6 +72,7 @@ class Pong
 
         drawBackground(80);
         drawLine();
+        drawPlayer();
         play();
         /*
         scorePlayerTop.displayScore();
@@ -90,7 +91,7 @@ class Pong
             fill(backgroundColor2, bgAlpha);
             rect(width/2, height/2, width/2, height/2);
         }
-        if (mode == 5) {
+        else if (mode == 5) {
             noStroke();
             fill(backgroundColor2, bgAlpha);
             rect(width/2, 0, width/2, height/2);
@@ -99,10 +100,11 @@ class Pong
             fill(backgroundColor2, bgAlpha);
             rect(0, height/2, width/2, height/2);
         }
-
-        noStroke();
-        fill(backgroundColor, bgAlpha);
-        rect(posX, posY, width, height);
+        else {
+            noStroke();
+            fill(backgroundColor, bgAlpha);
+            rect(posX, posY, width, height);
+        }
     }
 
     void drawLine()
@@ -115,13 +117,16 @@ class Pong
         line(posX, posY + height / 2, posX + width, posY + height / 2);
     }
 
-    void play()
+    void drawPlayer()
     {
         players.get(0).draw();
         players.get(1).draw();
         players.get(2).draw();
         players.get(3).draw();
+    }
 
+    void play()
+    {
         // Score
         if (ball.posY > posY + height) {
             //scorePlayerTop.scorePlayer += 1;
