@@ -4,18 +4,25 @@ class Score {
     int scorePlayer;
     int scorePosY;
     int maxScoreSecondMode;
+    color scoreColor;
 
-    Score(int score, int posY)
+    Score(int score, int posY, color sColor)
     {
         scoreText = str(score);
         scorePlayer = score;
         scorePosY = posY;
+        scoreColor = sColor;
     }
 
      void displayScore()
     {
         scoreText = str(scorePlayer);
-        fill(55);
+
+        float redColor = red(scoreColor)-30;
+        float greenColor = green(scoreColor)-30;
+        float blueColor = blue(scoreColor)-30;
+
+        fill(redColor, greenColor, blueColor);
         textFont(scoreFont);
         text(scoreText, (screenWidth - textWidth(scoreText)) / 2, scorePosY); // 50 is font-size / 2
     }

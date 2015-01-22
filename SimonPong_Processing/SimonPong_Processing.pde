@@ -117,8 +117,8 @@ void setup()
     ///////////
     // Score //
     ///////////
-    scoreTeamTop = new Score(0, scorePosYTop);
-    scoreTeamBottom = new Score(0, scorePosYBottom);
+    scoreTeamTop = new Score(0, scorePosYTop, color(41, 118, 174));
+    scoreTeamBottom = new Score(0, scorePosYBottom, color(238, 148, 39));
 
     //////////
     // Pong //
