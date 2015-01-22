@@ -95,7 +95,7 @@ void setup()
     /////////////
     // Arduino //
     /////////////
-    //instantiateArduino();
+    instantiateArduino();
 
     ////////////
     // Screen //
@@ -230,15 +230,14 @@ void draw()
     /////////////
     // Arduino //
     /////////////
-    //readArduino();
+    readArduino();
     readKeyboard();
-
-    //sendArduino();
+    sendArduino();
 }
 
 void instantiateArduino()
 {
-    String portName = Serial.list()[2];
+    String portName = Serial.list()[3];
     myPort = new Serial(this, portName, 9600);
 }
 
@@ -254,7 +253,7 @@ void readArduino()
         stringReceived = myPort.readStringUntil('\n');
         if(stringReceived != null) {
             moves = split(stringReceived,'$');
-            // println("stringReceived: "+stringReceived);
+            //println("stringReceived: "+stringReceived);
             if(moves.length == 4){
                 if(game.activeScreen != 1) {
                     if(int(moves[2].trim()) != 255 || int(moves[3].trim()) != 255) {

@@ -35,6 +35,9 @@ boolean isReadyToSendData = false;
 boolean ledIsOn = false;
 boolean canStopDemo = true;
 
+int valueP1;
+int valueP2;
+
 int latchPin = 11;
 int clockPin = 13;
 int dataPin = 12;
@@ -160,6 +163,8 @@ void loop() {
     }
     else if(isReadyToSendData) {
       if(sequenceNeedToBePlayedP1 && !sequenceNeedToBePlayedP2) {
+            Serial.println('test');
+
         sequenceIsPlayingP1 = true;
         if(ledIsOn) {
           ledIsOn = false;
@@ -200,7 +205,8 @@ void loop() {
           digitalWrite(latchPin, 1);
         }
         else {
-          ledIsOn = true;switch(sequenceP2[currentIndexSequenceP2]) {
+          ledIsOn = true;
+          switch(sequenceP2[currentIndexSequenceP2]) {
             case 0:
               dataDemo = dataDemoArray[8];
               break;
@@ -223,19 +229,70 @@ void loop() {
           sequenceNeedToBePlayedP2 = false;
         }
       }
-      else if(!sequenceNeedToBePlayedP1 && sequenceIsPlayingP1 && !sequenceIsPlayingP2) {
-        sequenceIsPlayingP1 = false;
-        digitalWrite(latchPin, 0);
-        shiftOut(dataPin, clockPin, dataDemoArray[12]);
-        digitalWrite(latchPin, 1);
-        currentIndexSequenceP1 = 0;
+      else if(sequenceNeedToBePlayedP2 && sequenceNeedToBePlayedP1) {
+        sequenceIsPlayingP2 = true;
+        sequenceIsPlayingP1 = true;
+        if(ledIsOn) {
+          ledIsOn = false;
+          digitalWrite(latchPin, 0);
+          shiftOut(dataPin, clockPin, dataDemoArray[12]);
+          digitalWrite(latchPin, 1);
+        }
+        else {
+          ledIsOn = true;
+          int valueP1;
+          int valueP2;
+          
+          if(3-sequenceP2[currentIndexSequenceP2] == 1 || 3-sequenceP2[currentIndexSequenceP2] == 0) {
+            valueP2 = pow(2,3-sequenceP2[currentIndexSequenceP2]);
+          }
+          else {
+            valueP2 = pow(2,3-sequenceP2[currentIndexSequenceP2])+1;
+          }
+          valueP1 = pow(2,7-sequenceP1[currentIndexSequenceP1])+1;
+          //Serial.println(valueP1);
+          
+          dataDemo = byte(valueP2 + valueP1);
+          digitalWrite(latchPin, 0);
+          shiftOut(dataPin, clockPin, dataDemo);
+          digitalWrite(latchPin, 1);
+          currentIndexSequenceP2++;
+          currentIndexSequenceP1++;
+        }
+        if(currentIndexSequenceP1 >= sequenceLength) {
+          sequenceNeedToBePlayedP1 = false;
+        }
+        if(currentIndexSequenceP2 >= sequenceLength) {
+          sequenceNeedToBePlayedP2 = false;
+        }
       }
-      else if(!sequenceNeedToBePlayedP2 && sequenceIsPlayingP2 && !sequenceIsPlayingP1) {
+//      else if(!sequenceNeedToBePlayedP1 && sequenceIsPlayingP1 && !sequenceIsPlayingP2) {
+//        sequenceIsPlayingP1 = false;
+//        digitalWrite(latchPin, 0);
+//        shiftOut(dataPin, clockPin, dataDemoArray[12]);
+//        digitalWrite(latchPin, 1);
+//        currentIndexSequenceP1 = 0;
+//      }
+//      else if(!sequenceNeedToBePlayedP2 && sequenceIsPlayingP2 && !sequenceIsPlayingP1) {
+//        sequenceIsPlayingP2 = false;
+//        digitalWrite(latchPin, 0);
+//        shiftOut(dataPin, clockPin, dataDemoArray[12]);
+//        digitalWrite(latchPin, 1);
+//        currentIndexSequenceP2 = 0;
+//      }
+      else if(!sequenceNeedToBePlayedP2 && sequenceIsPlayingP2) {
         sequenceIsPlayingP2 = false;
         digitalWrite(latchPin, 0);
         shiftOut(dataPin, clockPin, dataDemoArray[12]);
         digitalWrite(latchPin, 1);
         currentIndexSequenceP2 = 0;
+      }
+      else if(!sequenceNeedToBePlayedP1 && sequenceIsPlayingP1) {
+        sequenceIsPlayingP1 = false;
+        digitalWrite(latchPin, 0);
+        shiftOut(dataPin, clockPin, dataDemoArray[12]);
+        digitalWrite(latchPin, 1);
+        currentIndexSequenceP1 = 0;
       }
     }
   }
