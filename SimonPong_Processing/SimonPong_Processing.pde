@@ -89,7 +89,7 @@ void setup()
     /////////////
     // Arduino //
     /////////////
-    instantiateArduino();
+    //instantiateArduino();
 
     ////////////
     // Screen //
@@ -112,7 +112,7 @@ void setup()
     //////////
     // Pong //
     //////////
-        level = 3;
+        level = 4;
 
         /////////////
         // Level 1 //
@@ -212,9 +212,9 @@ void draw()
     /////////////
     // Arduino //
     /////////////
-    readArduino();
+    //readArduino();
     readKeyboard();
-    sendArduino();
+    //sendArduino();
 }
 
 void instantiateArduino()

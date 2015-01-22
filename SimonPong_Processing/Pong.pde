@@ -164,6 +164,8 @@ class Pong
         int teamOnePosX = posX;
         int teamTwoPosX = posX;
         int playerWidth = width;
+        boolean rotateOne = true;
+        boolean rotateTwo = false;
 
         if(mode == 4) {
             playerWidth = playerWidth / 2;
@@ -176,12 +178,10 @@ class Pong
             //teamTwoPosX = playerWidth;
         }
 
-        scoreTeamOne.display(teamOnePosX, playerWidth);
+        scoreTeamOne.display(teamOnePosX, playerWidth, rotateOne);
 
         if(mode != 2 && mode != 3) {
-
-
-            scoreTeamTwo.display(teamTwoPosX, playerWidth);
+            scoreTeamTwo.display(teamTwoPosX, playerWidth, rotateTwo);
         }
     }
 

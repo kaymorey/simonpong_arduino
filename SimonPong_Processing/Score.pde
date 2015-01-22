@@ -14,7 +14,7 @@ class Score {
         scoreColor = sColor;
     }
 
-     void display(int pongPosX, int pongWidth)
+     void display(int pongPosX, int pongWidth, boolean rotate)
     {
         scoreText = str(scorePlayer);
 
@@ -24,7 +24,15 @@ class Score {
 
         fill(redColor, greenColor, blueColor);
         textFont(scoreFont);
-        text(scoreText, pongPosX + (pongWidth - textWidth(scoreText)) / 2, scorePosY + 35); // 50 is font-size / 2
+
+        if (rotate) {
+            rotate(PI);
+            text(scoreText, pongPosX - (pongWidth + textWidth(scoreText)) / 2, - scorePosY + 35);
+            rotate(-PI);
+        }
+        else {
+            text(scoreText, pongPosX + (pongWidth - textWidth(scoreText)) / 2, scorePosY + 35); // 50 is font-size / 2
+        }
     }
 /*
     void displayTopScore()
