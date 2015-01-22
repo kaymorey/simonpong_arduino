@@ -167,7 +167,10 @@ class Pong
         boolean rotateOne = true;
         boolean rotateTwo = false;
 
-        if(mode == 4) {
+        if (mode == 3) {
+            rotateOne = false;
+        }
+        else if(mode == 4) {
             playerWidth = playerWidth / 2;
             //teamOnePosX = playerWidth;
             teamTwoPosX = playerWidth;
