@@ -84,7 +84,7 @@ void setup()
     //////////
     minim = new Minim(this);
     game = new Game(minim);
-    // game.backgroundSound.player.play();
+    game.backgroundSound.player.loop();
 
     /////////////
     // Arduino //
