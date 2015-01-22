@@ -12,7 +12,7 @@ class Player
     int index;
     Bar bar;
     SimonResolver resolver;
-    int returnedValueByResolver = 0;
+    int returnedValueByResolver = 3;
 
     Player(Minim minim, int indexPlayer, ArrayList<Integer> sequenceToPlay)
     {

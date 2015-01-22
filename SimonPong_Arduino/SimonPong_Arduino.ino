@@ -28,40 +28,40 @@ int interruptButtonRight_3 = 2;     // interrupt is on 0 (pin 2)
 int stateInterruptButtonRight_3 = 0;
 int stateRight = 255;               // variable to be updated by the interrupts
 
+boolean stringToReadHasBeenRead = false;
+boolean firstSequenceHasBeenDisplayed = false;
+boolean firstSequenceNeedToBeDisplayed = false;
+boolean isReadyToSendData = false;
+boolean ledIsOn = false;
+boolean canStopDemo = true;
 
 int latchPin = 11;
 int clockPin = 13;
 int dataPin = 12;
 
-//int blueLed = 9;
-//int redLed = 8;
-//int yellowLed = 7;
-//int greenLed = 6;
-//
-//boolean blueLedState = LOW;
-//boolean redLedState = LOW;
-//boolean yellowLedState = LOW;
-//boolean greenLedState = LOW;
+byte dataDemo;
+byte dataDemoArray[13];
+boolean isOnDemo = true;
+int currentIndexDemo = 0;
 
 long previousMillis = 0;
-long interval = 1000;
-int currentindexSequence = 0;
-boolean ledIsLighting = false;
+long interval = 500;
+
+int sequenceLength;
+int sequenceP1[100];
+int sequenceP2[100];
+int currentIndexSequenceP1 = 0;
+int currentIndexSequenceP2 = 0;
+boolean sequenceNeedToBePlayedP1 = false;
+boolean sequenceNeedToBePlayedP2 = false;
+boolean sequenceIsPlayingP1 = false;
+boolean sequenceIsPlayingP2 = false;
 
 String stringToSend;
 String stringToRead = "";
-
-int sequence[100];
-int sequenceLength;
-boolean sequenceNeedToBePlayed = false;
-boolean stringToReadHasBeenRead = false;
-boolean hasWaitedToDisplaySequence = false;
  
 void setup() {
-  //set pins to output because they are addressed in the main loop
   pinMode(latchPin, OUTPUT);
-  pinMode(dataPin, OUTPUT);
-  pinMode(clockPin, OUTPUT);
   
   // player left
   pinMode(interruptButtonLeft_0, INPUT);
@@ -78,12 +78,307 @@ void setup() {
   // initialize serial communications at 9600 bps:
   Serial.begin(9600);
   
+  dataDemoArray[0] = byte(136);  //10001000
+  dataDemoArray[1] = byte(68);  //01000100
+  dataDemoArray[2] = byte(34);  //00100010
+  dataDemoArray[3] = byte(17);  //00010001
+  dataDemoArray[4] = byte(128);  //10000000
+  dataDemoArray[5] = byte(64);  //01000000
+  dataDemoArray[6] = byte(32);  //00100000
+  dataDemoArray[7] = byte(16);  //00010000
+  dataDemoArray[8] = byte(8);  //00001000
+  dataDemoArray[9] = byte(4);  //00000100
+  dataDemoArray[10] = byte(2); //00000010
+  dataDemoArray[11] = byte(1); //00000001
+  dataDemoArray[12] = byte(0); //00000000
+
+  //function that blinks all the LEDs
+  //gets passed the number of blinks and the pause time
+  blinkAll_2Bytes(2,500); 
 }
  
 void loop() {
   unsigned long currentMillis = millis();
   
-  // player left
+  if(currentMillis - previousMillis > interval) {
+    previousMillis = currentMillis;
+    if(isOnDemo) {
+      dataDemo = dataDemoArray[currentIndexDemo];
+      digitalWrite(latchPin, 0);
+      shiftOut(dataPin, clockPin, dataDemo);
+      digitalWrite(latchPin, 1);
+      if(currentIndexDemo < 12) {
+        currentIndexDemo++;
+      }
+      else {
+        currentIndexDemo = 0;
+      }
+    }
+    else if(firstSequenceNeedToBeDisplayed && !firstSequenceHasBeenDisplayed) {
+      if(ledIsOn) {
+        ledIsOn = false;
+        digitalWrite(latchPin, 0);
+        shiftOut(dataPin, clockPin, dataDemoArray[12]);
+        digitalWrite(latchPin, 1);
+      }
+      else {
+        ledIsOn = true;
+        switch(sequenceP1[currentIndexSequenceP1]) {
+          case 0:
+            dataDemo = dataDemoArray[0];
+            break;
+          case 1:
+            dataDemo = dataDemoArray[1];
+            break;
+          case 2:
+            dataDemo = dataDemoArray[2];
+            break;
+          case 3:
+            dataDemo = dataDemoArray[3];
+            break;
+        }
+        digitalWrite(latchPin, 0);
+        shiftOut(dataPin, clockPin, dataDemo);
+        digitalWrite(latchPin, 1);
+        currentIndexSequenceP1++;
+        currentIndexSequenceP2++;
+      }
+      if(currentIndexSequenceP1 >= sequenceLength) {
+        firstSequenceHasBeenDisplayed = true;
+        firstSequenceNeedToBeDisplayed = false;
+        sequenceNeedToBePlayedP1 = false;
+        sequenceNeedToBePlayedP2 = false;
+      }
+    }
+    else if(firstSequenceHasBeenDisplayed && !isReadyToSendData) {
+      digitalWrite(latchPin, 0);
+      shiftOut(dataPin, clockPin, dataDemoArray[12]);
+      digitalWrite(latchPin, 1);
+      currentIndexSequenceP1 = 0;
+      currentIndexSequenceP2 = 0;
+      isReadyToSendData = true;
+    }
+    else if(isReadyToSendData) {
+      if(sequenceNeedToBePlayedP1 && !sequenceNeedToBePlayedP2) {
+        sequenceIsPlayingP1 = true;
+        if(ledIsOn) {
+          ledIsOn = false;
+          digitalWrite(latchPin, 0);
+          shiftOut(dataPin, clockPin, dataDemoArray[12]);
+          digitalWrite(latchPin, 1);
+        }
+        else {
+          ledIsOn = true;switch(sequenceP1[currentIndexSequenceP1]) {
+            case 0:
+              dataDemo = dataDemoArray[4];
+              break;
+            case 1:
+              dataDemo = dataDemoArray[5];
+              break;
+            case 2:
+              dataDemo = dataDemoArray[6];
+              break;
+            case 3:
+              dataDemo = dataDemoArray[7];
+              break;
+          }
+          digitalWrite(latchPin, 0);
+          shiftOut(dataPin, clockPin, dataDemo);
+          digitalWrite(latchPin, 1);
+          currentIndexSequenceP1++;
+        }
+        if(currentIndexSequenceP1 >= sequenceLength) {
+          sequenceNeedToBePlayedP1 = false;
+        }
+      }
+      else if(sequenceNeedToBePlayedP2 && !sequenceNeedToBePlayedP1) {
+        sequenceIsPlayingP2 = true;
+        if(ledIsOn) {
+          ledIsOn = false;
+          digitalWrite(latchPin, 0);
+          shiftOut(dataPin, clockPin, dataDemoArray[12]);
+          digitalWrite(latchPin, 1);
+        }
+        else {
+          ledIsOn = true;switch(sequenceP2[currentIndexSequenceP2]) {
+            case 0:
+              dataDemo = dataDemoArray[8];
+              break;
+            case 1:
+              dataDemo = dataDemoArray[9];
+              break;
+            case 2:
+              dataDemo = dataDemoArray[10];
+              break;
+            case 3:
+              dataDemo = dataDemoArray[11];
+              break;
+          }
+          digitalWrite(latchPin, 0);
+          shiftOut(dataPin, clockPin, dataDemo);
+          digitalWrite(latchPin, 1);
+          currentIndexSequenceP2++;
+        }
+        if(currentIndexSequenceP2 >= sequenceLength) {
+          sequenceNeedToBePlayedP2 = false;
+        }
+      }
+      else if(!sequenceNeedToBePlayedP1 && sequenceIsPlayingP1 && !sequenceIsPlayingP2) {
+        sequenceIsPlayingP1 = false;
+        digitalWrite(latchPin, 0);
+        shiftOut(dataPin, clockPin, dataDemoArray[12]);
+        digitalWrite(latchPin, 1);
+        currentIndexSequenceP1 = 0;
+      }
+      else if(!sequenceNeedToBePlayedP2 && sequenceIsPlayingP2 && !sequenceIsPlayingP1) {
+        sequenceIsPlayingP2 = false;
+        digitalWrite(latchPin, 0);
+        shiftOut(dataPin, clockPin, dataDemoArray[12]);
+        digitalWrite(latchPin, 1);
+        currentIndexSequenceP2 = 0;
+      }
+    }
+  }
+  readProcessing();
+  
+  if(isReadyToSendData || isOnDemo) {
+    readInterruptLeft();
+    readInterruptRight();
+  }
+  
+  potValueLeft = analogRead(potPinLeft); // read the pot value
+  potValueRight = analogRead(potPinRight); // read the pot values
+  
+  stringToSend = String(potValueLeft/4)+"$"+String(potValueRight/4)+"$"+String(stateLeft)+"$"+String(stateRight);
+  Serial.println(stringToSend);      // print the pot value back to the debugger pane
+  
+  if(stateLeft != 255) {
+    stateLeft = 255;
+  }
+  if(stateRight != 255) {
+    stateRight = 255;
+  }
+  
+  delay(30);                     // wait 30 milliseconds before the next loop
+}
+
+void readProcessing() {
+    // read data from processing
+  if (Serial.available() > 0) { // If data is available to read,
+    stringToRead = Serial.readStringUntil('\n'); // read it and store it in val
+    if(stringToRead == "stopDemo") {
+      isOnDemo = false;
+      digitalWrite(latchPin, 0);
+      shiftOut(dataPin, clockPin, dataDemoArray[12]);
+      digitalWrite(latchPin, 1);
+    }
+    else if(stringToRead == "firstSequence") {
+      firstSequenceNeedToBeDisplayed = true;
+      stringToRead = Serial.readStringUntil('\n');
+      readStringToRead();
+    }
+    else if(isReadyToSendData) {
+      readStringToRead();
+    }
+  }  
+}
+
+String getValue(String data, char separator, int index)
+{
+  int found = 0;
+  int strIndex[] = {0, -1};
+  int maxIndex = data.length()-1;
+
+  for(int i=0; i<=maxIndex && found<=index; i++){
+    if(data.charAt(i)==separator || i==maxIndex){
+        found++;
+        strIndex[0] = strIndex[1]+1;
+        strIndex[1] = (i == maxIndex) ? i+1 : i;
+    }
+  }
+
+  return found>index ? data.substring(strIndex[0], strIndex[1]) : "";
+}
+
+void readStringToRead() {
+  sequenceLength = getValue(stringToRead, '$', 1).toInt();
+  switch(getValue(stringToRead, '$', 0).toInt()) {
+    case 0:
+      for(int i = 0; i < sequenceLength; i++) {
+        sequenceP1[i] = getValue(stringToRead, '$', i+2).toInt();
+        sequenceP2[i] = getValue(stringToRead, '$', i+2).toInt();
+        sequenceNeedToBePlayedP1 = true;
+        sequenceNeedToBePlayedP2 = true;
+        currentIndexSequenceP1 = 0;
+        currentIndexSequenceP2 = 0;
+      }
+      break;
+    case 1:
+      for(int i = 0; i < sequenceLength; i++) {
+        sequenceP1[i] = getValue(stringToRead, '$', i+2).toInt();
+        sequenceNeedToBePlayedP1 = true;
+        currentIndexSequenceP1 = 0;
+      }
+      break;
+    case 2:
+      for(int i = 0; i < sequenceLength; i++) {
+        sequenceP2[i] = getValue(stringToRead, '$', i+2).toInt();
+        sequenceNeedToBePlayedP2 = true;
+        currentIndexSequenceP2 = 0;
+      }
+      break;
+  }
+  stringToRead = "";
+  stringToReadHasBeenRead = true;
+}
+
+void blinkAll_2Bytes(int n, int d) {
+  digitalWrite(latchPin, 0);
+  shiftOut(dataPin, clockPin, 0);
+  shiftOut(dataPin, clockPin, 0);
+  digitalWrite(latchPin, 1);
+  delay(200);
+  for (int x = 0; x < n; x++) {
+    digitalWrite(latchPin, 0);
+    shiftOut(dataPin, clockPin, 255);
+    shiftOut(dataPin, clockPin, 255);
+    digitalWrite(latchPin, 1);
+    delay(d);
+    digitalWrite(latchPin, 0);
+    shiftOut(dataPin, clockPin, 0);
+    shiftOut(dataPin, clockPin, 0);
+    digitalWrite(latchPin, 1);
+    delay(d);
+  }
+}
+
+void shiftOut(int myDataPin, int myClockPin, byte myDataOut) {
+  int i=0;
+  int pinState;
+  pinMode(myClockPin, OUTPUT);
+  pinMode(myDataPin, OUTPUT);
+
+  digitalWrite(myDataPin, 0);
+  digitalWrite(myClockPin, 0);
+
+  for (i=7; i>=0; i--)  {
+    digitalWrite(myClockPin, 0);
+
+    if ( myDataOut & (1<<i) ) {
+      pinState= 1;
+    }
+    else {	
+      pinState= 0;
+    }
+
+    digitalWrite(myDataPin, pinState);
+    digitalWrite(myClockPin, 1);
+    digitalWrite(myDataPin, 0);
+  }
+  digitalWrite(myClockPin, 0);
+}
+
+void readInterruptLeft() {
   if (stateInterruptButtonLeft_0 == 0 && digitalRead(interruptButtonLeft_0) == 1) {
     // on appuie sur le bouton pour la première fois
     stateInterruptButtonLeft_0 = 1;
@@ -123,8 +418,9 @@ void loop() {
     stateInterruptButtonLeft_3 = 0;
     changeStateLeft_3();
   }
-  
-  // player Right
+}
+
+void readInterruptRight() {
   if (stateInterruptButtonRight_0 == 0 && digitalRead(interruptButtonRight_0) == 1) {
     // on appuie sur le bouton pour la première fois
     stateInterruptButtonRight_0 = 1;
@@ -164,120 +460,7 @@ void loop() {
     stateInterruptButtonRight_3 = 0;
     changeStateRight_3();
   }
-
-  potValueLeft = analogRead(potPinLeft); // read the pot value
-  potValueRight = analogRead(potPinRight); // read the pot values
-  
-  
-  
-  
-  
-  
-  
-  stringToSend = String(potValueLeft/4)+"$"+String(potValueRight/4)+"$"+String(stateLeft)+"$"+String(stateRight);
-  Serial.println(stringToSend);      // print the pot value back to the debugger pane
-  if(stateLeft != 255) {
-    stateLeft = 255;
-  }
-  
-  if(stateRight != 255) {
-    stateRight = 255;
-  }
-  
-  readProcessing();
-  
-  if (!stringToReadHasBeenRead) {
-    stringToReadHasBeenRead = true;
-    if(stringToRead.length() != 0) {
-      readStringToRead();
-    }
-    else {
-      stringToReadHasBeenRead = false;
-    }
-  }
-  
-  if(sequenceNeedToBePlayed)
-  {
-    if(currentMillis - previousMillis > interval) {
-      if(hasWaitedToDisplaySequence) {
-        previousMillis = currentMillis;
-        if(!ledIsLighting) {
-          ledIsLighting = true;
-          switch(sequence[currentindexSequence]) {
-            case 0:
-                registerWrite(7, HIGH);
-                registerWrite(3, HIGH);
-//              blueLedState = HIGH;
-//              digitalWrite(blueLed, blueLedState);
-              break;
-            case 1:
-                registerWrite(6, HIGH);
-                registerWrite(2, HIGH);
-//              redLedState = HIGH;
-//              digitalWrite(redLed, redLedState);
-              break;
-            case 2:
-                registerWrite(5, HIGH);
-                registerWrite(1, HIGH);
-//              yellowLedState = HIGH;
-//              digitalWrite(yellowLed, yellowLedState);
-              break;
-            case 3:
-                registerWrite(4, HIGH);
-                registerWrite(0, HIGH);
-//              greenLedState = HIGH;
-//              digitalWrite(greenLed, greenLedState);
-              break;
-          }
-          //setLedOn(dataPin, clockPin, data);
-        }
-        else {
-          ledIsLighting = false;
-          switch(sequence[currentindexSequence]) {
-            case 0:
-                registerWrite(7, LOW);
-                registerWrite(3, LOW);
-//              blueLedState = LOW;
-//              digitalWrite(blueLed, blueLedState);
-              break;
-            case 1:
-                registerWrite(6, LOW);
-                registerWrite(2, LOW);
-//              redLedState = LOW;
-//              digitalWrite(redLed, redLedState);
-              break;
-            case 2:
-                registerWrite(5, LOW);
-                registerWrite(1, LOW);
-//              yellowLedState = LOW;
-//              digitalWrite(yellowLed, yellowLedState);
-              break;
-            case 3:
-                registerWrite(4, LOW);
-                registerWrite(0, LOW);
-//              greenLedState = LOW;
-//              digitalWrite(greenLed, greenLedState);
-              break;
-          }
-          currentindexSequence++;
-        }
-        if(currentindexSequence == sequenceLength) {
-          sequenceNeedToBePlayed = false;
-          hasWaitedToDisplaySequence = false;
-          currentindexSequence = 0;
-        }
-      }
-      else {
-        hasWaitedToDisplaySequence = true; 
-      }
-    }
-  }
-  
-  delay(30);                     // wait 30 milliseconds before the next loop
 }
-
-
-
 
 // player Left
 void changeStateLeft_0() {
@@ -329,84 +512,3 @@ void changeStateRight_3() {
   }
 }
 
-
-
-
-
-void readProcessing() {
-    // read data from processing
-  if (Serial.available() > 0) { // If data is available to read,
-    stringToRead = Serial.readStringUntil('\n'); // read it and store it in val
-  }  
-}
-
-String getValue(String data, char separator, int index)
-{
-  int found = 0;
-  int strIndex[] = {0, -1};
-  int maxIndex = data.length()-1;
-
-  for(int i=0; i<=maxIndex && found<=index; i++){
-    if(data.charAt(i)==separator || i==maxIndex){
-        found++;
-        strIndex[0] = strIndex[1]+1;
-        strIndex[1] = (i == maxIndex) ? i+1 : i;
-    }
-  }
-
-  return found>index ? data.substring(strIndex[0], strIndex[1]) : "";
-}
-
-void readStringToRead() {
-    sequenceLength = getValue(stringToRead, '$', 0).toInt();
-    for(int i = 0; i < sequenceLength; i++) {
-      sequence[i] = getValue(stringToRead, '$', i+1).toInt();
-      sequenceNeedToBePlayed = true;
-    }
-    stringToRead = "";
-    stringToReadHasBeenRead = false;
-}
-
-//blinks the whole register based on the number of times you want to 
-//blink "n" and the pause between them "d"
-//starts with a moment of darkness to make sure the first blink
-//has its full visual effect.
-//void blinkAll_2Bytes(int n, int d) {
-//  digitalWrite(latchPin, 0);
-//  shiftOut(dataPin, clockPin, 0);
-//  shiftOut(dataPin, clockPin, 0);
-//  digitalWrite(latchPin, 1);
-//  delay(200);
-//  for (int x = 0; x < n; x++) {
-//    digitalWrite(latchPin, 0);
-//    shiftOut(dataPin, clockPin, 255);
-//    shiftOut(dataPin, clockPin, 255);
-//    digitalWrite(latchPin, 1);
-//    delay(d);
-//    digitalWrite(latchPin, 0);
-//    shiftOut(dataPin, clockPin, 0);
-//    shiftOut(dataPin, clockPin, 0);
-//    digitalWrite(latchPin, 1);
-//    delay(d);
-//  }
-//}
-
-// the heart of the program
-void registerWrite(int whichPin, int whichState) {
-// the bits you want to send
-  byte bitsToSend = 0;
-
-  // turn off the output so the pins don't light up
-  // while you're shifting bits:
-  digitalWrite(latchPin, LOW);
-
-  // turn on the next highest bit in bitsToSend:
-  bitWrite(bitsToSend, whichPin, whichState);
-
-  // shift the bits out:
-  shiftOut(dataPin, clockPin, MSBFIRST, bitsToSend);
-
-    // turn on the output so the LEDs can light up:
-  digitalWrite(latchPin, HIGH);
-
-}

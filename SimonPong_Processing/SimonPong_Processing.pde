@@ -11,6 +11,8 @@ String stringReceived;
 String stringToSend;
 String[] moves;
 boolean hasWaited = false;
+boolean dataCanBeSent = false;
+String playerToSend;
 
 //////////
 // Game //
@@ -21,8 +23,10 @@ Minim minim;//audio context
 ////////////
 // Screen //
 ////////////
-int screenWidth  = 1680;
-int screenHeight = 1050;
+// int screenWidth  = 1680;
+// int screenHeight = 1050;
+int screenWidth  = 840;
+int screenHeight = 525;
 
 //////////
 // Pong //
@@ -62,10 +66,8 @@ int scorePosYBottom = screenHeight - (screenHeight / 4 - 50);
 Simon simon;
 int numberOfLed = 4;
 int numberOfColorInSequence = 3;
-// SimonResolver
-// SimonResolver simonResolver;
-boolean hasWaitedToReadInput = false;
- // /!\ cette variable doit être celle du joueur et récupérée pour chaque joueur. N'apparaît pas dans le main.
+// boolean hasWaitedToReadInput = false;
+boolean firstSequenceHasBeenSent = false;
 
 ///////////////////
 // fightLauncher //
@@ -75,7 +77,8 @@ int pauseInterval = 300;
 FightLauncher fightLauncherBottom;
 boolean launcherNeedTowait = false;
 String currentTimer;
-boolean pongCanBeLaunched = true;
+boolean pongCanBeLaunched = false;
+boolean demoHasBeenStopped = false;
 
 void setup()
 {
@@ -89,7 +92,7 @@ void setup()
     //////////
     minim = new Minim(this);
     game = new Game(minim);
-    game.backgroundSound.player.play();
+    // game.backgroundSound.player.play();
 
     /////////////
     // Arduino //
@@ -215,11 +218,13 @@ void draw()
     /////////////
     readArduino();
     readKeyboard();
+
+    sendArduino();
 }
 
 void instantiateArduino()
 {
-    String portName = Serial.list()[3];
+    String portName = Serial.list()[2];
     myPort = new Serial(this, portName, 9600);
 }
 
@@ -229,74 +234,116 @@ void readArduino()
         hasWaited = true;
         delay(1000);
         simon.play();
-        sendStringToArduino();
     }
 
     if(myPort.available() > 0){
         stringReceived = myPort.readStringUntil('\n');
         if(stringReceived != null) {
-            //println("stringReceived: "+stringReceived);
             moves = split(stringReceived,'$');
-            if (mousePressed == true) {
-                sendStringToArduino();
-            }
-
+            // println("stringReceived: "+stringReceived);
             if(moves.length == 4){
-                // joueur top left
-                switch (int(moves[2].trim())) {
-                    case 0 :
-                        players.get(0).returnedValueByResolver = players.get(0).resolver.compareSolution(0);
-                        break;
-                    case 1 :
-                        players.get(0).returnedValueByResolver = players.get(0).resolver.compareSolution(1);
-                        break;
-                    case 2 :
-                        players.get(0).returnedValueByResolver = players.get(0).resolver.compareSolution(2);
-                        break;
-                    case 3 :
-                        players.get(0).returnedValueByResolver = players.get(0).resolver.compareSolution(3);
-                        break;
-                }
-                // joueur top right
-                switch (int(moves[3].trim())) {
-                    case 0 :
-                        players.get(1).returnedValueByResolver = players.get(1).resolver.compareSolution(0);
-                        break;
-                    case 1 :
-                        players.get(1).returnedValueByResolver = players.get(1).resolver.compareSolution(1);
-                        break;
-                    case 2 :
-                        players.get(1).returnedValueByResolver = players.get(1).resolver.compareSolution(2);
-                        break;
-                    case 3 :
-                        players.get(1).returnedValueByResolver = players.get(1).resolver.compareSolution(3);
-                        break;
-                }
-
-                // if(returnedValueByResolver == 2) {
-                //     resetSimon();
-                // }
-                for (int i = 0; i < playersNumber; i++) {
-                    if(players.get(i).returnedValueByResolver == 2) {
-                        resetSimon(i);
+                if(game.activeScreen != 1) {
+                    if(int(moves[2].trim()) != 255 || int(moves[3].trim()) != 255) {
+                        game.activeScreen = 1;
                     }
                 }
+                else {
+                    // joueur top left
+                    switch (int(moves[2].trim())) {
+                        case 0 :
+                            players.get(2).returnedValueByResolver = players.get(2).resolver.compareSolution(0);
+                            break;
+                        case 1 :
+                            players.get(2).returnedValueByResolver = players.get(2).resolver.compareSolution(1);
+                            break;
+                        case 2 :
+                            players.get(2).returnedValueByResolver = players.get(2).resolver.compareSolution(2);
+                            break;
+                        case 3 :
+                            players.get(2).returnedValueByResolver = players.get(2).resolver.compareSolution(3);
+                            break;
+                    }
+                    // joueur top right
+                    switch (int(moves[3].trim())) {
+                        case 0 :
+                            players.get(3).returnedValueByResolver = players.get(3).resolver.compareSolution(0);
+                            break;
+                        case 1 :
+                            players.get(3).returnedValueByResolver = players.get(3).resolver.compareSolution(1);
+                            break;
+                        case 2 :
+                            players.get(3).returnedValueByResolver = players.get(3).resolver.compareSolution(2);
+                            break;
+                        case 3 :
+                            players.get(3).returnedValueByResolver = players.get(3).resolver.compareSolution(3);
+                            break;
+                    }
 
-                playerTopLeft = int(moves[1].trim());
-                playerTopRight = int(moves[0].trim());
-                /* from 0q to 255 */
-                // println("playerLeft: "+playerLeft);
-                // println("playerRight: "+playerRight);
-                players.get(0).bar.posX = playerTopLeft*(screenWidth/2-players.get(0).bar.width)/255;
-                players.get(1).bar.posX = playerTopRight*(screenWidth/2-players.get(1).bar.width)/255 + screenWidth/2;
+                    // if(returnedValueByResolver == 2) {
+                    //     resetSimon();
+                    // }
+                    for (int i = 0; i < playersNumber; i++) {
+                        if(players.get(i).returnedValueByResolver == 2) {
+                            resetSimon(i);
+                        }
+                        else if(players.get(i).returnedValueByResolver == 0) {
+                            players.get(i).returnedValueByResolver = 3;
+                            restartSequenceForPlayer(i);
+                        }
+                    }
+
+                    playerTopLeft = int(moves[1].trim());
+                    playerTopRight = int(moves[0].trim());
+                    /* from 0 to 255 */
+                    // println("playerLeft: "+playerLeft);
+                    // println("playerRight: "+playerRight);
+                    players.get(2).bar.posX = playerTopLeft*(screenWidth/2-players.get(2).bar.width)/255;
+                    players.get(3).bar.posX = playerTopRight*(screenWidth/2-players.get(3).bar.width)/255 + screenWidth/2;
+                }
             }
         }
     }
 }
 
-void sendStringToArduino()
+void sendArduino()
 {
-    stringToSend = str(numberOfColorInSequence);
+    if(game.activeScreen == 1 && !demoHasBeenStopped) {
+        demoHasBeenStopped = true;
+        myPort.write("stopDemo\n");
+    }
+    else if(pongCanBeLaunched && !firstSequenceHasBeenSent) {
+        firstSequenceHasBeenSent = true;
+        myPort.write("firstSequence\n");
+        stringToSend = "0$"+str(numberOfColorInSequence);
+        for(int i = 0; i < numberOfColorInSequence; i++) {
+            stringToSend += "$"+str(simon.sequenceToPlay.get(i));
+        }
+        stringToSend += "\n";
+        //println("stringToSend: "+stringToSend);
+        myPort.write(stringToSend);
+    }
+    else if(dataCanBeSent) {
+        dataCanBeSent = false;
+        stringToSend = "0$"+str(numberOfColorInSequence);
+        for(int i = 0; i < numberOfColorInSequence; i++) {
+            stringToSend += "$"+str(simon.sequenceToPlay.get(i));
+        }
+        stringToSend += "\n";
+        //println("stringToSend: "+stringToSend);
+        myPort.write(stringToSend);
+    }
+}
+
+void restartSequenceForPlayer(int player) {
+    switch(player) {
+        case 2:
+            playerToSend = "1";
+            break;
+        case 3:
+            playerToSend = "2";
+            break;
+    }
+    stringToSend = playerToSend+"$"+str(numberOfColorInSequence);
     for(int i = 0; i < numberOfColorInSequence; i++) {
         stringToSend += "$"+str(simon.sequenceToPlay.get(i));
     }
@@ -313,9 +360,11 @@ void resetSimon(int player)
     simon = new Simon(++numberOfColorInSequence,numberOfLed);
     for (int i = 0; i < playersNumber; i++) {
         players.get(i).resolver = new SimonResolver(simon.sequenceToPlay);
+        players.get(i).returnedValueByResolver = 3;
     }
     simon.play();
-    sendStringToArduino();
+    dataCanBeSent = true;
+    sendArduino();
 }
 
 void readKeyboard()
