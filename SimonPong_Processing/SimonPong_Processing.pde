@@ -30,12 +30,15 @@ int screenHeight = 600;//1050;
 // Pong //
 //////////
 int level;
-int levelDuration = 20000;
+int levelDuration = 3000;
 int[] randomLevels = {1, 2, 3};
 int levelTimer;
 int levelMaxTime;
 int transitionLevelCounter;
 int nbLevelsPlayed;
+int nbRoundsWinOne;
+int nbRoundsWinTwo;
+
 Pong pongLeft;
 Pong pongRight;
 Pong pongTop;
@@ -152,41 +155,6 @@ void setup()
     }
 }
 
-String calculateScore()
-{
-    int scoreOne = 0;
-    int scoreTwo = 0;
-
-    switch (level) {
-        case 1 :
-            scoreOne = pongLeft.scoreTeamOne.scorePlayer + pongRight.scoreTeamOne.scorePlayer;
-            scoreTwo = pongLeft.scoreTeamTwo.scorePlayer + pongRight.scoreTeamTwo.scorePlayer;
-            break;
-        case 2 :
-            scoreOne = pongTop.scoreTeamOne.scorePlayer;
-            scoreTwo = pongBottom.scoreTeamOne.scorePlayer;
-            break;
-        case 3 :
-            scoreOne = pongDiagonalTLBR.scoreTeamOne.scorePlayer + pongDiagonalTRBL.scoreTeamOne.scorePlayer;
-            scoreTwo = pongDiagonalTLBR.scoreTeamTwo.scorePlayer + pongDiagonalTRBL.scoreTeamTwo.scorePlayer;
-        default :
-            scoreOne = pongFull.scoreTeamOne.scorePlayer;
-            scoreTwo = pongFull.scoreTeamTwo.scorePlayer;
-            break;
-    }
-
-    int hand = nbLevelsPlayed + 1;
-    if (scoreOne > scoreTwo) {
-        return "Team one wins round " + hand + " !";
-    }
-    else if (scoreTwo > scoreOne) {
-        return "Team two wins round" + hand + " !";
-    }
-    else {
-        return "Equality round " + hand + " !";
-    }
-}
-
 void draw()
 {
     int currentMillis = millis();
@@ -209,13 +177,42 @@ void draw()
                 level = randomLevels[levelIndex];
                 randomLevels = remove(randomLevels, levelIndex);
             }
-            else {
+            else if (nbLevelsPlayed == 2) {
                 level = 4;
+            }
+            else {
+                if (nbRoundsWinOne == nbRoundsWinTwo && nbLevelsPlayed == 3) {
+                    int levelIndex = int(random(randomLevels.length));
+                    level = randomLevels[levelIndex];
+                    randomLevels = remove(randomLevels, levelIndex);
+                }
+                else {
+                    game.activeScreen = 2;
+                }
             }
         }
     }
 
-    if (game.activeScreen != 0) {
+    if (game.activeScreen == 0) {
+        if (game.pressPhraseOpacity < 255 && game.increasePhraseOpacity) {
+            game.pressPhraseOpacity += 6;
+        }
+        else if (game.pressPhraseOpacity > 0 && !game.increasePhraseOpacity) {
+            game.pressPhraseOpacity -= 6;
+        }
+        else if (game.pressPhraseOpacity >= 255) {
+            game.increasePhraseOpacity = false;
+        }
+        else if (game.pressPhraseOpacity <= 0) {
+            game.increasePhraseOpacity = true;
+        }
+
+        game.drawInitialScreen();
+    }
+    else if (game.activeScreen == 2) {
+        game.drawLastScreen();
+    }
+    else {
         //////////
         // Pong //
         //////////
@@ -253,27 +250,6 @@ void draw()
         fightLauncherBottom.draw();
         displayLauncher(currentMillis);
 
-        // if(pongCanBeLaunched) {
-        //     pongTop.draw();
-        //     pongBottom.draw();
-        // }
-
-    }
-    else {
-        if (game.pressPhraseOpacity < 255 && game.increasePhraseOpacity) {
-            game.pressPhraseOpacity += 6;
-        }
-        else if (game.pressPhraseOpacity > 0 && !game.increasePhraseOpacity) {
-            game.pressPhraseOpacity -= 6;
-        }
-        else if (game.pressPhraseOpacity >= 255) {
-            game.increasePhraseOpacity = false;
-        }
-        else if (game.pressPhraseOpacity <= 0) {
-            game.increasePhraseOpacity = true;
-        }
-
-        game.drawInitialScreen();
     }
 
     /////////////
@@ -282,6 +258,43 @@ void draw()
     //readArduino();
     readKeyboard();
     //sendArduino();
+}
+
+String calculateScore()
+{
+    int scoreOne = 0;
+    int scoreTwo = 0;
+
+    switch (level) {
+        case 1 :
+            scoreOne = pongLeft.scoreTeamOne.scorePlayer + pongRight.scoreTeamOne.scorePlayer;
+            scoreTwo = pongLeft.scoreTeamTwo.scorePlayer + pongRight.scoreTeamTwo.scorePlayer;
+            break;
+        case 2 :
+            scoreOne = pongTop.scoreTeamOne.scorePlayer;
+            scoreTwo = pongBottom.scoreTeamOne.scorePlayer;
+            break;
+        case 3 :
+            scoreOne = pongDiagonalTLBR.scoreTeamOne.scorePlayer + pongDiagonalTRBL.scoreTeamOne.scorePlayer;
+            scoreTwo = pongDiagonalTLBR.scoreTeamTwo.scorePlayer + pongDiagonalTRBL.scoreTeamTwo.scorePlayer;
+        default :
+            scoreOne = pongFull.scoreTeamOne.scorePlayer;
+            scoreTwo = pongFull.scoreTeamTwo.scorePlayer;
+            break;
+    }
+
+    int hand = nbLevelsPlayed + 1;
+    if (scoreOne > scoreTwo) {
+        nbRoundsWinOne += 1;
+        return "Team one wins round " + hand + " !";
+    }
+    else if (scoreTwo > scoreOne) {
+        nbRoundsWinTwo += 1;
+        return "Team two wins round" + hand + " !";
+    }
+    else {
+        return "Equality round " + hand + " !";
+    }
 }
 
 void instantiateArduino()
