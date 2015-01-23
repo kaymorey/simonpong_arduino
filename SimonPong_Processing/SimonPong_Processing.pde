@@ -6,7 +6,8 @@ int previousMillis = 0;
 /////////////
 // Arduino //
 /////////////
-Serial myPort;
+Serial myPort1;
+Serial myPort2;
 String stringReceived;
 String stringToSend;
 String[] moves;
@@ -89,7 +90,7 @@ void setup()
     /////////////
     // Arduino //
     /////////////
-    //instantiateArduino();
+    instantiateArduino();
 
     ////////////
     // Screen //
@@ -212,15 +213,18 @@ void draw()
     /////////////
     // Arduino //
     /////////////
-    //readArduino();
+    readArduino();
     readKeyboard();
-    //sendArduino();
+    sendArduino();
 }
 
 void instantiateArduino()
 {
-    String portName = Serial.list()[3];
-    myPort = new Serial(this, portName, 9600);
+    String portName1 = Serial.list()[2];
+    myPort1 = new Serial(this, portName1, 9600);
+
+    String portName2 = Serial.list()[2];
+    myPort2 = new Serial(this, portName2, 9600);
 }
 
 void readArduino()
@@ -231,8 +235,18 @@ void readArduino()
         simon.play();
     }
 
-    if(myPort.available() > 0){
-        stringReceived = myPort.readStringUntil('\n');
+    if(myPort2.available() > 0){
+        println("myPort1.readStringUntil('\n'): "+myPort2.readStringUntil('\n'));
+    }
+    if(dataCanBeSent) {
+        myPort2.write("pute\n");
+    }
+    else {
+        myPort2.write("blink\n");
+    }
+
+    if(myPort1.available() > 0){
+        stringReceived = myPort1.readStringUntil('\n');
         if(stringReceived != null) {
             moves = split(stringReceived,'$');
             //println("stringReceived: "+stringReceived);
@@ -304,18 +318,18 @@ void sendArduino()
 {
     if(game.activeScreen == 1 && !demoHasBeenStopped) {
         demoHasBeenStopped = true;
-        myPort.write("stopDemo\n");
+        myPort1.write("stopDemo\n");
     }
     else if(pongCanBeLaunched && !firstSequenceHasBeenSent) {
         firstSequenceHasBeenSent = true;
-        myPort.write("firstSequence\n");
+        myPort1.write("firstSequence\n");
         stringToSend = "0$"+str(numberOfColorInSequence);
         for(int i = 0; i < numberOfColorInSequence; i++) {
             stringToSend += "$"+str(simon.sequenceToPlay.get(i));
         }
         stringToSend += "\n";
         //println("stringToSend: "+stringToSend);
-        myPort.write(stringToSend);
+        myPort1.write(stringToSend);
     }
     else if(dataCanBeSent) {
         dataCanBeSent = false;
@@ -325,7 +339,7 @@ void sendArduino()
         }
         stringToSend += "\n";
         //println("stringToSend: "+stringToSend);
-        myPort.write(stringToSend);
+        myPort1.write(stringToSend);
     }
 }
 
@@ -343,7 +357,7 @@ void restartSequenceForPlayer(int player) {
         stringToSend += "$"+str(simon.sequenceToPlay.get(i));
     }
     stringToSend += "\n";
-    myPort.write(stringToSend);
+    myPort1.write(stringToSend);
 }
 
 void resetSimon(int player)
