@@ -8,9 +8,12 @@ int previousMillis = 0;
 /////////////
 Serial myPort1;
 Serial myPort2;
-String stringReceived;
-String stringToSend;
-String[] moves;
+String stringReceived1;
+String stringReceived2;
+String stringToSend1;
+String stringToSend2;
+String[] moves1;
+String[] moves2;
 boolean hasWaited = false;
 boolean dataCanBeSent = false;
 String playerToSend;
@@ -31,7 +34,7 @@ int screenHeight = 600;//1050;
 // Pong //
 //////////
 int level;
-int levelDuration = 3000;
+int levelDuration = 300000;
 int levelTimer;
 int levelMaxTime;
 int transitionLevelCounter;
@@ -55,6 +58,8 @@ ArrayList<Player> players = new ArrayList<Player>();
 // Temporaire
 int playerTopLeft;
 int playerTopRight;
+int playerBottomLeft;
+int playerBottomRight;
 
 ///////////
 // Score //
@@ -101,7 +106,7 @@ void setup()
     /////////////
     // Arduino //
     /////////////
-    // instantiateArduino();
+    instantiateArduino();
 
     ////////////
     // Screen //
@@ -264,9 +269,9 @@ void draw()
     /////////////
     // Arduino //
     /////////////
-    // readArduino();
+    readArduino();
     readKeyboard();
-    // sendArduino();
+    sendArduino();
 }
 
 String calculateScore()
@@ -308,10 +313,10 @@ String calculateScore()
 
 void instantiateArduino()
 {
-    String portName1 = Serial.list()[2];
+    String portName1 = Serial.list()[4];
     myPort1 = new Serial(this, portName1, 9600);
 
-    String portName2 = Serial.list()[2];
+    String portName2 = Serial.list()[8];
     myPort2 = new Serial(this, portName2, 9600);
 }
 
@@ -323,30 +328,30 @@ void readArduino()
         simon.play();
     }
 
-    if(myPort2.available() > 0){
-        println("myPort1.readStringUntil('\n'): "+myPort2.readStringUntil('\n'));
-    }
-    if(dataCanBeSent) {
-        myPort2.write("pute\n");
-    }
-    else {
-        myPort2.write("blink\n");
-    }
+    //if(myPort2.available() > 0){
+        //println("myPort1.readStringUntil('\n'): "+myPort2.readStringUntil('\n'));
+    //}
+    // if(dataCanBeSent) {
+    //     myPort2.write("pute\n");
+    // }
+    // else {
+    //     myPort2.write("blink\n");
+    // }
 
     if(myPort1.available() > 0){
-        stringReceived = myPort1.readStringUntil('\n');
-        if(stringReceived != null) {
-            moves = split(stringReceived,'$');
+        stringReceived1 = myPort1.readStringUntil('\n');
+        if(stringReceived1 != null) {
+            moves1 = split(stringReceived1,'$');
             //println("stringReceived: "+stringReceived);
-            if(moves.length == 4){
+            if(moves1.length == 4){
                 if(game.activeScreen != 1) {
-                    if(int(moves[2].trim()) != 255 || int(moves[3].trim()) != 255) {
+                    if(int(moves1[2].trim()) != 255 || int(moves1[3].trim()) != 255) {
                         game.activeScreen = 1;
                     }
                 }
                 else {
                     // joueur top left
-                    switch (int(moves[2].trim())) {
+                    switch (int(moves1[2].trim())) {
                         case 0 :
                             players.get(2).returnedValueByResolver = players.get(2).resolver.compareSolution(0);
                             break;
@@ -361,7 +366,7 @@ void readArduino()
                             break;
                     }
                     // joueur top right
-                    switch (int(moves[3].trim())) {
+                    switch (int(moves1[3].trim())) {
                         case 0 :
                             players.get(3).returnedValueByResolver = players.get(3).resolver.compareSolution(0);
                             break;
@@ -389,13 +394,81 @@ void readArduino()
                         }
                     }
 
-                    playerTopLeft = int(moves[1].trim());
-                    playerTopRight = int(moves[0].trim());
+                    playerTopLeft = int(moves1[1].trim());
+                    playerTopRight = int(moves1[0].trim());
                     /* from 0 to 255 */
                     // println("playerLeft: "+playerLeft);
                     // println("playerRight: "+playerRight);
                     players.get(2).bar.posX = playerTopLeft*(screenWidth/2-players.get(2).bar.width)/255;
                     players.get(3).bar.posX = playerTopRight*(screenWidth/2-players.get(3).bar.width)/255 + screenWidth/2;
+                }
+            }
+        }
+    }
+
+    if(myPort2.available() > 0){
+        stringReceived2 = myPort2.readStringUntil('\n');
+        if(stringReceived2 != null) {
+            moves2 = split(stringReceived2,'$');
+            //println("stringReceived: "+stringReceived);
+            if(moves2.length == 4){
+                if(game.activeScreen != 1) {
+                    if(int(moves2[2].trim()) != 255 || int(moves2[3].trim()) != 255) {
+                        game.activeScreen = 1;
+                    }
+                }
+                else {
+                    // joueur top left
+                    switch (int(moves2[2].trim())) {
+                        case 0 :
+                            players.get(0).returnedValueByResolver = players.get(0).resolver.compareSolution(0);
+                            break;
+                        case 1 :
+                            players.get(0).returnedValueByResolver = players.get(0).resolver.compareSolution(1);
+                            break;
+                        case 2 :
+                            players.get(0).returnedValueByResolver = players.get(0).resolver.compareSolution(2);
+                            break;
+                        case 3 :
+                            players.get(0).returnedValueByResolver = players.get(0).resolver.compareSolution(3);
+                            break;
+                    }
+                    // joueur top right
+                    switch (int(moves2[3].trim())) {
+                        case 0 :
+                            players.get(1).returnedValueByResolver = players.get(1).resolver.compareSolution(0);
+                            break;
+                        case 1 :
+                            players.get(1).returnedValueByResolver = players.get(1).resolver.compareSolution(1);
+                            break;
+                        case 2 :
+                            players.get(1).returnedValueByResolver = players.get(1).resolver.compareSolution(2);
+                            break;
+                        case 3 :
+                            players.get(1).returnedValueByResolver = players.get(1).resolver.compareSolution(3);
+                            break;
+                    }
+
+                    // if(returnedValueByResolver == 2) {
+                    //     resetSimon();
+                    // }
+                    for (int i = 0; i < playersNumber; i++) {
+                        if(players.get(i).returnedValueByResolver == 2) {
+                            resetSimon(i);
+                        }
+                        else if(players.get(i).returnedValueByResolver == 0) {
+                            players.get(i).returnedValueByResolver = 3;
+                            restartSequenceForPlayer(i);
+                        }
+                    }
+
+                    playerBottomLeft = int(moves2[1].trim());
+                    playerBottomRight = int(moves2[0].trim());
+                    /* from 0 to 255 */
+                    // println("playerLeft: "+playerLeft);
+                    // println("playerRight: "+playerRight);
+                    players.get(0).bar.posX = playerBottomLeft*(screenWidth/2-players.get(0).bar.width)/255;
+                    players.get(1).bar.posX = playerBottomRight*(screenWidth/2-players.get(1).bar.width)/255 + screenWidth/2;
                 }
             }
         }
@@ -407,32 +480,55 @@ void sendArduino()
     if(game.activeScreen == 1 && !demoHasBeenStopped) {
         demoHasBeenStopped = true;
         myPort1.write("stopDemo\n");
+        myPort2.write("stopDemo\n");
     }
     else if(pongCanBeLaunched && !firstSequenceHasBeenSent) {
         firstSequenceHasBeenSent = true;
         myPort1.write("firstSequence\n");
-        stringToSend = "0$"+str(numberOfColorInSequence);
+        myPort2.write("firstSequence\n");
+        stringToSend1 = "0$"+str(numberOfColorInSequence);
         for(int i = 0; i < numberOfColorInSequence; i++) {
-            stringToSend += "$"+str(simon.sequenceToPlay.get(i));
+            stringToSend1 += "$"+str(simon.sequenceToPlay.get(i));
         }
-        stringToSend += "\n";
+        stringToSend1 += "\n";
         //println("stringToSend: "+stringToSend);
-        myPort1.write(stringToSend);
+        myPort1.write(stringToSend1);
+
+        stringToSend2 = "0$"+str(numberOfColorInSequence);
+        for(int i = 0; i < numberOfColorInSequence; i++) {
+            stringToSend2 += "$"+str(simon.sequenceToPlay.get(i));
+        }
+        stringToSend2+= "\n";
+        //println("stringToSend: "+stringToSend);
+        myPort2.write(stringToSend2);
     }
     else if(dataCanBeSent) {
         dataCanBeSent = false;
-        stringToSend = "0$"+str(numberOfColorInSequence);
+        stringToSend1 = "0$"+str(numberOfColorInSequence);
         for(int i = 0; i < numberOfColorInSequence; i++) {
-            stringToSend += "$"+str(simon.sequenceToPlay.get(i));
+            stringToSend1 += "$"+str(simon.sequenceToPlay.get(i));
         }
-        stringToSend += "\n";
+        stringToSend1 += "\n";
         //println("stringToSend: "+stringToSend);
-        myPort1.write(stringToSend);
+        myPort2.write(stringToSend2);
+        stringToSend2 = "0$"+str(numberOfColorInSequence);
+        for(int i = 0; i < numberOfColorInSequence; i++) {
+            stringToSend2 += "$"+str(simon.sequenceToPlay.get(i));
+        }
+        stringToSend2 += "\n";
+        //println("stringToSend: "+stringToSend);
+        myPort2.write(stringToSend2);
     }
 }
 
 void restartSequenceForPlayer(int player) {
     switch(player) {
+        case 0:
+            playerToSend = "1";
+            break;
+        case 1:
+            playerToSend = "2";
+            break;
         case 2:
             playerToSend = "1";
             break;
@@ -440,12 +536,22 @@ void restartSequenceForPlayer(int player) {
             playerToSend = "2";
             break;
     }
-    stringToSend = playerToSend+"$"+str(numberOfColorInSequence);
-    for(int i = 0; i < numberOfColorInSequence; i++) {
-        stringToSend += "$"+str(simon.sequenceToPlay.get(i));
+    if(player == 2 || player == 3) {
+        stringToSend1 = playerToSend+"$"+str(numberOfColorInSequence);
+        for(int i = 0; i < numberOfColorInSequence; i++) {
+            stringToSend1 += "$"+str(simon.sequenceToPlay.get(i));
+        }
+        stringToSend1 += "\n";
+        myPort1.write(stringToSend1);
     }
-    stringToSend += "\n";
-    myPort1.write(stringToSend);
+    if(player == 0 || player == 1) {
+        stringToSend2 = playerToSend+"$"+str(numberOfColorInSequence);
+        for(int i = 0; i < numberOfColorInSequence; i++) {
+            stringToSend2 += "$"+str(simon.sequenceToPlay.get(i));
+        }
+        stringToSend2 += "\n";
+        myPort1.write(stringToSend2);
+    }
 }
 
 void resetSimon(int player)
