@@ -1,7 +1,7 @@
 class Game {
     Sound backgroundSound;
     Sound loseSound;
-    int activeScreen = 0;
+    int activeScreen;
 
     PFont pressBtnFont;
     PFont gameNameFont;
@@ -9,10 +9,14 @@ class Game {
     int pressPhraseOpacity = 255;
     boolean increasePhraseOpacity = true;
 
+    int [] randomLevels = {1, 2, 3};
+
     boolean end;
 
     Game(Minim minim)
     {
+        activeScreen = 0;
+
         pressBtnFont = loadFont("BebasNeueBook-30.vlw");
         gameNameFont = loadFont("BebasNeue-100.vlw");
 

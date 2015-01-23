@@ -32,7 +32,6 @@ int screenHeight = 600;//1050;
 //////////
 int level;
 int levelDuration = 3000;
-int[] randomLevels = {1, 2, 3};
 int levelTimer;
 int levelMaxTime;
 int transitionLevelCounter;
@@ -77,16 +76,19 @@ boolean firstSequenceHasBeenSent = false;
 int interval = 5;
 int pauseInterval = 300;
 FightLauncher fightLauncherBottom;
-boolean launcherNeedTowait = false;
+boolean launcherNeedTowait;
 String currentTimer;
-boolean pongCanBeLaunched = false;
-boolean demoHasBeenStopped = false;
+boolean pongCanBeLaunched;
+boolean demoHasBeenStopped;
 
 void setup()
 {
     ///////////////////
     // fightLauncher //
     ///////////////////
+    launcherNeedTowait = false;
+    boolean pongCanBeLaunched = false;
+    boolean demoHasBeenStopped = false;
     fightLauncherBottom = new FightLauncher("3",5,scorePosYBottom);
 
     //////////
@@ -99,7 +101,7 @@ void setup()
     /////////////
     // Arduino //
     /////////////
-    instantiateArduino();
+    // instantiateArduino();
 
     ////////////
     // Screen //
@@ -122,9 +124,9 @@ void setup()
     //////////
     // Pong //
     //////////
-        int levelIndex = int(random(randomLevels.length));
-        level = randomLevels[levelIndex];
-        randomLevels = remove(randomLevels, levelIndex);
+        int levelIndex = int(random(game.randomLevels.length));
+        level = game.randomLevels[levelIndex];
+        game.randomLevels = remove(game.randomLevels, levelIndex);
 
         /////////////
         // Level 1 //
@@ -174,20 +176,21 @@ void draw()
             transitionLevelCounter = 0;
             nbLevelsPlayed += 1;
             if (nbLevelsPlayed <= 1) {
-                int levelIndex = int(random(randomLevels.length));
-                level = randomLevels[levelIndex];
-                randomLevels = remove(randomLevels, levelIndex);
+                int levelIndex = int(random(game.randomLevels.length));
+                level = game.randomLevels[levelIndex];
+                game.randomLevels = remove(game.randomLevels, levelIndex);
             }
             else if (nbLevelsPlayed == 2) {
                 level = 4;
             }
             else {
                 if (nbRoundsWinOne == nbRoundsWinTwo && nbLevelsPlayed == 3) {
-                    int levelIndex = int(random(randomLevels.length));
-                    level = randomLevels[levelIndex];
-                    randomLevels = remove(randomLevels, levelIndex);
+                    int levelIndex = int(random(game.randomLevels.length));
+                    level = game.randomLevels[levelIndex];
+                    game.randomLevels = remove(game.randomLevels, levelIndex);
                 }
                 else {
+                    previousMillis = millis();
                     game.activeScreen = 2;
                 }
             }
@@ -211,7 +214,12 @@ void draw()
         game.drawInitialScreen();
     }
     else if (game.activeScreen == 2) {
-        game.drawLastScreen();
+        if (currentMillis - previousMillis <= 1000) {
+            game.drawLastScreen();
+        }
+        else {
+            setup();
+        }
     }
     else {
         //////////
@@ -256,9 +264,9 @@ void draw()
     /////////////
     // Arduino //
     /////////////
-    readArduino();
+    // readArduino();
     readKeyboard();
-    sendArduino();
+    // sendArduino();
 }
 
 String calculateScore()
