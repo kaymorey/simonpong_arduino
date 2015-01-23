@@ -80,7 +80,7 @@ class Ball
         ellipse(posX, posY, radius, radius);
 
         if (!pongCanBeLaunched) {
-            maxTimer = 150;
+            maxTimer = 210;
         }
         else {
             maxTimer = 100;

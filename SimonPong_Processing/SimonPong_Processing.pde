@@ -75,7 +75,7 @@ boolean firstSequenceHasBeenSent = false;
 ///////////////////
 int interval = 5;
 int pauseInterval = 300;
-FightLauncher fightLauncherBottom;
+FightLauncher fightLauncher;
 boolean launcherNeedTowait;
 String currentTimer;
 boolean pongCanBeLaunched;
@@ -89,7 +89,7 @@ void setup()
     launcherNeedTowait = false;
     boolean pongCanBeLaunched = false;
     boolean demoHasBeenStopped = false;
-    fightLauncherBottom = new FightLauncher("3",5,scorePosYBottom);
+    fightLauncher = new FightLauncher("3",5,screenHeight/4);
 
     //////////
     // Game //
@@ -256,8 +256,8 @@ void draw()
         }
 
 
-        fightLauncherBottom.draw();
-        displayLauncher(currentMillis);
+        fightLauncher.draw();
+        fightLauncher.displayLauncher(currentMillis);
 
     }
 
@@ -589,39 +589,6 @@ void readKeyboard()
         //          hasWaitedToReadInput = !hasWaitedToReadInput;
         //      }
         }
-    }
-}
-
-void displayLauncher(int currentMillis)
-{
-    if(fightLauncherBottom.fontSize >= 200) {
-        launcherNeedTowait = true;
-        currentTimer = fightLauncherBottom.valueToDisplay;
-        if(currentTimer == "3") {
-            fightLauncherBottom.valueToDisplay = "2";
-            fightLauncherBottom.fontSize = 0;
-        }
-        else if(currentTimer == "2") {
-            fightLauncherBottom.valueToDisplay = "1";
-            fightLauncherBottom.fontSize = 0;
-        }
-        else if(currentTimer == "1") {
-            fightLauncherBottom.valueToDisplay = "FIGHT !";
-            fightLauncherBottom.fontSize = 0;
-        }
-        else if(currentTimer == "FIGHT !") {
-            fightLauncherBottom.valueToDisplay = "";
-            fightLauncherBottom.fontSize = 0;
-            pongCanBeLaunched = true;
-        }
-    }
-    if(currentMillis - previousMillis > interval && fightLauncherBottom.valueToDisplay != "" && !launcherNeedTowait) {
-        previousMillis = currentMillis;
-        fightLauncherBottom.fontSize += 7;
-    }
-    else if(currentMillis - previousMillis > pauseInterval && launcherNeedTowait) {
-        previousMillis = currentMillis;
-        launcherNeedTowait = false;
     }
 }
 
