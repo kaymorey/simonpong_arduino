@@ -293,7 +293,7 @@ String calculateScore()
         return "Team two wins round" + hand + " !";
     }
     else {
-        return "Equality round " + hand + " !";
+        return "Draw round " + hand + " !";
     }
 }
 

@@ -102,8 +102,8 @@ class Game {
             textBottom = "You win !";
         }
         else {
-            textTop = "Equality";
-            textBottom = "Equality";
+            textTop = "Draw";
+            textBottom = "Draw";
         }
 
         fill(251, 211, 89);
