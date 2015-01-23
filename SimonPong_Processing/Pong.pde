@@ -26,6 +26,7 @@ class Pong
     Score scoreTeamTwo;
     int mode;
     int lastBarTouched = -1;
+    boolean firstDisplay = true;
 
     Pong(Game pongGame, int pongWidth, int pongHeight, int pongPosX, int pongPosY, color pongBackground, ArrayList<Player> pongPlayers, int pongMode) {
 
@@ -96,10 +97,15 @@ class Pong
 
     void draw()
     {
-
+        if (firstDisplay) {
+            levelTimer = millis();
+            firstDisplay = false;
+        }
         drawBackground(80);
         drawLine();
-        drawScore();
+        if (pongCanBeLaunched) {
+            drawScore();
+        }
         drawPlayer();
         play();
         /*
@@ -217,7 +223,7 @@ class Pong
         else {
             ball.loading();
         }
-        
+
 
         if (ball.testBallHitBar(players.get(0).bar)) {
             ball.changeBallDirection(players.get(0).bar.posX, 1);
