@@ -88,6 +88,16 @@ class Bar
         }
     }
 
+    void reverse(boolean controlInverted)
+    {
+        if (!controlInverted && posX > 0) {
+            posX -= 5;
+        }
+        else if (controlInverted && posX < screenWidth / 2 - width) {
+            posX += 5;
+        }
+    }
+
     void speed(boolean increase)
     {
         if (increase && (barSpeed + 5 <= maxSpeed)) {

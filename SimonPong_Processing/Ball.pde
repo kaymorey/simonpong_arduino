@@ -8,7 +8,7 @@ class Ball
     int posY;
     int incrementX;
     int incrementY;
-    int[] incrementsY = {3, -3};
+    int[] incrementsY = {10, -10};
 
     int counter;
 
@@ -169,24 +169,24 @@ class Ball
         // If collision with top bar multi equals 1 else multi equals -1 (ball going to top or bottom)
         switch (posBallHitBar(posXBar)) {
             case -2:
-                incrementX = -3;
-                incrementY = 2 * multi;
+                incrementX = -5;
+                incrementY = 8 * multi;
                 break;
             case -1:
-                incrementX = -2;
-                incrementY = 2 * multi;
+                incrementX = -3;
+                incrementY = 8 * multi;
                 break;
             case 0:
                 incrementX = 0;
-                incrementY = 3 * multi;
+                incrementY = 10 * multi;
                 break;
             case 1:
-                incrementX = 2;
-                incrementY = 2 * multi;
+                incrementX = 3;
+                incrementY = 8 * multi;
                 break;
             case 2:
-                incrementX = 3;
-                incrementY = 2 * multi;
+                incrementX = 5;
+                incrementY = 8 * multi;
                 break;
         }
     }

@@ -24,14 +24,14 @@ Minim minim;//audio context
 ////////////
 // Screen //
 ////////////
-int screenWidth  = 800;//1680;
-int screenHeight = 600;//1050;
+int screenWidth  = 1680;
+int screenHeight = 1050;
 
 //////////
 // Pong //
 //////////
 int level;
-int levelDuration = 3000;
+int levelDuration = 6*3000;
 int levelTimer;
 int levelMaxTime;
 int transitionLevelCounter;
@@ -128,6 +128,11 @@ void setup()
         level = game.randomLevels[levelIndex];
         game.randomLevels = remove(game.randomLevels, levelIndex);
 
+        transitionLevelCounter = 0;
+        nbLevelsPlayed = 0;
+        nbRoundsWinOne = 0;
+        nbRoundsWinTwo = 0;
+
         /////////////
         // Level 1 //
         /////////////
@@ -165,14 +170,14 @@ void draw()
     // End of level
     if (currentMillis - levelTimer >= levelDuration) {
         transitionLevelCounter += 1;
-        if (transitionLevelCounter <= 50) {
+        if (transitionLevelCounter <= 100) {
             game.drawTimesUpPhrase();
         }
-        else if (transitionLevelCounter >= 50 && transitionLevelCounter <= 100) {
+        else if (transitionLevelCounter >= 100 && transitionLevelCounter <= 200) {
             String winingTeam = calculateScore();
             game.drawWiningTeamPhrase(winingTeam);
         }
-        else if (transitionLevelCounter >= 150) {
+        else if (transitionLevelCounter >= 200) {
             transitionLevelCounter = 0;
             nbLevelsPlayed += 1;
             if (nbLevelsPlayed <= 1) {
@@ -194,6 +199,8 @@ void draw()
                     game.activeScreen = 2;
                 }
             }
+
+            background(255);
         }
     }
 
@@ -342,9 +349,38 @@ void readArduino()
                 if(game.activeScreen != 1) {
                     if(int(moves[2].trim()) != 255 || int(moves[3].trim()) != 255) {
                         game.activeScreen = 1;
+                        background(255);
                     }
                 }
                 else {
+                    switch (int(moves[2].trim())) {
+                        case 0 :
+                            players.get(0).returnedValueByResolver = players.get(0).resolver.compareSolution(0);
+                            break;
+                        case 1 :
+                            players.get(0).returnedValueByResolver = players.get(0).resolver.compareSolution(1);
+                            break;
+                        case 2 :
+                            players.get(0).returnedValueByResolver = players.get(0).resolver.compareSolution(2);
+                            break;
+                        case 3 :
+                            players.get(0).returnedValueByResolver = players.get(0).resolver.compareSolution(3);
+                            break;
+                    }
+                    switch (int(moves[2].trim())) {
+                        case 0 :
+                            players.get(1).returnedValueByResolver = players.get(1).resolver.compareSolution(0);
+                            break;
+                        case 1 :
+                            players.get(1).returnedValueByResolver = players.get(1).resolver.compareSolution(1);
+                            break;
+                        case 2 :
+                            players.get(1).returnedValueByResolver = players.get(1).resolver.compareSolution(2);
+                            break;
+                        case 3 :
+                            players.get(1).returnedValueByResolver = players.get(1).resolver.compareSolution(3);
+                            break;
+                    }
                     // joueur top left
                     switch (int(moves[2].trim())) {
                         case 0 :
@@ -381,6 +417,31 @@ void readArduino()
                     // }
                     for (int i = 0; i < playersNumber; i++) {
                         if(players.get(i).returnedValueByResolver == 2) {
+
+                            int power = int(random(0, 2));
+
+                            switch (power) {
+                                case 0 :
+                                    players.get(i).bar.expand();
+                                    break;
+                                case 1 :
+                                    pongLeft.ball.transparentMalus = true;
+                                    pongLeft.ball.isTransparent = true;
+
+                                    pongRight.ball.transparentMalus = true;
+                                    pongRight.ball.isTransparent = true;
+
+                                    pongTop.ball.transparentMalus = true;
+                                    pongTop.ball.isTransparent = true;
+
+                                    pongBottom.ball.transparentMalus = true;
+                                    pongBottom.ball.isTransparent = true;
+                                    break; 
+                                default :
+                                    players.get(2).bar.shrink();
+                                    break;
+                            }
+
                             resetSimon(i);
                         }
                         else if(players.get(i).returnedValueByResolver == 0) {
@@ -394,6 +455,9 @@ void readArduino()
                     /* from 0 to 255 */
                     // println("playerLeft: "+playerLeft);
                     // println("playerRight: "+playerRight);
+                    players.get(0).bar.posX = playerTopLeft*(screenWidth/2-players.get(0).bar.width)/255;
+                    players.get(1).bar.posX = playerTopRight*(screenWidth/2-players.get(1).bar.width)/255 + screenWidth/2;
+
                     players.get(2).bar.posX = playerTopLeft*(screenWidth/2-players.get(2).bar.width)/255;
                     players.get(3).bar.posX = playerTopRight*(screenWidth/2-players.get(3).bar.width)/255 + screenWidth/2;
                 }
@@ -493,12 +557,15 @@ void readKeyboard()
             }
             // Controls for bottom left bar
             if (key == 'q' || key == 'Q') {
+                /*
                 if (!players.get(2).bar.controlInverted && players.get(2).bar.posX > 0) {
                     players.get(2).bar.posX -= 5;
                 }
                 else if (players.get(2).bar.controlInverted && players.get(2).bar.posX < screenWidth / 2 - players.get(2).bar.width) {
                     players.get(2).bar.posX += 5;
-                }
+                }*/
+
+                players.get(2).bar.reverse(false);
              }
              else if ((key == 's' || key == 'S')) {
                 if (!players.get(2).bar.controlInverted && players.get(2).bar.posX < screenWidth / 2 - players.get(2).bar.width) {
