@@ -17,7 +17,7 @@ class Game {
         backgroundSound = new Sound(minim, "arcade-music-loop.wav");
         backgroundSound.player.setGain(-6);
 
-        loseSound = new Sound(minim, "lose.mp3");
+        loseSound = new Sound(minim, "lose3.mp3");
         loseSound.player.setGain(-5);
     }
 
