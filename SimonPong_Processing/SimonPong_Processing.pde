@@ -23,13 +23,19 @@ Minim minim;//audio context
 ////////////
 // Screen //
 ////////////
-int screenWidth  = 1280;//1680;
-int screenHeight = 800;//1050;
+int screenWidth  = 800;//1680;
+int screenHeight = 600;//1050;
 
 //////////
 // Pong //
 //////////
 int level;
+int levelDuration = 20000;
+int[] randomLevels = {1, 2, 3};
+int levelTimer;
+int levelMaxTime;
+int transitionLevelCounter;
+int nbLevelsPlayed;
 Pong pongLeft;
 Pong pongRight;
 Pong pongTop;
@@ -84,7 +90,7 @@ void setup()
     //////////
     minim = new Minim(this);
     game = new Game(minim);
-    game.backgroundSound.player.loop();
+    // game.backgroundSound.player.loop();
 
     /////////////
     // Arduino //
@@ -112,7 +118,9 @@ void setup()
     //////////
     // Pong //
     //////////
-        level = 1;
+        int levelIndex = int(random(randomLevels.length));
+        level = randomLevels[levelIndex];
+        randomLevels = remove(randomLevels, levelIndex);
 
         /////////////
         // Level 1 //
@@ -144,9 +152,68 @@ void setup()
     }
 }
 
+String calculateScore()
+{
+    int scoreOne = 0;
+    int scoreTwo = 0;
+
+    switch (level) {
+        case 1 :
+            scoreOne = pongLeft.scoreTeamOne.scorePlayer + pongRight.scoreTeamOne.scorePlayer;
+            scoreTwo = pongLeft.scoreTeamTwo.scorePlayer + pongRight.scoreTeamTwo.scorePlayer;
+            break;
+        case 2 :
+            scoreOne = pongTop.scoreTeamOne.scorePlayer;
+            scoreTwo = pongBottom.scoreTeamOne.scorePlayer;
+            break;
+        case 3 :
+            scoreOne = pongDiagonalTLBR.scoreTeamOne.scorePlayer + pongDiagonalTRBL.scoreTeamOne.scorePlayer;
+            scoreTwo = pongDiagonalTLBR.scoreTeamTwo.scorePlayer + pongDiagonalTRBL.scoreTeamTwo.scorePlayer;
+        default :
+            scoreOne = pongFull.scoreTeamOne.scorePlayer;
+            scoreTwo = pongFull.scoreTeamTwo.scorePlayer;
+            break;
+    }
+
+    int hand = nbLevelsPlayed + 1;
+    if (scoreOne > scoreTwo) {
+        return "Team one wins round " + hand + " !";
+    }
+    else if (scoreTwo > scoreOne) {
+        return "Team two wins round" + hand + " !";
+    }
+    else {
+        return "Equality round " + hand + " !";
+    }
+}
+
 void draw()
 {
     int currentMillis = millis();
+
+    // End of level
+    if (currentMillis - levelTimer >= levelDuration) {
+        transitionLevelCounter += 1;
+        if (transitionLevelCounter <= 50) {
+            game.drawTimesUpPhrase();
+        }
+        else if (transitionLevelCounter >= 50 && transitionLevelCounter <= 100) {
+            String winingTeam = calculateScore();
+            game.drawWiningTeamPhrase(winingTeam);
+        }
+        else if (transitionLevelCounter >= 150) {
+            transitionLevelCounter = 0;
+            nbLevelsPlayed += 1;
+            if (nbLevelsPlayed <= 1) {
+                int levelIndex = int(random(randomLevels.length));
+                level = randomLevels[levelIndex];
+                randomLevels = remove(randomLevels, levelIndex);
+            }
+            else {
+                level = 4;
+            }
+        }
+    }
 
     if (game.activeScreen != 0) {
         //////////
@@ -521,4 +588,11 @@ void displayLauncher(int currentMillis)
         previousMillis = currentMillis;
         launcherNeedTowait = false;
     }
+}
+
+int[] remove(int array[], int item) {
+    int outgoing[] = new int[array.length - 1];
+    System.arraycopy(array, 0, outgoing, 0, item);
+    System.arraycopy(array, item+1, outgoing, item, array.length - (item + 1));
+    return outgoing;
 }

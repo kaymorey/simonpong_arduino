@@ -17,7 +17,7 @@ class Ball
     boolean ballAtTheTop = true;
 
     int timer = 0;
-    int maxTimer = 100;
+    int maxTimer;
     boolean loadingEnd = false;
 
     Ball(int radiusBall, int initialPosXBall, int initialPosYBall) {
@@ -78,6 +78,13 @@ class Ball
         }
 
         ellipse(posX, posY, radius, radius);
+
+        if (!pongCanBeLaunched) {
+            maxTimer = 150;
+        }
+        else {
+            maxTimer = 100;
+        }
     }
 
     void moveBall(int pongWidth, int pongHeight, int pongPosX, int pongPosY, int mode)
@@ -98,7 +105,7 @@ class Ball
             incrementX = -incrementX;
         }
         else if ((mode == 4) && (posX + radius / 2 > pongWidth / 2) && (posY - radius / 2 < pongHeight / 2)) {
-            
+
             if (!ballAtTheTop) {
                 posX = posX - pongWidth / 2;
                 ballAtTheTop = true;
@@ -118,7 +125,7 @@ class Ball
             }
         }
         else if ((mode == 5) && (posX + radius / 2 > pongWidth / 2) && (posY + radius / 2 > pongHeight / 2)) {
-            
+
             if (ballAtTheTop) {
                 posX = posX - pongWidth / 2;
                 ballAtTheTop = false;
@@ -128,7 +135,7 @@ class Ball
             }
         }
         else if ((mode == 5) && (posX - radius / 2 < pongWidth / 2) && (posY - radius / 2 < pongHeight / 2)) {
-            
+
             if (!ballAtTheTop) {
                 posX = posX + pongWidth / 2;
                 ballAtTheTop = true;

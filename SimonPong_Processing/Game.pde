@@ -58,4 +58,21 @@ class Game {
         rotate(PI);
         text(txt, - (screenWidth + textWidth(txt)) / 2, - 30);
     }
+
+    void drawTimesUpPhrase()
+    {
+        String txt = "Time's up !";
+        fill(255, 255, 255);
+        textFont(gameNameFont);
+        textSize(65);
+        text (txt, (screenWidth - textWidth(txt)) / 2, screenHeight / 2 + 33);
+    }
+
+    void drawWiningTeamPhrase(String txt)
+    {
+        fill(255, 255, 255);
+        textFont(gameNameFont);
+        textSize(65);
+        text (txt, (screenWidth - textWidth(txt)) / 2, screenHeight / 2 + 33);
+    }
 }

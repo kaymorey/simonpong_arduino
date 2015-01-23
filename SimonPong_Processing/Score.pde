@@ -31,7 +31,7 @@ class Score {
             rotate(-PI);
         }
         else {
-            text(scoreText, pongPosX + (pongWidth - textWidth(scoreText)) / 2, scorePosY + 35); // 50 is font-size / 2
+            text(scoreText, pongPosX + (pongWidth - textWidth(scoreText)) / 2, scorePosY + 35);
         }
     }
 /*
