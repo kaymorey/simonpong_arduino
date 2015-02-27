@@ -155,8 +155,10 @@ class Ball
     }
 
     boolean testBallHitBar(Bar bar) {
+        int posXBallMid = posX + radius / 2;
+        int posYBallMid = posY + radius / 2;
 
-        if ((posX + radius / 2 >= bar.posX && posX - radius / 2 <= bar.posX + bar.width) && (posY + radius / 2 >= bar.posY && posY - radius / 2 <= bar.posY + bar.height)) {
+        if ((posXBallMid >= bar.posX && posXBallMid <= bar.posX + bar.width) && (posYBallMid >= bar.posY && posYBallMid <= bar.posY + bar.height)) {
             bar.sound.player.play();
             bar.sound.player.rewind();
             // Collision
@@ -188,21 +190,26 @@ class Ball
                 incrementX = 5;
                 incrementY = 8 * multi;
                 break;
+            default:
+                break;
         }
     }
 
     int posBallHitBar (int posXBar) {
         int rangeBar = barWidth / 5;
-        if (posX > posXBar && posX < posXBar + rangeBar) {
+        int posXBallMid = posX + radius / 2;
+        int posXBallRight = posX + radius;
+
+        if (posXBallRight >= posXBar && posXBallMid < posXBar + rangeBar) {
             return -2; // LEFT
         }
-        else if (posX >= posXBar + rangeBar && posX < posXBar + rangeBar * 2) {
+        else if (posXBallMid >= posXBar + rangeBar && posXBallMid < posXBar + rangeBar * 2) {
             return -1; // MIDLEFT
         }
-        else if (posX >= posXBar + barWidth - rangeBar * 2 && posX < posXBar + barWidth - rangeBar) {
+        else if (posXBallMid >= posXBar + rangeBar * 3 && posXBallMid< posXBar + rangeBar * 4) {
             return 1; // MIDRIGHT
         }
-        else if (posX < posXBar + barWidth && posX >= posXBar + barWidth - rangeBar) {
+        else if (posXBallMid >= posXBar + rangeBar * 4 && posXBall <= posXBar + barWidth) {
             return 2; // RIGHT
         }
         return 0; // MIDDLE

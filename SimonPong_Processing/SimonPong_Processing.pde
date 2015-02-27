@@ -106,7 +106,7 @@ void setup()
     /////////////
     // Arduino //
     /////////////
-    instantiateArduino();
+    // instantiateArduino();
 
     ////////////
     // Screen //
@@ -276,9 +276,9 @@ void draw()
     /////////////
     // Arduino //
     /////////////
-    readArduino();
+    // readArduino();
     readKeyboard();
-    sendArduino();
+    // sendArduino();
 }
 
 String calculateScore()
@@ -441,7 +441,7 @@ void readArduino()
 
                                     pongBottom.ball.transparentMalus = true;
                                     pongBottom.ball.isTransparent = true;
-                                    break; 
+                                    break;
                                 default :
                                     players.get(2).bar.shrink();
                                     break;
