@@ -17,6 +17,7 @@ String[] moves2;
 boolean hasWaited = false;
 boolean dataCanBeSent = false;
 String playerToSend;
+String winingTeam;
 
 //////////
 // Game //
@@ -29,8 +30,8 @@ Minim minim;//audio context
 ////////////
 // int screenWidth  = 1680;
 // int screenHeight = 1050;
-int screenWidth  = 800;
-int screenHeight = 600;
+int screenWidth  = 1200;
+int screenHeight = 700;
 
 //////////
 // Pong //
@@ -172,70 +173,45 @@ void setup()
 
 void draw()
 {
-    int currentMillis = millis();
-
-    // End of level
-    if (currentMillis - levelTimer >= levelDuration) {
-        transitionLevelCounter += 1;
-        if (transitionLevelCounter <= 100) {
-            game.drawTimesUpPhrase();
-        }
-        else if (transitionLevelCounter >= 100 && transitionLevelCounter <= 200) {
-            String winingTeam = calculateScore();
-            game.drawWiningTeamPhrase(winingTeam);
-        }
-        else if (transitionLevelCounter >= 200) {
-            transitionLevelCounter = 0;
-            nbLevelsPlayed += 1;
-            if (nbLevelsPlayed <= 1) {
-                int levelIndex = int(random(game.randomLevels.length));
-                level = game.randomLevels[levelIndex];
-                game.randomLevels = remove(game.randomLevels, levelIndex);
+    if (game.activeScreen == 1) {
+        int currentMillis = millis();
+        // End of level
+        if (currentMillis - levelTimer >= levelDuration) {
+            transitionLevelCounter += 1;
+            if (transitionLevelCounter <= 100) {
+                game.drawTimesUpPhrase();
+                winingTeam = calculateScore();
             }
-            else if (nbLevelsPlayed == 2) {
-                level = 4;
+            else if (transitionLevelCounter >= 100 && transitionLevelCounter <= 200) {
+                game.drawWiningTeamPhrase(winingTeam);
             }
-            else {
-                if (nbRoundsWinOne == nbRoundsWinTwo && nbLevelsPlayed == 3) {
+            else if (transitionLevelCounter >= 200) {
+                transitionLevelCounter = 0;
+                nbLevelsPlayed += 1;
+                if (nbLevelsPlayed <= 1) {
                     int levelIndex = int(random(game.randomLevels.length));
                     level = game.randomLevels[levelIndex];
                     game.randomLevels = remove(game.randomLevels, levelIndex);
                 }
-                else {
-                    previousMillis = millis();
-                    game.activeScreen = 2;
+                else if (nbLevelsPlayed == 2) {
+                    level = 4;
                 }
+                else {
+                    if (nbRoundsWinOne == nbRoundsWinTwo && nbLevelsPlayed == 3) {
+                        int levelIndex = int(random(game.randomLevels.length));
+                        level = game.randomLevels[levelIndex];
+                        game.randomLevels = remove(game.randomLevels, levelIndex);
+                    }
+                    else {
+                        previousMillis = millis();
+                        game.activeScreen = 2;
+                    }
+                }
+
+                background(255);
             }
-
-            background(255);
-        }
-    }
-
-    if (game.activeScreen == 0) {
-        if (game.pressPhraseOpacity < 255 && game.increasePhraseOpacity) {
-            game.pressPhraseOpacity += 6;
-        }
-        else if (game.pressPhraseOpacity > 0 && !game.increasePhraseOpacity) {
-            game.pressPhraseOpacity -= 6;
-        }
-        else if (game.pressPhraseOpacity >= 255) {
-            game.increasePhraseOpacity = false;
-        }
-        else if (game.pressPhraseOpacity <= 0) {
-            game.increasePhraseOpacity = true;
         }
 
-        game.drawInitialScreen();
-    }
-    else if (game.activeScreen == 2) {
-        if (currentMillis - previousMillis <= 1000) {
-            game.drawLastScreen();
-        }
-        else {
-            setup();
-        }
-    }
-    else {
         //////////
         // Pong //
         //////////
@@ -272,7 +248,32 @@ void draw()
 
         fightLauncher.draw();
         fightLauncher.displayLauncher(currentMillis);
+    }
 
+    else if (game.activeScreen == 0) {
+        if (game.pressPhraseOpacity < 255 && game.increasePhraseOpacity) {
+            game.pressPhraseOpacity += 6;
+        }
+        else if (game.pressPhraseOpacity > 0 && !game.increasePhraseOpacity) {
+            game.pressPhraseOpacity -= 6;
+        }
+        else if (game.pressPhraseOpacity >= 255) {
+            game.increasePhraseOpacity = false;
+        }
+        else if (game.pressPhraseOpacity <= 0) {
+            game.increasePhraseOpacity = true;
+        }
+
+        game.drawInitialScreen();
+    }
+    else if (game.activeScreen == 2) {
+        int currentMillis = millis();
+        if (currentMillis - previousMillis <= 1000) {
+            game.drawLastScreen();
+        }
+        else {
+            setup();
+        }
     }
 
     /////////////

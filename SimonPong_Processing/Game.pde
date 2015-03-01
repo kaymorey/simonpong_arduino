@@ -5,6 +5,7 @@ class Game {
 
     PFont pressBtnFont;
     PFont gameNameFont;
+    PImage arrowImage;
 
     int pressPhraseOpacity = 255;
     boolean increasePhraseOpacity = true;
@@ -19,6 +20,7 @@ class Game {
 
         pressBtnFont = loadFont("BebasNeueBook-30.vlw");
         gameNameFont = loadFont("BebasNeue-100.vlw");
+        arrowImage = loadImage("arrow.png");
 
         backgroundSound = new Sound(minim, "arcade-music-loop.wav");
         backgroundSound.player.setGain(-6);
@@ -51,7 +53,8 @@ class Game {
         textSize(72);
         text(txt, (screenWidth - textWidth(txt)) / 2, screenHeight / 2 + 72);
 
-        displayPressPhrase();
+        // displayPressPhrase();
+        displayReproducePhrase();
     }
 
     void displayPressPhrase()
@@ -63,6 +66,30 @@ class Game {
 
         rotate(PI);
         text(txt, - (screenWidth + textWidth(txt)) / 2, - 30);
+    }
+
+    void displayReproducePhrase()
+    {
+        String txt = "Reproduce the light sequence to gain bonus !";
+        fill(255, 255, 255);
+        tint(255, pressPhraseOpacity);
+        textFont(pressBtnFont);
+        // Bottom left
+        text(txt, screenWidth / 4 - textWidth(txt) / 2, screenHeight - 80);
+        image(arrowImage, screenWidth / 4 - arrowImage.width / 2, screenHeight - 60);
+
+        // Bottom right
+        text(txt, screenWidth * 3 / 4 - textWidth(txt) / 2, screenHeight - 80);
+        image(arrowImage, screenWidth * 3 / 4 - arrowImage.width / 2, screenHeight - 60);
+
+        rotate(PI);
+
+        // Top left
+        text(txt, - (screenWidth / 4 + textWidth(txt) / 2), - 80);
+        image(arrowImage, - (screenWidth / 4 + arrowImage.width / 2), - 60);
+        // Top right
+        text(txt, - (screenWidth * 3 / 4 + textWidth(txt) / 2), - 80);
+        image(arrowImage, - (screenWidth * 3 / 4 + arrowImage.width / 2), - 60);
     }
 
     void drawTimesUpPhrase()
