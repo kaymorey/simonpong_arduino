@@ -39,6 +39,16 @@ class Game {
         displayInitialScreen();
     }
 
+    void drawInstructionsScreen()
+    {
+        fill(251, 211, 89);
+        rect(0, 0, screenWidth, screenHeight / 2);
+        fill(41, 118, 174);
+        rect(0, screenHeight / 2, screenWidth, screenHeight / 2);
+
+        displayReproducePhrase();
+    }
+
     void displayInitialScreen()
     {
         String txt = "Simon";
@@ -53,8 +63,7 @@ class Game {
         textSize(72);
         text(txt, (screenWidth - textWidth(txt)) / 2, screenHeight / 2 + 72);
 
-        // displayPressPhrase();
-        displayReproducePhrase();
+        displayPressPhrase();
     }
 
     void displayPressPhrase()

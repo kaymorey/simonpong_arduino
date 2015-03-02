@@ -173,7 +173,7 @@ void setup()
 
 void draw()
 {
-    if (game.activeScreen == 1) {
+    if (game.activeScreen == 2) {
         int currentMillis = millis();
         // End of level
         if (currentMillis - levelTimer >= levelDuration) {
@@ -204,7 +204,7 @@ void draw()
                     }
                     else {
                         previousMillis = millis();
-                        game.activeScreen = 2;
+                        game.activeScreen = 3;
                     }
                 }
 
@@ -250,7 +250,7 @@ void draw()
         fightLauncher.displayLauncher(currentMillis);
     }
 
-    else if (game.activeScreen == 0) {
+    else if (game.activeScreen == 0 || game.activeScreen == 1) {
         if (game.pressPhraseOpacity < 255 && game.increasePhraseOpacity) {
             game.pressPhraseOpacity += 6;
         }
@@ -264,11 +264,20 @@ void draw()
             game.increasePhraseOpacity = true;
         }
 
-        game.drawInitialScreen();
+        if (game.activeScreen == 0) {
+            game.drawInitialScreen();
+        }
+        else {
+            int currentMillis = millis();
+            if (currentMillis - previousMillis > 6000) {
+                game.activeScreen = 2;
+            }
+            game.drawInstructionsScreen();
+        }
     }
-    else if (game.activeScreen == 2) {
+    else if (game.activeScreen == 3) {
         int currentMillis = millis();
-        if (currentMillis - previousMillis <= 1000) {
+        if (currentMillis - previousMillis <= 5000) {
             game.drawLastScreen();
         }
         else {
@@ -357,6 +366,7 @@ void instantiateArduino()
 //                 if(game.activeScreen != 1) {
 //                     if(int(moves1[2].trim()) != 255 || int(moves1[3].trim()) != 255) {
 //                         game.activeScreen = 1;
+//                         previousMillis = millis();
 //                         background(255);
 //                     }
 //                 }
@@ -662,6 +672,7 @@ void readKeyboard()
         else {
             if (key == ENTER) {
                 game.activeScreen = 1;
+                previousMillis = millis();
                 background(255);
             }
             // Controls for bottom left bar
