@@ -171,6 +171,20 @@ void setup()
     }
 }
 
+void resetPongs()
+{
+    pongLeft.resetBars();
+    pongRight.resetBars();
+
+    pongTop.resetBars();
+    pongBottom.resetBars();
+
+    pongDiagonalTLBR.resetBars();
+    pongDiagonalTRBL.resetBars();
+
+    pongFull.resetBars();
+}
+
 void draw()
 {
     if (game.activeScreen == 2) {
@@ -192,15 +206,18 @@ void draw()
                     int levelIndex = int(random(game.randomLevels.length));
                     level = game.randomLevels[levelIndex];
                     game.randomLevels = remove(game.randomLevels, levelIndex);
+                    resetPongs();
                 }
                 else if (nbLevelsPlayed == 2) {
                     level = 4;
+                    resetPongs();
                 }
                 else {
                     if (nbRoundsWinOne == nbRoundsWinTwo && nbLevelsPlayed == 3) {
                         int levelIndex = int(random(game.randomLevels.length));
                         level = game.randomLevels[levelIndex];
                         game.randomLevels = remove(game.randomLevels, levelIndex);
+                        resetPongs();
                     }
                     else {
                         previousMillis = millis();
@@ -339,218 +356,218 @@ void instantiateArduino()
     myPort2 = new Serial(this, portName2, 9600);
 }
 
-// void readArduino()
-// {
-//     if(!hasWaited){
-//         hasWaited = true;
-//         delay(1000);
-//         simon.play();
-//     }
+void readArduino()
+{
+    if(!hasWaited){
+        hasWaited = true;
+        delay(1000);
+        simon.play();
+    }
 
-//     //if(myPort2.available() > 0){
-//         //println("myPort1.readStringUntil('\n'): "+myPort2.readStringUntil('\n'));
-//     //}
-//     // if(dataCanBeSent) {
-//     //     myPort2.write("pute\n");
-//     // }
-//     // else {
-//     //     myPort2.write("blink\n");
-//     // }
+    //if(myPort2.available() > 0){
+        //println("myPort1.readStringUntil('\n'): "+myPort2.readStringUntil('\n'));
+    //}
+    // if(dataCanBeSent) {
+    //     myPort2.write("pute\n");
+    // }
+    // else {
+    //     myPort2.write("blink\n");
+    // }
 
-//     if(myPort1.available() > 0){
-//         stringReceived1 = myPort1.readStringUntil('\n');
-//         if(stringReceived1 != null) {
-//             moves1 = split(stringReceived1,'$');
-//             //println("stringReceived: "+stringReceived);
-//             if(moves1.length == 4){
-//                 if(game.activeScreen != 1) {
-//                     if(int(moves1[2].trim()) != 255 || int(moves1[3].trim()) != 255) {
-//                         game.activeScreen = 1;
-//                         previousMillis = millis();
-//                         background(255);
-//                     }
-//                 }
-//                 else {
-//                     switch (int(moves[2].trim())) {
-//                         case 0 :
-//                             players.get(0).returnedValueByResolver = players.get(0).resolver.compareSolution(0);
-//                             break;
-//                         case 1 :
-//                             players.get(0).returnedValueByResolver = players.get(0).resolver.compareSolution(1);
-//                             break;
-//                         case 2 :
-//                             players.get(0).returnedValueByResolver = players.get(0).resolver.compareSolution(2);
-//                             break;
-//                         case 3 :
-//                             players.get(0).returnedValueByResolver = players.get(0).resolver.compareSolution(3);
-//                             break;
-//                     }
-//                     switch (int(moves[2].trim())) {
-//                         case 0 :
-//                             players.get(1).returnedValueByResolver = players.get(1).resolver.compareSolution(0);
-//                             break;
-//                         case 1 :
-//                             players.get(1).returnedValueByResolver = players.get(1).resolver.compareSolution(1);
-//                             break;
-//                         case 2 :
-//                             players.get(1).returnedValueByResolver = players.get(1).resolver.compareSolution(2);
-//                             break;
-//                         case 3 :
-//                             players.get(1).returnedValueByResolver = players.get(1).resolver.compareSolution(3);
-//                             break;
-//                     }
-//                     // joueur top left
-//                     switch (int(moves1[2].trim())) {
-//                         case 0 :
-//                             players.get(2).returnedValueByResolver = players.get(2).resolver.compareSolution(0);
-//                             break;
-//                         case 1 :
-//                             players.get(2).returnedValueByResolver = players.get(2).resolver.compareSolution(1);
-//                             break;
-//                         case 2 :
-//                             players.get(2).returnedValueByResolver = players.get(2).resolver.compareSolution(2);
-//                             break;
-//                         case 3 :
-//                             players.get(2).returnedValueByResolver = players.get(2).resolver.compareSolution(3);
-//                             break;
-//                     }
-//                     // joueur top right
-//                     switch (int(moves1[3].trim())) {
-//                         case 0 :
-//                             players.get(3).returnedValueByResolver = players.get(3).resolver.compareSolution(0);
-//                             break;
-//                         case 1 :
-//                             players.get(3).returnedValueByResolver = players.get(3).resolver.compareSolution(1);
-//                             break;
-//                         case 2 :
-//                             players.get(3).returnedValueByResolver = players.get(3).resolver.compareSolution(2);
-//                             break;
-//                         case 3 :
-//                             players.get(3).returnedValueByResolver = players.get(3).resolver.compareSolution(3);
-//                             break;
-//                     }
+    if(myPort1.available() > 0){
+        stringReceived1 = myPort1.readStringUntil('\n');
+        if(stringReceived1 != null) {
+            moves1 = split(stringReceived1,'$');
+            //println("stringReceived: "+stringReceived);
+            if(moves1.length == 4){
+                if(game.activeScreen != 1) {
+                    if(int(moves1[2].trim()) != 255 || int(moves1[3].trim()) != 255) {
+                        game.activeScreen = 1;
+                        previousMillis = millis();
+                        background(255);
+                    }
+                }
+                else {
+                    switch (int(moves1[2].trim())) {
+                        case 0 :
+                            players.get(0).returnedValueByResolver = players.get(0).resolver.compareSolution(0);
+                            break;
+                        case 1 :
+                            players.get(0).returnedValueByResolver = players.get(0).resolver.compareSolution(1);
+                            break;
+                        case 2 :
+                            players.get(0).returnedValueByResolver = players.get(0).resolver.compareSolution(2);
+                            break;
+                        case 3 :
+                            players.get(0).returnedValueByResolver = players.get(0).resolver.compareSolution(3);
+                            break;
+                    }
+                    switch (int(moves1[2].trim())) {
+                        case 0 :
+                            players.get(1).returnedValueByResolver = players.get(1).resolver.compareSolution(0);
+                            break;
+                        case 1 :
+                            players.get(1).returnedValueByResolver = players.get(1).resolver.compareSolution(1);
+                            break;
+                        case 2 :
+                            players.get(1).returnedValueByResolver = players.get(1).resolver.compareSolution(2);
+                            break;
+                        case 3 :
+                            players.get(1).returnedValueByResolver = players.get(1).resolver.compareSolution(3);
+                            break;
+                    }
+                    // joueur top left
+                    switch (int(moves1[2].trim())) {
+                        case 0 :
+                            players.get(2).returnedValueByResolver = players.get(2).resolver.compareSolution(0);
+                            break;
+                        case 1 :
+                            players.get(2).returnedValueByResolver = players.get(2).resolver.compareSolution(1);
+                            break;
+                        case 2 :
+                            players.get(2).returnedValueByResolver = players.get(2).resolver.compareSolution(2);
+                            break;
+                        case 3 :
+                            players.get(2).returnedValueByResolver = players.get(2).resolver.compareSolution(3);
+                            break;
+                    }
+                    // joueur top right
+                    switch (int(moves1[3].trim())) {
+                        case 0 :
+                            players.get(3).returnedValueByResolver = players.get(3).resolver.compareSolution(0);
+                            break;
+                        case 1 :
+                            players.get(3).returnedValueByResolver = players.get(3).resolver.compareSolution(1);
+                            break;
+                        case 2 :
+                            players.get(3).returnedValueByResolver = players.get(3).resolver.compareSolution(2);
+                            break;
+                        case 3 :
+                            players.get(3).returnedValueByResolver = players.get(3).resolver.compareSolution(3);
+                            break;
+                    }
 
-//                     // if(returnedValueByResolver == 2) {
-//                     //     resetSimon();
-//                     // }
-//                     for (int i = 0; i < playersNumber; i++) {
-//                         if(players.get(i).returnedValueByResolver == 2) {
+                    // if(returnedValueByResolver == 2) {
+                    //     resetSimon();
+                    // }
+                    for (int i = 0; i < playersNumber; i++) {
+                        if(players.get(i).returnedValueByResolver == 2) {
 
-//                             int power = int(random(0, 2));
+                            int power = int(random(0, 2));
 
-//                             switch (power) {
-//                                 case 0 :
-//                                     players.get(i).bar.expand();
-//                                     break;
-//                                 case 1 :
-//                                     pongLeft.ball.transparentMalus = true;
-//                                     pongLeft.ball.isTransparent = true;
+                            switch (power) {
+                                case 0 :
+                                    players.get(i).bar.expand();
+                                    break;
+                                case 1 :
+                                    pongLeft.ball.transparentMalus = true;
+                                    pongLeft.ball.isTransparent = true;
 
-//                                     pongRight.ball.transparentMalus = true;
-//                                     pongRight.ball.isTransparent = true;
+                                    pongRight.ball.transparentMalus = true;
+                                    pongRight.ball.isTransparent = true;
 
-//                                     pongTop.ball.transparentMalus = true;
-//                                     pongTop.ball.isTransparent = true;
+                                    pongTop.ball.transparentMalus = true;
+                                    pongTop.ball.isTransparent = true;
 
-//                                     pongBottom.ball.transparentMalus = true;
-//                                     pongBottom.ball.isTransparent = true;
-//                                     break;
-//                                 default :
-//                                     players.get(2).bar.shrink();
-//                                     break;
-//                             }
+                                    pongBottom.ball.transparentMalus = true;
+                                    pongBottom.ball.isTransparent = true;
+                                    break;
+                                default :
+                                    players.get(2).bar.shrink();
+                                    break;
+                            }
 
-//                             resetSimon(i);
-//                         }
-//                         else if(players.get(i).returnedValueByResolver == 0) {
-//                             players.get(i).returnedValueByResolver = 3;
-//                             restartSequenceForPlayer(i);
-//                         }
-//                     }
+                            resetSimon(i);
+                        }
+                        else if(players.get(i).returnedValueByResolver == 0) {
+                            players.get(i).returnedValueByResolver = 3;
+                            restartSequenceForPlayer(i);
+                        }
+                    }
 
-//                     playerTopLeft = int(moves1[1].trim());
-//                     playerTopRight = int(moves1[0].trim());
-//                     /* from 0 to 255 */
-//                     // println("playerLeft: "+playerLeft);
-//                     // println("playerRight: "+playerRight);
-//                     players.get(0).bar.posX = playerTopLeft*(screenWidth/2-players.get(0).bar.width)/255;
-//                     players.get(1).bar.posX = playerTopRight*(screenWidth/2-players.get(1).bar.width)/255 + screenWidth/2;
+                    playerTopLeft = int(moves1[1].trim());
+                    playerTopRight = int(moves1[0].trim());
+                    /* from 0 to 255 */
+                    // println("playerLeft: "+playerLeft);
+                    // println("playerRight: "+playerRight);
+                    players.get(0).bar.posX = playerTopLeft*(screenWidth/2-players.get(0).bar.width)/255;
+                    players.get(1).bar.posX = playerTopRight*(screenWidth/2-players.get(1).bar.width)/255 + screenWidth/2;
 
-//                     players.get(2).bar.posX = playerTopLeft*(screenWidth/2-players.get(2).bar.width)/255;
-//                     players.get(3).bar.posX = playerTopRight*(screenWidth/2-players.get(3).bar.width)/255 + screenWidth/2;
-//                 }
-//             }
-//         }
-//     }
+                    players.get(2).bar.posX = playerTopLeft*(screenWidth/2-players.get(2).bar.width)/255;
+                    players.get(3).bar.posX = playerTopRight*(screenWidth/2-players.get(3).bar.width)/255 + screenWidth/2;
+                }
+            }
+        }
+    }
 
-//     if(myPort2.available() > 0){
-//         stringReceived2 = myPort2.readStringUntil('\n');
-//         if(stringReceived2 != null) {
-//             moves2 = split(stringReceived2,'$');
-//             //println("stringReceived: "+stringReceived);
-//             if(moves2.length == 4){
-//                 if(game.activeScreen != 1) {
-//                     if(int(moves2[2].trim()) != 255 || int(moves2[3].trim()) != 255) {
-//                         game.activeScreen = 1;
-//                     }
-//                 }
-//                 else {
-//                     // joueur top left
-//                     switch (int(moves2[2].trim())) {
-//                         case 0 :
-//                             players.get(0).returnedValueByResolver = players.get(0).resolver.compareSolution(0);
-//                             break;
-//                         case 1 :
-//                             players.get(0).returnedValueByResolver = players.get(0).resolver.compareSolution(1);
-//                             break;
-//                         case 2 :
-//                             players.get(0).returnedValueByResolver = players.get(0).resolver.compareSolution(2);
-//                             break;
-//                         case 3 :
-//                             players.get(0).returnedValueByResolver = players.get(0).resolver.compareSolution(3);
-//                             break;
-//                     }
-//                     // joueur top right
-//                     switch (int(moves2[3].trim())) {
-//                         case 0 :
-//                             players.get(1).returnedValueByResolver = players.get(1).resolver.compareSolution(0);
-//                             break;
-//                         case 1 :
-//                             players.get(1).returnedValueByResolver = players.get(1).resolver.compareSolution(1);
-//                             break;
-//                         case 2 :
-//                             players.get(1).returnedValueByResolver = players.get(1).resolver.compareSolution(2);
-//                             break;
-//                         case 3 :
-//                             players.get(1).returnedValueByResolver = players.get(1).resolver.compareSolution(3);
-//                             break;
-//                     }
+    if(myPort2.available() > 0){
+        stringReceived2 = myPort2.readStringUntil('\n');
+        if(stringReceived2 != null) {
+            moves2 = split(stringReceived2,'$');
+            //println("stringReceived: "+stringReceived);
+            if(moves2.length == 4){
+                if(game.activeScreen != 1) {
+                    if(int(moves2[2].trim()) != 255 || int(moves2[3].trim()) != 255) {
+                        game.activeScreen = 1;
+                    }
+                }
+                else {
+                    // joueur top left
+                    switch (int(moves2[2].trim())) {
+                        case 0 :
+                            players.get(0).returnedValueByResolver = players.get(0).resolver.compareSolution(0);
+                            break;
+                        case 1 :
+                            players.get(0).returnedValueByResolver = players.get(0).resolver.compareSolution(1);
+                            break;
+                        case 2 :
+                            players.get(0).returnedValueByResolver = players.get(0).resolver.compareSolution(2);
+                            break;
+                        case 3 :
+                            players.get(0).returnedValueByResolver = players.get(0).resolver.compareSolution(3);
+                            break;
+                    }
+                    // joueur top right
+                    switch (int(moves2[3].trim())) {
+                        case 0 :
+                            players.get(1).returnedValueByResolver = players.get(1).resolver.compareSolution(0);
+                            break;
+                        case 1 :
+                            players.get(1).returnedValueByResolver = players.get(1).resolver.compareSolution(1);
+                            break;
+                        case 2 :
+                            players.get(1).returnedValueByResolver = players.get(1).resolver.compareSolution(2);
+                            break;
+                        case 3 :
+                            players.get(1).returnedValueByResolver = players.get(1).resolver.compareSolution(3);
+                            break;
+                    }
 
-//                     // if(returnedValueByResolver == 2) {
-//                     //     resetSimon();
-//                     // }
-//                     for (int i = 0; i < playersNumber; i++) {
-//                         if(players.get(i).returnedValueByResolver == 2) {
-//                             resetSimon(i);
-//                         }
-//                         else if(players.get(i).returnedValueByResolver == 0) {
-//                             players.get(i).returnedValueByResolver = 3;
-//                             restartSequenceForPlayer(i);
-//                         }
-//                     }
+                    // if(returnedValueByResolver == 2) {
+                    //     resetSimon();
+                    // }
+                    for (int i = 0; i < playersNumber; i++) {
+                        if(players.get(i).returnedValueByResolver == 2) {
+                            resetSimon(i);
+                        }
+                        else if(players.get(i).returnedValueByResolver == 0) {
+                            players.get(i).returnedValueByResolver = 3;
+                            restartSequenceForPlayer(i);
+                        }
+                    }
 
-//                     playerBottomLeft = int(moves2[1].trim());
-//                     playerBottomRight = int(moves2[0].trim());
-//                     /* from 0 to 255 */
-//                     // println("playerLeft: "+playerLeft);
-//                     // println("playerRight: "+playerRight);
-//                     players.get(0).bar.posX = playerBottomLeft*(screenWidth/2-players.get(0).bar.width)/255;
-//                     players.get(1).bar.posX = playerBottomRight*(screenWidth/2-players.get(1).bar.width)/255 + screenWidth/2;
-//                 }
-//             }
-//         }
-//     }
-// }
+                    playerBottomLeft = int(moves2[1].trim());
+                    playerBottomRight = int(moves2[0].trim());
+                    /* from 0 to 255 */
+                    // println("playerLeft: "+playerLeft);
+                    // println("playerRight: "+playerRight);
+                    players.get(0).bar.posX = playerBottomLeft*(screenWidth/2-players.get(0).bar.width)/255;
+                    players.get(1).bar.posX = playerBottomRight*(screenWidth/2-players.get(1).bar.width)/255 + screenWidth/2;
+                }
+            }
+        }
+    }
+}
 
 void sendArduino()
 {

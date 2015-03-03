@@ -194,6 +194,19 @@ class Pong
         }
     }
 
+    void resetBars()
+    {
+        players.get(0).bar.width = barWidth;
+        players.get(1).bar.width = barWidth;
+        players.get(2).bar.width = barWidth;
+        players.get(3).bar.width = barWidth;
+
+        players.get(0).bar.posX = players.get(0).bar.initialPosX;
+        players.get(1).bar.posX = players.get(1).bar.initialPosX;
+        players.get(2).bar.posX = players.get(2).bar.initialPosX;
+        players.get(3).bar.posX = players.get(3).bar.initialPosX;
+    }
+
     void play()
     {
         // Score
