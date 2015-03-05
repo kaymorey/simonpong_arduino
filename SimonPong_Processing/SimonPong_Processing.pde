@@ -199,15 +199,18 @@ void draw()
                     int levelIndex = int(random(game.randomLevels.length));
                     level = game.randomLevels[levelIndex];
                     game.randomLevels = remove(game.randomLevels, levelIndex);
+                    resetPongs();
                 }
                 else if (nbLevelsPlayed == 2) {
                     level = 4;
+                    resetPongs();
                 }
                 else {
                     if (nbRoundsWinOne == nbRoundsWinTwo && nbLevelsPlayed == 3) {
                         int levelIndex = int(random(game.randomLevels.length));
                         level = game.randomLevels[levelIndex];
                         game.randomLevels = remove(game.randomLevels, levelIndex);
+                        resetPongs();
                     }
                     else {
                         previousMillis = millis();
@@ -298,6 +301,20 @@ void draw()
     readArduino();
     //readKeyboard();
     sendArduino();
+}
+
+void resetPongs()
+{
+    pongLeft.resetBars();
+    pongRight.resetBars();
+
+    pongTop.resetBars();
+    pongBottom.resetBars();
+
+    pongDiagonalTLBR.resetBars();
+    pongDiagonalTRBL.resetBars();
+
+    pongFull.resetBars();
 }
 
 String calculateScore()
@@ -400,7 +417,7 @@ void readArduino()
                     // if(returnedValueByResolver == 2) {
                     //     resetSimon();
                     // }
-                    
+
 
                     playerTopLeft = int(moves1[1].trim());
                     playerTopRight = int(moves1[0].trim());
