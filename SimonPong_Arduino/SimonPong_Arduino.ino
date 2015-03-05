@@ -18,7 +18,7 @@ int interruptButtonLeft_3 = 6;     // interrupt is on 0 (pin 6)
 int stateInterruptButtonLeft_3 = 0;
 int stateLeft = 255;               // variable to be updated by the interrupts
 
-int interruptButtonRight_0 = 5;     // interrupt is on 0 (pin 5)
+int interruptButtonRight_0 = 5;     // interrupt is on 0 (pin 5)@
 int stateInterruptButtonRight_0 = 0;
 int interruptButtonRight_1 = 4;     // interrupt is on 0 (pin 4)
 int stateInterruptButtonRight_1 = 0;
@@ -38,9 +38,9 @@ boolean canStopDemo = true;
 int valueP1;
 int valueP2;
 
-int latchPin = 11;
-int clockPin = 13;
-int dataPin = 12;
+int latchPin = 11; // 8
+int clockPin = 13; // 12
+int dataPin = 12; // 11
 
 byte dataDemo;
 byte dataDemoArray[13];

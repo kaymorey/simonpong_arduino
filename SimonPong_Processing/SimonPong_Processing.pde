@@ -19,6 +19,8 @@ boolean dataCanBeSent = false;
 String playerToSend;
 String winingTeam;
 
+boolean gameAsBeenInitialized = false;
+
 //////////
 // Game //
 //////////
@@ -28,16 +30,16 @@ Minim minim;//audio context
 ////////////
 // Screen //
 ////////////
-// int screenWidth  = 1680;
-// int screenHeight = 1050;
-int screenWidth  = 1200;
-int screenHeight = 700;
+int screenWidth  = 1680;
+int screenHeight = 1050;
+//int screenWidth  = 1200;
+//int screenHeight = 700;
 
 //////////
 // Pong //
 //////////
 int level;
-int levelDuration = 5000;
+int levelDuration = 50000;
 int levelTimer;
 int levelMaxTime;
 int transitionLevelCounter;
@@ -74,9 +76,11 @@ int scorePosYBottom = screenHeight - (screenHeight / 4 - 50);
 ///////////
 Simon simon;
 int numberOfLed = 4;
-int numberOfColorInSequence = 3;
+int numberOfColorInSequence = 4;
 // boolean hasWaitedToReadInput = false;
 boolean firstSequenceHasBeenSent = false;
+
+boolean sequenceNeedtoBeRestarted = false;
 
 ///////////////////
 // fightLauncher //
@@ -104,12 +108,15 @@ void setup()
     //////////
     minim = new Minim(this);
     game = new Game(minim);
-    // game.backgroundSound.player.loop();
+    game.backgroundSound.player.loop();
 
     /////////////
     // Arduino //
     /////////////
-    // instantiateArduino();
+    if(!gameAsBeenInitialized) {
+        gameAsBeenInitialized = true;
+        instantiateArduino();
+    }
 
     ////////////
     // Screen //
@@ -288,9 +295,9 @@ void draw()
     /////////////
     // Arduino //
     /////////////
-    // readArduino();
-    readKeyboard();
-    // sendArduino();
+    readArduino();
+    //readKeyboard();
+    sendArduino();
 }
 
 String calculateScore()
@@ -339,218 +346,185 @@ void instantiateArduino()
     myPort2 = new Serial(this, portName2, 9600);
 }
 
-// void readArduino()
-// {
-//     if(!hasWaited){
-//         hasWaited = true;
-//         delay(1000);
-//         simon.play();
-//     }
+void readArduino()
+{
+    if(!hasWaited){
+        hasWaited = true;
+        delay(1000);
+        simon.play();
+    }
 
-//     //if(myPort2.available() > 0){
-//         //println("myPort1.readStringUntil('\n'): "+myPort2.readStringUntil('\n'));
-//     //}
-//     // if(dataCanBeSent) {
-//     //     myPort2.write("pute\n");
-//     // }
-//     // else {
-//     //     myPort2.write("blink\n");
-//     // }
+    if(myPort1.available() > 0){
+        stringReceived1 = myPort1.readStringUntil('\n');
+        if(stringReceived1 != null) {
+            moves1 = split(stringReceived1,'$');
+            //println("stringReceived: "+stringReceived);
+            if(moves1.length == 4){
+                if(game.activeScreen == 0) {
+                    if(int(moves1[2].trim()) != 255 || int(moves1[3].trim()) != 255) {
+                        game.activeScreen = 1;
+                        previousMillis = millis();
+                        background(255);
+                    }
+                }
+                else {
+                    switch (int(moves1[2].trim())) {
+                        case 0 :
+                            players.get(1).returnedValueByResolver = players.get(1).resolver.compareSolution(0);
+                            break;
+                        case 1 :
+                            players.get(1).returnedValueByResolver = players.get(1).resolver.compareSolution(1);
+                            break;
+                        case 2 :
+                            players.get(1).returnedValueByResolver = players.get(1).resolver.compareSolution(2);
+                            break;
+                        case 3 :
+                            players.get(1).returnedValueByResolver = players.get(1).resolver.compareSolution(3);
+                            break;
+                    }
+                    switch (int(moves1[3].trim())) {
+                        case 0 :
+                            players.get(0).returnedValueByResolver = players.get(0).resolver.compareSolution(0);
+                            break;
+                        case 1 :
+                            players.get(0).returnedValueByResolver = players.get(0).resolver.compareSolution(1);
+                            break;
+                        case 2 :
+                            players.get(0).returnedValueByResolver = players.get(0).resolver.compareSolution(2);
+                            break;
+                        case 3 :
+                            players.get(0).returnedValueByResolver = players.get(0).resolver.compareSolution(3);
+                            break;
+                    }
 
-//     if(myPort1.available() > 0){
-//         stringReceived1 = myPort1.readStringUntil('\n');
-//         if(stringReceived1 != null) {
-//             moves1 = split(stringReceived1,'$');
-//             //println("stringReceived: "+stringReceived);
-//             if(moves1.length == 4){
-//                 if(game.activeScreen != 1) {
-//                     if(int(moves1[2].trim()) != 255 || int(moves1[3].trim()) != 255) {
-//                         game.activeScreen = 1;
-//                         previousMillis = millis();
-//                         background(255);
-//                     }
-//                 }
-//                 else {
-//                     switch (int(moves[2].trim())) {
-//                         case 0 :
-//                             players.get(0).returnedValueByResolver = players.get(0).resolver.compareSolution(0);
-//                             break;
-//                         case 1 :
-//                             players.get(0).returnedValueByResolver = players.get(0).resolver.compareSolution(1);
-//                             break;
-//                         case 2 :
-//                             players.get(0).returnedValueByResolver = players.get(0).resolver.compareSolution(2);
-//                             break;
-//                         case 3 :
-//                             players.get(0).returnedValueByResolver = players.get(0).resolver.compareSolution(3);
-//                             break;
-//                     }
-//                     switch (int(moves[2].trim())) {
-//                         case 0 :
-//                             players.get(1).returnedValueByResolver = players.get(1).resolver.compareSolution(0);
-//                             break;
-//                         case 1 :
-//                             players.get(1).returnedValueByResolver = players.get(1).resolver.compareSolution(1);
-//                             break;
-//                         case 2 :
-//                             players.get(1).returnedValueByResolver = players.get(1).resolver.compareSolution(2);
-//                             break;
-//                         case 3 :
-//                             players.get(1).returnedValueByResolver = players.get(1).resolver.compareSolution(3);
-//                             break;
-//                     }
-//                     // joueur top left
-//                     switch (int(moves1[2].trim())) {
-//                         case 0 :
-//                             players.get(2).returnedValueByResolver = players.get(2).resolver.compareSolution(0);
-//                             break;
-//                         case 1 :
-//                             players.get(2).returnedValueByResolver = players.get(2).resolver.compareSolution(1);
-//                             break;
-//                         case 2 :
-//                             players.get(2).returnedValueByResolver = players.get(2).resolver.compareSolution(2);
-//                             break;
-//                         case 3 :
-//                             players.get(2).returnedValueByResolver = players.get(2).resolver.compareSolution(3);
-//                             break;
-//                     }
-//                     // joueur top right
-//                     switch (int(moves1[3].trim())) {
-//                         case 0 :
-//                             players.get(3).returnedValueByResolver = players.get(3).resolver.compareSolution(0);
-//                             break;
-//                         case 1 :
-//                             players.get(3).returnedValueByResolver = players.get(3).resolver.compareSolution(1);
-//                             break;
-//                         case 2 :
-//                             players.get(3).returnedValueByResolver = players.get(3).resolver.compareSolution(2);
-//                             break;
-//                         case 3 :
-//                             players.get(3).returnedValueByResolver = players.get(3).resolver.compareSolution(3);
-//                             break;
-//                     }
+                    // if(returnedValueByResolver == 2) {
+                    //     resetSimon();
+                    // }
+                    
 
-//                     // if(returnedValueByResolver == 2) {
-//                     //     resetSimon();
-//                     // }
-//                     for (int i = 0; i < playersNumber; i++) {
-//                         if(players.get(i).returnedValueByResolver == 2) {
+                    playerTopLeft = int(moves1[1].trim());
+                    playerTopRight = int(moves1[0].trim());
+                    /* from 0 to 255 */
+                    // println("playerLeft: "+playerLeft);
+                    // println("playerRight: "+playerRight);
+                    players.get(0).bar.posX = (screenWidth/2-players.get(0).bar.width)-playerTopLeft*(screenWidth/2-players.get(0).bar.width)/255;
+                    players.get(1).bar.posX = (screenWidth/2-players.get(0).bar.width)-playerTopRight*(screenWidth/2-players.get(1).bar.width)/255 + screenWidth/2;
 
-//                             int power = int(random(0, 2));
+                    // players.get(2).bar.posX = playerTopLeft*(screenWidth/2-players.get(2).bar.width)/255;
+                    // players.get(3).bar.posX = playerTopRight*(screenWidth/2-players.get(3).bar.width)/255 + screenWidth/2;
+                }
+            }
+        }
+    }
 
-//                             switch (power) {
-//                                 case 0 :
-//                                     players.get(i).bar.expand();
-//                                     break;
-//                                 case 1 :
-//                                     pongLeft.ball.transparentMalus = true;
-//                                     pongLeft.ball.isTransparent = true;
+    if(myPort2.available() > 0){
+        //println("test");
+        stringReceived2 = myPort2.readStringUntil('\n');
+        if(stringReceived2 != null) {
+            moves2 = split(stringReceived2,'$');
+            //println("stringReceived: "+stringReceived);
+            if(moves2.length == 4){
+                if(game.activeScreen == 0) {
+                    if(int(moves2[2].trim()) != 255 || int(moves2[3].trim()) != 255) {
+                        game.activeScreen = 1;
+                    }
+                }
+                else {
+                    // joueur top left
+                    switch (int(moves2[2].trim())) {
+                        case 0 :
+                            players.get(2).returnedValueByResolver = players.get(2).resolver.compareSolution(0);
+                            break;
+                        case 1 :
+                            players.get(2).returnedValueByResolver = players.get(2).resolver.compareSolution(1);
+                            break;
+                        case 2 :
+                            players.get(2).returnedValueByResolver = players.get(2).resolver.compareSolution(2);
+                            break;
+                        case 3 :
+                            players.get(2).returnedValueByResolver = players.get(2).resolver.compareSolution(3);
+                            break;
+                    }
+                    // joueur top right
+                    switch (int(moves2[3].trim())) {
+                        case 0 :
+                            players.get(3).returnedValueByResolver = players.get(3).resolver.compareSolution(0);
+                            break;
+                        case 1 :
+                            players.get(3).returnedValueByResolver = players.get(3).resolver.compareSolution(1);
+                            break;
+                        case 2 :
+                            players.get(3).returnedValueByResolver = players.get(3).resolver.compareSolution(2);
+                            break;
+                        case 3 :
+                            players.get(3).returnedValueByResolver = players.get(3).resolver.compareSolution(3);
+                            break;
+                    }
 
-//                                     pongRight.ball.transparentMalus = true;
-//                                     pongRight.ball.isTransparent = true;
+                    // if(returnedValueByResolver == 2) {
+                    //     resetSimon();
+                    // }
+                    // for (int i = 0; i < playersNumber; i++) {
+                    //     if(players.get(i).returnedValueByResolver == 2) {
+                    //         resetSimon(i);
+                    //     }
+                    //     else if(players.get(i).returnedValueByResolver == 0) {
+                    //         players.get(i).returnedValueByResolver = 3;
+                    //         restartSequenceForPlayer(i);
+                    //     }
+                    // }
 
-//                                     pongTop.ball.transparentMalus = true;
-//                                     pongTop.ball.isTransparent = true;
+                    playerBottomLeft = int(moves2[1].trim());
+                    playerBottomRight = int(moves2[0].trim());
+                    /* from 0 to 255 */
+                    // println("playerLeft: "+playerLeft);
+                    // println("playerRight: "+playerRight);
+                    players.get(2).bar.posX = playerBottomLeft*(screenWidth/2-players.get(2).bar.width)/255;
+                    players.get(3).bar.posX = playerBottomRight*(screenWidth/2-players.get(3).bar.width)/255 + screenWidth/2;
+                }
+            }
+        }
+    }
 
-//                                     pongBottom.ball.transparentMalus = true;
-//                                     pongBottom.ball.isTransparent = true;
-//                                     break;
-//                                 default :
-//                                     players.get(2).bar.shrink();
-//                                     break;
-//                             }
+    for (int i = 0; i < playersNumber; i++) {
+        if(players.get(i).returnedValueByResolver == 2 && !sequenceNeedtoBeRestarted) {
 
-//                             resetSimon(i);
-//                         }
-//                         else if(players.get(i).returnedValueByResolver == 0) {
-//                             players.get(i).returnedValueByResolver = 3;
-//                             restartSequenceForPlayer(i);
-//                         }
-//                     }
+            int power = int(random(0, 2));
 
-//                     playerTopLeft = int(moves1[1].trim());
-//                     playerTopRight = int(moves1[0].trim());
-//                     /* from 0 to 255 */
-//                     // println("playerLeft: "+playerLeft);
-//                     // println("playerRight: "+playerRight);
-//                     players.get(0).bar.posX = playerTopLeft*(screenWidth/2-players.get(0).bar.width)/255;
-//                     players.get(1).bar.posX = playerTopRight*(screenWidth/2-players.get(1).bar.width)/255 + screenWidth/2;
+            switch (power) {
+                case 0 :
+                    players.get(i).bar.expand();
+                    break;
+                case 1 :
+                    pongLeft.ball.transparentMalus = true;
+                    pongLeft.ball.isTransparent = true;
 
-//                     players.get(2).bar.posX = playerTopLeft*(screenWidth/2-players.get(2).bar.width)/255;
-//                     players.get(3).bar.posX = playerTopRight*(screenWidth/2-players.get(3).bar.width)/255 + screenWidth/2;
-//                 }
-//             }
-//         }
-//     }
+                    pongRight.ball.transparentMalus = true;
+                    pongRight.ball.isTransparent = true;
 
-//     if(myPort2.available() > 0){
-//         stringReceived2 = myPort2.readStringUntil('\n');
-//         if(stringReceived2 != null) {
-//             moves2 = split(stringReceived2,'$');
-//             //println("stringReceived: "+stringReceived);
-//             if(moves2.length == 4){
-//                 if(game.activeScreen != 1) {
-//                     if(int(moves2[2].trim()) != 255 || int(moves2[3].trim()) != 255) {
-//                         game.activeScreen = 1;
-//                     }
-//                 }
-//                 else {
-//                     // joueur top left
-//                     switch (int(moves2[2].trim())) {
-//                         case 0 :
-//                             players.get(0).returnedValueByResolver = players.get(0).resolver.compareSolution(0);
-//                             break;
-//                         case 1 :
-//                             players.get(0).returnedValueByResolver = players.get(0).resolver.compareSolution(1);
-//                             break;
-//                         case 2 :
-//                             players.get(0).returnedValueByResolver = players.get(0).resolver.compareSolution(2);
-//                             break;
-//                         case 3 :
-//                             players.get(0).returnedValueByResolver = players.get(0).resolver.compareSolution(3);
-//                             break;
-//                     }
-//                     // joueur top right
-//                     switch (int(moves2[3].trim())) {
-//                         case 0 :
-//                             players.get(1).returnedValueByResolver = players.get(1).resolver.compareSolution(0);
-//                             break;
-//                         case 1 :
-//                             players.get(1).returnedValueByResolver = players.get(1).resolver.compareSolution(1);
-//                             break;
-//                         case 2 :
-//                             players.get(1).returnedValueByResolver = players.get(1).resolver.compareSolution(2);
-//                             break;
-//                         case 3 :
-//                             players.get(1).returnedValueByResolver = players.get(1).resolver.compareSolution(3);
-//                             break;
-//                     }
+                    pongTop.ball.transparentMalus = true;
+                    pongTop.ball.isTransparent = true;
 
-//                     // if(returnedValueByResolver == 2) {
-//                     //     resetSimon();
-//                     // }
-//                     for (int i = 0; i < playersNumber; i++) {
-//                         if(players.get(i).returnedValueByResolver == 2) {
-//                             resetSimon(i);
-//                         }
-//                         else if(players.get(i).returnedValueByResolver == 0) {
-//                             players.get(i).returnedValueByResolver = 3;
-//                             restartSequenceForPlayer(i);
-//                         }
-//                     }
+                    pongBottom.ball.transparentMalus = true;
+                    pongBottom.ball.isTransparent = true;
+                    break;
+                default :
+                    players.get(i).bar.shrink();
+                    break;
+            }
 
-//                     playerBottomLeft = int(moves2[1].trim());
-//                     playerBottomRight = int(moves2[0].trim());
-//                     /* from 0 to 255 */
-//                     // println("playerLeft: "+playerLeft);
-//                     // println("playerRight: "+playerRight);
-//                     players.get(0).bar.posX = playerBottomLeft*(screenWidth/2-players.get(0).bar.width)/255;
-//                     players.get(1).bar.posX = playerBottomRight*(screenWidth/2-players.get(1).bar.width)/255 + screenWidth/2;
-//                 }
-//             }
-//         }
-//     }
-// }
+            sequenceNeedtoBeRestarted = true;
+        }
+        else if(players.get(i).returnedValueByResolver == 0) {
+            players.get(i).returnedValueByResolver = 3;
+            restartSequenceForPlayer(i);
+        }
+    }
+
+    if(sequenceNeedtoBeRestarted) {
+        resetSimon();
+    }
+}
 
 void sendArduino()
 {
@@ -580,6 +554,7 @@ void sendArduino()
         myPort2.write(stringToSend2);
     }
     else if(dataCanBeSent) {
+
         dataCanBeSent = false;
         stringToSend1 = "0$"+str(numberOfColorInSequence);
         for(int i = 0; i < numberOfColorInSequence; i++) {
@@ -587,7 +562,7 @@ void sendArduino()
         }
         stringToSend1 += "\n";
         //println("stringToSend: "+stringToSend);
-        myPort2.write(stringToSend2);
+        myPort1.write(stringToSend1);
         stringToSend2 = "0$"+str(numberOfColorInSequence);
         for(int i = 0; i < numberOfColorInSequence; i++) {
             stringToSend2 += "$"+str(simon.sequenceToPlay.get(i));
@@ -613,7 +588,7 @@ void restartSequenceForPlayer(int player) {
             playerToSend = "2";
             break;
     }
-    if(player == 2 || player == 3) {
+    if(player == 0 || player == 1) {
         stringToSend1 = playerToSend+"$"+str(numberOfColorInSequence);
         for(int i = 0; i < numberOfColorInSequence; i++) {
             stringToSend1 += "$"+str(simon.sequenceToPlay.get(i));
@@ -621,23 +596,24 @@ void restartSequenceForPlayer(int player) {
         stringToSend1 += "\n";
         myPort1.write(stringToSend1);
     }
-    if(player == 0 || player == 1) {
+    if(player == 2 || player == 3) {
         stringToSend2 = playerToSend+"$"+str(numberOfColorInSequence);
         for(int i = 0; i < numberOfColorInSequence; i++) {
             stringToSend2 += "$"+str(simon.sequenceToPlay.get(i));
         }
         stringToSend2 += "\n";
-        myPort1.write(stringToSend2);
+        myPort2.write(stringToSend2);
     }
 }
 
-void resetSimon(int player)
+void resetSimon()
 {
+    sequenceNeedtoBeRestarted = false;
     for (int i = 0; i < playersNumber; i++) {
         players.get(i).returnedValueByResolver = 0;
     }
-    simon.win(player);
-    simon = new Simon(++numberOfColorInSequence,numberOfLed);
+    // simon.win(player);
+    simon = new Simon(numberOfColorInSequence,numberOfLed);
     for (int i = 0; i < playersNumber; i++) {
         players.get(i).resolver = new SimonResolver(simon.sequenceToPlay);
         players.get(i).returnedValueByResolver = 3;
