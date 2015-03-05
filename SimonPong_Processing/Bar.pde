@@ -5,6 +5,9 @@ class Bar
     int posY;
     int barSpeed;
 
+    int initialPosX;
+    int initialPosY;
+
     int initialWidth;
     int width;
     int height;
@@ -38,27 +41,37 @@ class Bar
         switch (index) {
             case 0:
                 posX = screenWidth / 4 - barWidth / 2;
+                initialPosX = screenWidth / 4 - barWidth / 2;
                 posY = 0;
+                initialPosY = 0;
                 sound = new Sound(minim, "bar1.mp3");
                 break;
             case 1:
                 posX = 3 * screenWidth / 4 - barWidth / 2;
+                initialPosX = 3 * screenWidth / 4 - barWidth / 2;
                 posY = 0;
+                initialPosY = 0;
                 sound = new Sound(minim, "bar1.mp3");
                 break;
             case 2:
                 posX = screenWidth / 4 - barWidth / 2;
+                initialPosX = screenWidth / 4 - barWidth / 2;
                 posY = screenHeight - height;
+                initialPosY = screenHeight - height;
                 sound = new Sound(minim, "bar2.mp3");
                 break;
             case 3:
                 posX = 3 * screenWidth / 4 - barWidth / 2;
+                initialPosX = 3 * screenWidth / 4 - barWidth / 2;
                 posY = screenHeight - height;
+                initialPosY = screenHeight - height;
                 sound = new Sound(minim, "bar2.mp3");
                 break;
             default :
                 posX = 0;
+                initialPosX = 0;
                 posY = 0;
+                initialPosY = 0;
                 break;
         }
     }
