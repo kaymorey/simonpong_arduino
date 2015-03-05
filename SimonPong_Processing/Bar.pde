@@ -89,7 +89,7 @@ class Bar
     {
         if (width + 20 <= maxWidth) {
             width += 20;
-            posX -= 10;
+            posX += 10;
         }
     }
 
@@ -97,7 +97,7 @@ class Bar
     {
         if (width - 20 >= minWidth) {
             width -= 20;
-            posX += 10;
+            posX -= 10;
         }
     }
 

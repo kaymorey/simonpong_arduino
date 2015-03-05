@@ -108,7 +108,6 @@ void setup()
     //////////
     minim = new Minim(this);
     game = new Game(minim);
-    game.backgroundSound.player.loop();
 
     /////////////
     // Arduino //
@@ -116,6 +115,7 @@ void setup()
     if(!gameAsBeenInitialized) {
         gameAsBeenInitialized = true;
         instantiateArduino();
+        game.backgroundSound.player.loop();
     }
 
     ////////////
