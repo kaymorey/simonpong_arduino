@@ -32,8 +32,8 @@ Minim minim;//audio context
 ////////////
 int screenWidth  = 1680;
 int screenHeight = 1050;
-//int screenWidth  = 1200;
-//int screenHeight = 700;
+// int screenWidth  = 1200;
+// int screenHeight = 700;
 
 //////////
 // Pong //
@@ -299,7 +299,7 @@ void draw()
     // Arduino //
     /////////////
     readArduino();
-    //readKeyboard();
+    // readKeyboard();
     sendArduino();
 }
 

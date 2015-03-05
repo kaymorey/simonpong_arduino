@@ -90,7 +90,7 @@ class Ball
     void moveBall(int pongWidth, int pongHeight, int pongPosX, int pongPosY, int mode)
     {
         if (transparentMalus) {
-            if (counter == 30) {
+            if (counter == 12) {
                 counter = 1;
                 isTransparent = !isTransparent;
             }
@@ -157,8 +157,10 @@ class Ball
     boolean testBallHitBar(Bar bar) {
         int posXBallMid = posX + radius / 2;
         int posYBallMid = posY + radius / 2;
+        int posXBallRight = posX + radius;
+        int posYBallBottom = posY + radius;
 
-        if ((posXBallMid >= bar.posX && posXBallMid <= bar.posX + bar.width) && (posYBallMid >= bar.posY && posYBallMid <= bar.posY + bar.height)) {
+        if ((posXBallRight >= bar.posX && posX <= bar.posX + bar.width) && (posYBallBottom >= bar.posY && posY <= bar.posY + bar.height)) {
             bar.sound.player.play();
             bar.sound.player.rewind();
             // Collision
@@ -209,7 +211,7 @@ class Ball
         else if (posXBallMid >= posXBar + rangeBar * 3 && posXBallMid< posXBar + rangeBar * 4) {
             return 1; // MIDRIGHT
         }
-        else if (posXBallMid >= posXBar + rangeBar * 4 && posXBall <= posXBar + barWidth) {
+        else if (posXBallMid >= posXBar + rangeBar * 4 && posX <= posXBar + barWidth) {
             return 2; // RIGHT
         }
         return 0; // MIDDLE
