@@ -299,7 +299,7 @@ void draw()
     // Arduino //
     /////////////
     readArduino();
-    // readKeyboard();
+    //readKeyboard();
     sendArduino();
 }
 
@@ -504,9 +504,34 @@ void readArduino()
     }
 
     for (int i = 0; i < playersNumber; i++) {
+        
+        PImage resultSequenceImage;
+        resultSequenceImage = loadImage("check.png");
+        
+        switch (i) {
+            case 1: // Top right
+                imagePosX = -(3 * screenWidth / 4 - resultSequenceImage.width / 2);
+                imagePosY = - 150;
+                break;
+            case 2: // Bottom left
+                imagePosX = screenWidth / 4 - resultSequenceImage.width / 2;
+                imagePosY = screenHeight - 150;
+                break;
+            case 3: // Bottom right
+                imagePosX = 3 * screenWidth / 4 - resultSequenceImage.width / 2;
+                imagePosY = screenHeight - 150;
+                break;
+            default : // Top left
+                imagePosX = -(screenWidth / 4 - resultSequenceImage.width / 2);
+                imagePosY = - 150;
+                break;
+        }
+        
         if(players.get(i).returnedValueByResolver == 2 && !sequenceNeedtoBeRestarted) {
 
             int power = int(random(0, 2));
+            
+            image(resultSequenceImage, imagePosX, imagePosY);
 
             switch (power) {
                 case 0 :
@@ -533,6 +558,10 @@ void readArduino()
             sequenceNeedtoBeRestarted = true;
         }
         else if(players.get(i).returnedValueByResolver == 0) {
+            
+            resultSequenceImage = loadImage("cross.png");
+            image(resultSequenceImage, imagePosX, imagePosY);
+          
             players.get(i).returnedValueByResolver = 3;
             restartSequenceForPlayer(i);
         }
